@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="CentOS搭建whmcs破解版本">
+<meta name="keywords" content="linux,web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 6.x whmcs">
+<meta property="og:url" content="http://blog.kompaz.win/2016/05/18/CentOS 6.x whmcs/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="CentOS搭建whmcs破解版本">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.155Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS 6.x whmcs">
+<meta name="twitter:description" content="CentOS搭建whmcs破解版本">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/05/18/CentOS 6.x whmcs/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>CentOS 6.x whmcs | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/05/18/CentOS 6.x whmcs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CentOS 6.x whmcs
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-05-18 09:07:14" itemprop="dateCreated datePublished" datetime="2016-05-18T09:07:14+08:00">2016-05-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">CentOS搭建whmcs破解版本</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-LAMP安装"><a href="#1-LAMP安装" class="headerlink" title="1.LAMP安装"></a>1.LAMP安装</h3><h4 id="php安装"><a href="#php安装" class="headerlink" title="php安装"></a>php安装</h4><pre><code>yum install php php-mysql -y
+yum install php-mysql php-gd php-imap php-ldap php-odbc php-pear php-xml php-xmlrpc php-pear -y
+</code></pre><h4 id="http-mysql-服务安装"><a href="#http-mysql-服务安装" class="headerlink" title="http mysql 服务安装"></a>http mysql 服务安装</h4><p>安装http mysql</p>
+<pre><code>yum install httpd -y
+yum install mysql-server mysql mysql-devel -y
+</code></pre><p>启动http mysql服务，并加入开机启动</p>
+<pre><code>service httpd start
+service mysqld start
+chkconfig httpd on
+chkconfig mysqld on
+</code></pre><h4 id="mysql配置"><a href="#mysql配置" class="headerlink" title="mysql配置"></a>mysql配置</h4><p>启动服务后，命令行下执行</p>
+<pre><code>/usr/bin/mysql_secure_installation
+</code></pre><p>出现如下几个选项，首次安装第一项直接回车即可，然后设置root密码，root远程登陆可以禁止</p>
+<pre><code>Enter current password for root (enter for none):
+Remove anonymous users? [Y/n] y
+Disallow root login remotely? [Y/n] n
+Remove test database and access to it? [Y/n] y
+Reload privilege tables now? [Y/n] y
+</code></pre><h4 id="phpmyadmin安装"><a href="#phpmyadmin安装" class="headerlink" title="phpmyadmin安装"></a>phpmyadmin安装</h4><p>yum安装phpmyadmin</p>
+<pre><code>yum install epel-release -y
+yum install phpmyadmin -y
+</code></pre><p>创建可以访问的软连接</p>
+<pre><code>ln -s /usr/share/phpMyAdmin /var/www/html/phpMyAdmin
+</code></pre><p>允许可以网页访问phpmyadmin，要不然会出现403错误</p>
+<pre><code>cat &lt;&lt;EOF&gt;&gt;/etc/httpd/conf/httpd.conf
+&lt;Directory &quot;/usr/share/phpMyAdmin/&quot;&gt;
+    AllowOverride None
+    Order allow,deny  
+    Allow from all  
+&lt;/Directory&gt;
+EOF
+</code></pre><blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>不同版本的phpmyadmin可能名称不同，有些版本的文件夹名字为phpmyadmin</p>
+</blockquote>
+<p>添加可以访问的IP地址，修改/etc/httpd/conf.d/phpMyAdmin.conf设置，其中192.168.86.104为可以通过IP地址访问phpmyadmin，不添加下面的选项，则无法通过非本地进行访问，配置完成后重启http和mysql服务。</p>
+<pre><code>&lt;Directory /usr/share/phpMyAdmin/&gt;
+   AddDefaultCharset UTF-8
+
+   &lt;IfModule mod_authz_core.c&gt;
+ # Apache 2.4
+ &lt;RequireAny&gt;
+   Require ip 127.0.0.1
+   Require ip ::1
+   Require ip 192.168.86.104
+ &lt;/RequireAny&gt;
+   &lt;/IfModule&gt;
+   &lt;IfModule !mod_authz_core.c&gt;
+ # Apache 2.2
+ Order Deny,Allow
+ Deny from All
+ Allow from 127.0.0.1
+ Allow from ::1
+   &lt;/IfModule&gt;
+&lt;/Directory&gt;
+</code></pre><p>如果是centos7，则删除上面的，添加如下，并重启httpd服务</p>
+<pre><code>&lt;Directory /usr/share/phpMyAdmin/&gt;
+    Options none
+    AllowOverride Limit
+    Require all granted
+&lt;/Directory&gt;
+</code></pre><blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>低版本的phpmyadmin可能不需要修改此文件</p>
+</blockquote>
+<h4 id="mysql添加whmcs用户"><a href="#mysql添加whmcs用户" class="headerlink" title="mysql添加whmcs用户"></a>mysql添加whmcs用户</h4><p>使用root用户登录mysql,选择mysql数据库</p>
+<pre><code>mysql -u root -p
+use mysql
+create user &apos;whmcs&apos;@&apos;localhost&apos; identified by &apos;whmcs&apos;
+flush privileges
+</code></pre><p>为用户创建数据库</p>
+<pre><code>create database whmcs;
+</code></pre><p>为用户赋予操作数据库testdb的所有权限</p>
+<pre><code>grant all privileges on whmcs.* to &apos;whmcs&apos;@&apos;localhost&apos; identified  by &apos;whmcs&apos;;
+flush privileges;
+</code></pre><p>用新用户登录</p>
+<pre><code>mysql -u whmcs -p
+</code></pre><hr>
+<h3 id="2-whmcs安装配置"><a href="#2-whmcs安装配置" class="headerlink" title="2.whmcs安装配置"></a>2.whmcs安装配置</h3><h4 id="ioncube安装"><a href="#ioncube安装" class="headerlink" title="ioncube安装"></a>ioncube安装</h4><ul>
+<li>whmcs的安装需要ioncube，首先需要安装ioncube，从官网下载linux的安装包，然后解压在/var/www/html目录下。</li>
+<li>将解压文件重命名为ioncube</li>
+<li>在浏览器下输入<a href="http://www.google.com" target="_blank" rel="noopener">http://[IP地址]/ioncube/loader-wizard.php</a>，启动ioncube安装向导。</li>
+<li>将ioncube_loader_lin_5.3.so拷贝到 /usr/lib64/php/modules目录下。</li>
+<li>将这个文件 <a href="">00-ioncube.ini</a>下载到/etc/php.d文件夹下。</li>
+<li>重启http服务器</li>
+<li>在浏览器上访问测试ioncube是否安装成功，若安装成功则进行下一步。</li>
+</ul>
+<h4 id="whmcs安装"><a href="#whmcs安装" class="headerlink" title="whmcs安装"></a>whmcs安装</h4><p>将whmcs解压到/var/www/html目录下。下载地址请点击<a href="http://pan.baidu.com/s/1bzu4kY" target="_blank" rel="noopener">这里</a>，将目录下的configuration.php.new重命名为或拷贝configuration.php</p>
+<pre><code>cp configuration.php.new configuration.php
+</code></pre><p>修改一些文件的权限为777</p>
+<pre><code>chmod -R 777  attachments downloads templates_c  configuration.php
+</code></pre><p>这时候使用浏览器访问<a href="http://192.168.86.104/whmcs/install/install.php" target="_blank" rel="noopener">http://192.168.86.104/whmcs/install/install.php</a>,按照提示，一步步进行安装设置，license填写任意数字，数据库一定按照之前创建的数据库填写，hosts，user，password。然后开始开始初始化。</p>
+<h4 id="whmcs安装完成"><a href="#whmcs安装完成" class="headerlink" title="whmcs安装完成"></a>whmcs安装完成</h4><ul>
+<li>删除install文件夹</li>
+<li>修改configuration.php的权限为755</li>
+<li>编辑configuration.php定义最高权限文件夹的路径，这样这三个文件夹对于网页访问者就不可见了。最后一项的myadminname，是指你将文件夹admin重命名成的新文件名！</li>
+</ul>
+<pre><code class="markdown">
+$templates_compiledir = "/root/whmcs/templates_c/";
+$attachments_dir = "/root/whmcs/attachments/";
+$downloads_dir = "/root/whmcs/downloads/";
+$customadminpath = "icean";
+</code></pre>
+
+<h4 id="whmcs破解"><a href="#whmcs破解" class="headerlink" title="whmcs破解"></a>whmcs破解</h4><p>使用破解文件中的class.license，替换掉include/class/class-license.php中的文件，破解文件下载请点击<a href="http://pan.baidu.com/s/1bo4ckeb" target="_blank" rel="noopener">这里</a>。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/web/" rel="tag"># web</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/15/VirtualBox Linux Shrink/" rel="next" title="VirtualBox Linux Shrink">
+                <i class="fa fa-chevron-left"></i> VirtualBox Linux Shrink
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/28/TunnelBroker绑定Linux VPS/" rel="prev" title="TunnelBroker绑定Linux VPS">
+                TunnelBroker绑定Linux VPS <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-LAMP安装"><span class="nav-number">1.</span> <span class="nav-text">1.LAMP安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#php安装"><span class="nav-number">1.1.</span> <span class="nav-text">php安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#http-mysql-服务安装"><span class="nav-number">1.2.</span> <span class="nav-text">http mysql 服务安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql配置"><span class="nav-number">1.3.</span> <span class="nav-text">mysql配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#phpmyadmin安装"><span class="nav-number">1.4.</span> <span class="nav-text">phpmyadmin安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql添加whmcs用户"><span class="nav-number">1.5.</span> <span class="nav-text">mysql添加whmcs用户</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-whmcs安装配置"><span class="nav-number">2.</span> <span class="nav-text">2.whmcs安装配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ioncube安装"><span class="nav-number">2.1.</span> <span class="nav-text">ioncube安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#whmcs安装"><span class="nav-number">2.2.</span> <span class="nav-text">whmcs安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#whmcs安装完成"><span class="nav-number">2.3.</span> <span class="nav-text">whmcs安装完成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#whmcs破解"><span class="nav-number">2.4.</span> <span class="nav-text">whmcs破解</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

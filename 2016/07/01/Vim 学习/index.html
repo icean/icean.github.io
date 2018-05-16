@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Vim 学习">
+<meta name="keywords" content="linux,vim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vim 学习">
+<meta property="og:url" content="http://blog.kompaz.win/2016/07/01/Vim 学习/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="Vim 学习">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.854Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vim 学习">
+<meta name="twitter:description" content="Vim 学习">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/07/01/Vim 学习/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Vim 学习 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/07/01/Vim 学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vim 学习
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-07-01 06:46:46" itemprop="dateCreated datePublished" datetime="2016-07-01T06:46:46+08:00">2016-07-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习/" itemprop="url" rel="index"><span itemprop="name">学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">Vim 学习</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-移动"><a href="#1-移动" class="headerlink" title="1. 移动"></a>1. 移动</h3><h4 id="word为单位移动"><a href="#word为单位移动" class="headerlink" title="word为单位移动"></a>word为单位移动</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a line with example text</span><br><span class="line"> ---&gt;--&gt;-&gt;-----------------&gt;</span><br><span class="line">   w  w  w                3w</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a line with example text</span><br><span class="line">&lt;----&lt;--&lt;-&lt;---------&lt;---</span><br><span class="line">     b     b  b        2b      b</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a line with example text</span><br><span class="line">    &lt;- &lt;--- -----&gt; ----&gt;</span><br><span class="line">     ge ge        e      e</span><br></pre></td></tr></table></figure>
+<p>有一些被认为是non-word的特殊字符, 比如”.”, “-“或”)”充当了word边界的作用。要改变Vim对word边界的定义, 请查看’iskeyword’选项.还可以以空白为分界的WORDs为单位进行移动. 这种WORD与通常意义上的word的边界不同.所以此处用了大写的WORD来区分于word. 它的移动命令也是相应字母的大写形式, 如下所示:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">      ge          b          w                                       e</span><br><span class="line">     &lt;-          &lt;-         ---&gt;                                  ---&gt;</span><br><span class="line">This is-a line, with special/separated/words (and some more).</span><br><span class="line">     &lt;----&lt;-----            --------------------------&gt;             -----&gt;</span><br><span class="line">        gE     B                                  W                                    E</span><br></pre></td></tr></table></figure></p>
+<h4 id="移动到行首或者行尾"><a href="#移动到行首或者行尾" class="headerlink" title="移动到行首或者行尾"></a>移动到行首或者行尾</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">            ^</span><br><span class="line">    &lt;------------</span><br><span class="line">.....This is a line with example text</span><br><span class="line">&lt;----------------- ---------------&gt;</span><br><span class="line">            0                        $</span><br></pre></td></tr></table></figure>
+<p>“\$”命令还可接受一个计数, 就象其它的移动命令一样.但是移动到一行的行尾多于一次没有任何意义. 所以它的功能被赋予为移动到下一行的行尾. 如”1\$”会将光标移动到当前行行尾, “2\$”则会移动到下一行的行尾, 如此类推.</p>
+<p>####移动到指定字符 </p>
+<p>一个最有用的移动命令是单字符搜索命令. 命令”fx”在当前行上查找下一个字符x. 提示: “f”意为”find”.例如, 光标位于下行的开头, 假如你要移动到单词human中的字符h上去. 只要执行命令”fh”就可以了,命令”fy”会将光标定位于单词really的尾部.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">To err is human. To really foul up you need a computer.</span><br><span class="line">---------&gt;---------------&gt;</span><br><span class="line">       fh               fy</span><br></pre></td></tr></table></figure>
+<p>该命令可以带一个命令计数; 命令”3fl”会把光标定位于”foul” 的”l”上:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">To err is human. To really foul up you need a computer.</span><br><span class="line">               ---------------------&gt;</span><br><span class="line">                            3fl</span><br></pre></td></tr></table></figure>
+<p>F向左搜索</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">To err is human. To really foul up you need a computer.</span><br><span class="line">	      &lt;---------------------</span><br><span class="line">                               Fh</span><br></pre></td></tr></table></figure>
+<p>“tx”命令形同”fx”命令, 只不过它不是把光标停留在被搜索字符上, 而是在它之前的一个字符上. 提示: “t”意为”To”. 该命令的反方向版是”Tx”:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">To err is human. To really foul up you need a computer.</span><br><span class="line">                &lt;------------    -------------&gt;</span><br><span class="line">                          Th                  tn</span><br></pre></td></tr></table></figure>
+<p>这4个命令都可以用”;”来重复. 以”,”也是重复同样的命令, 但是方向与原命令的方向相反 1 . 无论如何, 这4个命令都不会使光标跑到其它行上去. 即使当前的句子还没有结束</p>
+<p>####匹配一个括号为目的的移动 </p>
+<p>这对方括号[]和花括号{}同样适用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">                  %</span><br><span class="line">             &lt;-----&gt;</span><br><span class="line">if (a == (b  *  c) / d)</span><br><span class="line">   &lt;----------------&gt;</span><br><span class="line">               %</span><br></pre></td></tr></table></figure>
+<h4 id="移动到指定行"><a href="#移动到指定行" class="headerlink" title="移动到指定行"></a>移动到指定行</h4><p>没有指定命令计数作为参数的话 3 , “G”会把光标定位到最后一行上.”gg”命令是跳转到第一行的快捷的方法. “1G”效果也是一样,但是敲起来就没那么顺手了.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">|    first line of a file     ^</span><br><span class="line">|    text text text text    |</span><br><span class="line">|    text text text text    |  gg</span><br><span class="line"> 7G  |    text text text text    |</span><br><span class="line">|    text text text text</span><br><span class="line">|    text text text text</span><br><span class="line">       V   text text text text    |</span><br><span class="line">     text text text text    |  G</span><br><span class="line">     text text text text    |</span><br><span class="line">             last line of a file     V</span><br></pre></td></tr></table></figure>
+<p>另一个移动到某行的方法是在命令”%”之前指定一个命令计数 1 . 比如”50%”将会把光标定位在文件的中间 2 . “90%”跳到接近文件尾的地方 3 .</p>
+<p>上面的这些命令都假设你只是想跳转到文件中的某一行上, 不管该行当前是否显示在屏幕上.但如果你只是想移动到目前显示在屏幕上的那些行呢? 下图展示了达到这一目标的几个命令:”H”意为Home, “M”为Middle, “L”为Last.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">		+---------------------------+</span><br><span class="line">H --&gt;        |  text sample text              |</span><br><span class="line">		|  sample text		        |</span><br><span class="line">		|  text sample text              |</span><br><span class="line">  		  |  sample text                     |</span><br><span class="line">M --&gt;       |  text sample text              |</span><br><span class="line">		|  sample text 		         |</span><br><span class="line">		|  text sample text	            |</span><br><span class="line">		|  sample text		        |</span><br><span class="line">L --&gt;         |  text sample text              |</span><br><span class="line">		+---------------------------+</span><br></pre></td></tr></table></figure>
+<p>Vim允许你在文本中定义你自己的标记. 命令”ma”将当前光标下的位置名之为标记”a”.从a到z一共可以使用26个自定义的标记. 定义后的标记在屏幕上也看不出来. 不过Vim在内部记录了它们所代表的位置.</p>
+<p>要跳转到一个你定义过的标记, 使用命令`{mark}, {mark}就是你定义的标记的名字.就象这样:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`a</span><br></pre></td></tr></table></figure>
+<p>命令’mark(单引号, 或者叫呼应单引号)会使你跳转到mark所在行的行首.这与`mark略有不同, `mark会精准地把你带到你定义mark时所在的行和列.</p>
+<p>你可以移动到文件开始处并在此放置一个名为s(start)的标记:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ms</span><br></pre></td></tr></table></figure>
+<h4 id="修改历史光标跳转"><a href="#修改历史光标跳转" class="headerlink" title="修改历史光标跳转"></a>修改历史光标跳转</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Ctrl-O  前一个修改所在光标位置 </span><br><span class="line">Ctrl-I   后一个修改所在光标位置</span><br></pre></td></tr></table></figure>
+<h4 id="滚动"><a href="#滚动" class="headerlink" title="滚动"></a>滚动</h4><ul>
+<li>CTRL-U命令会使文本向下滚动半屏. 也可以想象为在显示文本的窗<br>口向上滚动了半屏. 不要担心这种容易混淆的解释, 不是只有你一个人<br>搞不清楚.</li>
+<li>CTRL-D命令将窗口向下移动半屏, 所以相当于文本向上滚动了半屏:</li>
+<li>“zz”命令 会把当前行置为屏幕正中央</li>
+<li>“zt”命令会把当前行置于屏幕顶端  </li>
+<li>“zb”则把当前行置于屏幕底端 </li>
+<li>一次滚动一行可以使用CTRL-E(向上滚动)和CTRL-Y(向下滚动)</li>
+</ul>
+<hr>
+<h3 id="2-删除"><a href="#2-删除" class="headerlink" title="2. 删除"></a>2. 删除</h3><h4 id="操作符命令和位移"><a href="#操作符命令和位移" class="headerlink" title="操作符命令和位移"></a>操作符命令和位移</h4><p>“4w”命令是向前移动4个word. 所以”d4w”命令是删除4个word.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">To err is human. To really foul up you need a computer.</span><br><span class="line">                            ------------------&gt;</span><br><span class="line">                                    d4w</span><br><span class="line">To err is human. you need a computer.</span><br></pre></td></tr></table></figure>
+<p>Vim只删除到位移命令之后光标的前一个位置. 这是因为Vim知道你并不是要删除下一个word的第一个字符. 如果你用”e”命令来移动到word的末尾, Vim也会假设你是要包括那最后一个字符<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">To err is human. you need a computer.</span><br><span class="line">                           --------&gt;</span><br><span class="line">                               d2e</span><br><span class="line">To err is human. a computer.</span><br></pre></td></tr></table></figure></p>
+<p>删除到行尾</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">To err is human. a computer.</span><br><span class="line">                           ------------&gt;</span><br><span class="line">                               d$</span><br><span class="line">To err is human</span><br></pre></td></tr></table></figure>
+<p>删除换行符<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">命令J</span><br></pre></td></tr></table></figure></p>
+<h4 id="改变文本"><a href="#改变文本" class="headerlink" title="改变文本"></a>改变文本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">To err is human</span><br><span class="line">     -------&gt;</span><br><span class="line">      c2wbe&lt;Esc&gt;</span><br><span class="line">To be human</span><br></pre></td></tr></table></figure>
+<p>快捷命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x      代表dl(删除当前光标下的字符)</span><br><span class="line">X 	代表dh(删除当前光标左边的字符)</span><br><span class="line">D     代表d$(删除到行尾的内容)</span><br><span class="line">C 	代表c$(修改到行尾的内容)</span><br><span class="line">s 	代表cl(修改一个字符)</span><br><span class="line">S 	代表cc(修改一整行)</span><br></pre></td></tr></table></figure>
+<h4 id="替换"><a href="#替换" class="headerlink" title="替换"></a>替换</h4><p>单个替换</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">there is somerhing grong here</span><br><span class="line">rT                  rt       rw</span><br><span class="line">There is something wrong here</span><br></pre></td></tr></table></figure>
+<h4 id="重复改动"><a href="#重复改动" class="headerlink" title="重复改动"></a>重复改动</h4><p>“.”命令是Vim中一个简单而强大的命令. 它会重复上一次做出的改动. 例如, 假设你在编辑一个HTML文件, 想删除其中所有的\&lt;B>标签. 你把光标置于\&lt;B>的&lt;字符上然后命令”df&gt;”. 然后到\&lt;/B>的&lt;上用”.”命令做同样的事. “.”命令会执行上一次所执行的更改命令( 此例中是”df&gt;”).要删除另一个标签, 同样把光标置于&lt;字符上然后执行”.”命令即可.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">                                       To &lt;B&gt;generate&lt;/B&gt; a table of &lt;B&gt;contents</span><br><span class="line">f&lt;           找到第一个 &lt;     ---&gt;</span><br><span class="line">df&gt;         删除到 &gt;处的内容   --&gt;</span><br><span class="line">f&lt;           找到下一个 &lt;                  ---------&gt;</span><br><span class="line">.              重复 df&gt;                                      ---&gt;</span><br><span class="line">f&lt;           找到下一个 &lt;                                    -------------&gt;</span><br><span class="line">.              重复 df&gt;                                                                --&gt;</span><br></pre></td></tr></table></figure>
+<p>把”four”改为”five”. 它在你的文件里多次出现. 你可以用以下命令来做出修改:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/four&lt;Enter&gt;     找到第一个字符串&quot;four&quot;</span><br><span class="line">cwfive&lt;Esc&gt;      把它改为&quot;five&quot;</span><br><span class="line">n 	  		    找到下一个字符串&quot;four&quot;</span><br><span class="line">. 			   同样改为&quot;five&quot;</span><br><span class="line">n 		          继续找下一个</span><br><span class="line">. 			   做同样的修改</span><br><span class="line">			等等</span><br></pre></td></tr></table></figure>
+<p>如果光标位于一个单词的中间而你要删除这个单词, 通常你需要把光标移到该单词的开头然后用”dw”命令. 不过有一个更简单的办法:”daw”，同时也删除掉单词后的空格，若不打算删除单词后的空格，使用:”diw”</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this is some example text.</span><br><span class="line">		    daw</span><br><span class="line">this is some text.</span><br></pre></td></tr></table></figure>
+<p>删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">x       删除当前光标下的字符(&quot;dl&quot;的快捷命令)</span><br><span class="line">X       删除当前光标之前的字符(&quot;dh&quot;的快捷命令)</span><br><span class="line">D      删除自当前光标至行尾的内容(&quot;d$&quot;的快捷命令)</span><br><span class="line">dw    删除自当前光标至下一个word的开头</span><br><span class="line">db     删除自当前光标至前一个word的开始</span><br><span class="line">diw    删除当前光标所在的word(不包括空白字符)</span><br><span class="line">daw   删除当前光标所在的word(包括空白字符)</span><br><span class="line">dG     删除当前行至文件尾的内容</span><br><span class="line">dgg   删除当前行至文件头的内容</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~      改变当前光标下字符的大小写, 并将光标移至下一个字符. 这不是一个操作符命令(除非你设置了&apos;tildeop&apos;3 选项), 所以你不能让它与一个位移命令搭配使用. 但它可以在Visual模式下改变所有被选中的文本的大小写.</span><br><span class="line">I       将光标置于当前行第一个非空白字符处并进入Insert模式</span><br><span class="line">A     当光标置于当前行尾并进入Insert模式</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/vim/" rel="tag"># vim</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/24/CentOS 6.x vsftp 启用 SSL或TLS/" rel="next" title="CentOS 6.x vsftp 启用 SSL或TLS">
+                <i class="fa fa-chevron-left"></i> CentOS 6.x vsftp 启用 SSL或TLS
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/03/X大_OSPFv3_入侵测试/" rel="prev" title="X大 OSPFv3 入侵测试">
+                X大 OSPFv3 入侵测试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-移动"><span class="nav-number">1.</span> <span class="nav-text">1. 移动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#word为单位移动"><span class="nav-number">1.1.</span> <span class="nav-text">word为单位移动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移动到行首或者行尾"><span class="nav-number">1.2.</span> <span class="nav-text">移动到行首或者行尾</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#移动到指定行"><span class="nav-number">1.3.</span> <span class="nav-text">移动到指定行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改历史光标跳转"><span class="nav-number">1.4.</span> <span class="nav-text">修改历史光标跳转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#滚动"><span class="nav-number">1.5.</span> <span class="nav-text">滚动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-删除"><span class="nav-number">2.</span> <span class="nav-text">2. 删除</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#操作符命令和位移"><span class="nav-number">2.1.</span> <span class="nav-text">操作符命令和位移</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改变文本"><span class="nav-number">2.2.</span> <span class="nav-text">改变文本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#替换"><span class="nav-number">2.3.</span> <span class="nav-text">替换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重复改动"><span class="nav-number">2.4.</span> <span class="nav-text">重复改动</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

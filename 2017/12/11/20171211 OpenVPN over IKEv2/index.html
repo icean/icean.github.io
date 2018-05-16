@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. 背景介绍关于如何绕过实验室的访问策略，直接访问服务器区服务器，之前的文章Strongswan Linux host-to-host配置 已经介绍过，实现的拓扑如图1-1所示：  服务器区的服务器Carol的IP地址为172.18.31.13/16，办公区Moon的IP地址为10.30.8.8/19 Carol以IKEv2 VPN连接到Moon，获取的办公区虚拟IP地址为10.30.30.13">
+<meta name="keywords" content="openvpn,IKEv2,vpn,network">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenVPN over IKEv2 配置">
+<meta property="og:url" content="http://blog.kompaz.win/2017/12/11/20171211 OpenVPN over IKEv2/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. 背景介绍关于如何绕过实验室的访问策略，直接访问服务器区服务器，之前的文章Strongswan Linux host-to-host配置 已经介绍过，实现的拓扑如图1-1所示：  服务器区的服务器Carol的IP地址为172.18.31.13/16，办公区Moon的IP地址为10.30.8.8/19 Carol以IKEv2 VPN连接到Moon，获取的办公区虚拟IP地址为10.30.30.13">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/pptp_over_ikev2/2-2.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:32.877Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenVPN over IKEv2 配置">
+<meta name="twitter:description" content="1. 背景介绍关于如何绕过实验室的访问策略，直接访问服务器区服务器，之前的文章Strongswan Linux host-to-host配置 已经介绍过，实现的拓扑如图1-1所示：  服务器区的服务器Carol的IP地址为172.18.31.13/16，办公区Moon的IP地址为10.30.8.8/19 Carol以IKEv2 VPN连接到Moon，获取的办公区虚拟IP地址为10.30.30.13">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/12/11/20171211 OpenVPN over IKEv2/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenVPN over IKEv2 配置 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/12/11/20171211 OpenVPN over IKEv2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenVPN over IKEv2 配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-12-11 23:06:00" itemprop="dateCreated datePublished" datetime="2017-12-11T23:06:00+08:00">2017-12-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:32" itemprop="dateModified" datetime="2018-05-08T09:52:32+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-背景介绍"><a href="#1-背景介绍" class="headerlink" title="1. 背景介绍"></a>1. 背景介绍</h3><p>关于如何绕过实验室的访问策略，直接访问<span style="color:red"><strong>服务器区</strong></span>服务器，之前的文章<a href="http://blog.kompaz.win/2017/03/02/Strongswan%20Linux%20host-to-host/"><strong>Strongswan Linux host-to-host配置</strong></a> 已经介绍过，实现的拓扑如图1-1所示：</p>
+<ul>
+<li><span style="color:red"><strong>服务器区</strong></span>的服务器Carol的IP地址为<code>172.18.31.13/16</code>，<span style="color:green"><strong>办公区</strong></span>Moon的IP地址为<code>10.30.8.8/19</code></li>
+<li>Carol以IKEv2 VPN连接到Moon，获取的<span style="color:green"><strong>办公区</strong></span>虚拟IP地址为<code>10.30.30.13</code></li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg" alt="3-1"></center><center style="color:purple"><strong>图1-1 逻辑拓扑</strong></center>
+
+<a id="more"></a>
+<hr>
+<h3 id="2-理论基础"><a href="#2-理论基础" class="headerlink" title="2. 理论基础"></a>2. 理论基础</h3><p>首先参考《<a href="http://blog.kompaz.win/2017/03/20/PPTP%20over%20IKEv2/">PPTP over IKEv2 配置</a>》。</p>
+<p>OpenVPN可以配置为<strong>路由模式</strong>或者<strong>交换模式</strong>：</p>
+<ul>
+<li>路由模式为<span style="color:green"><strong>办公区</strong></span>客户端获取的IP地址为虚拟IP地址，以SNAT方式访问<span style="color:red"><strong>服务器区</strong></span>的服务器，对于<span style="color:red"><strong>服务器区</strong></span>而言，因为是SNAT转发，<span style="color:green"><strong>办公区</strong></span>的客户端是不可访问的。</li>
+<li>交换模式为<span style="color:green"><strong>办公区</strong></span>客户端获取的IP地址为<span style="color:red"><strong>服务器区</strong></span>的IP地址，对于对于<span style="color:red"><strong>服务器区</strong></span>，<span style="color:green"><strong>办公区</strong></span>的客户端是可以访问的。</li>
+</ul>
+<hr>
+<h3 id="3-实现步骤"><a href="#3-实现步骤" class="headerlink" title="3. 实现步骤"></a>3. 实现步骤</h3><h4 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h4><p>假设<span style="color:red"><strong>服务器区</strong></span>的服务器仍为Carol，<span style="color:green"><strong>办公区</strong></span>的IKEv2 服务器为Moon，<span style="color:green"><strong>办公区</strong></span>的客户端为Bob</p>
+<table>
+<thead>
+<tr>
+<th>设备</th>
+<th>所在区域</th>
+<th>逻辑所在区域</th>
+<th>IP地址</th>
+<th>操作系统</th>
+<th>VPN角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Moon</td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td>10.30.8.8</td>
+<td>CentOS 6</td>
+<td>IKEv2 VPN服务器IP</td>
+</tr>
+<tr>
+<td>Carol</td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td>172.18.31.13</td>
+<td>CentOS 7</td>
+<td>IKEv2 VPN客户端IP</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td>10.30.30.13</td>
+<td>CentOS 7</td>
+<td>IKEv2 VPN虚拟IP</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td>192.168.99.1</td>
+<td>CentOS 7</td>
+<td>Open VPN虚拟网关IP（路由模式）</td>
+</tr>
+<tr>
+<td>Bob</td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td>10.30.5.39</td>
+<td>Windows</td>
+<td>Open VPN客户端IP</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td>192.168.99.10</td>
+<td>Windows</td>
+<td>Open VPN虚拟IP（路由模式）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td>172.18.31.10</td>
+<td>Windows</td>
+<td>Open VPN虚拟IP（交换模式）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h4><p>在Carol上安装openvpn以及相关软件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release</span><br><span class="line">yum -y install gcc openssl-devel lzo-devel pam-deve</span><br><span class="line">yum -y install easy-rsa</span><br><span class="line">yum -y install openvpn</span><br></pre></td></tr></table></figure>
+<h4 id="密钥-amp-证书生成"><a href="#密钥-amp-证书生成" class="headerlink" title="密钥&amp;证书生成"></a>密钥&amp;证书生成</h4><p>拷贝easy-rsa配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp -R /usr/share/easy-rsa/ /etc/openvpn/</span><br><span class="line"><span class="built_in">cd</span> /etc/openvpn/easy-rsa/2.0/</span><br></pre></td></tr></table></figure>
+<p>修改变量文件vars，主要修改有，更多选项，参考文件内注释</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> KEY_COUNTRY=<span class="string">"CN"</span> <span class="comment">#自定义国家</span></span><br><span class="line"><span class="built_in">export</span> KEY_PROVINCE=<span class="string">"BJ"</span> <span class="comment">#自定义省份</span></span><br><span class="line"><span class="built_in">export</span> KEY_CITY=<span class="string">"BeiJing"</span> <span class="comment">#自定义城市</span></span><br><span class="line"><span class="built_in">export</span> KEY_ORG=<span class="string">"Long"</span> <span class="comment">#自定义组织机构</span></span><br><span class="line"><span class="built_in">export</span> KEY_EMAIL=<span class="string">"test@long.com"</span> <span class="comment">#自定义邮箱</span></span><br><span class="line"><span class="built_in">export</span> KEY_OU=<span class="string">"Operation"</span> <span class="comment">#自定义单位或部门</span></span><br></pre></td></tr></table></figure>
+<p>生成证书，如果弹出输入，直接回车即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ./vars </span><br><span class="line">./clean-all <span class="comment">#清理keys</span></span><br><span class="line">./build-ca <span class="comment">#生成ca.crt和ca.key</span></span><br><span class="line">./build-key-server server <span class="comment">#生成server.crt和server.csr和server.key</span></span><br><span class="line">./build-dh <span class="comment">#生成dh2048.pem</span></span><br><span class="line">openvpn --genkey --secret keys/ta.key <span class="comment">#生成ta.key</span></span><br></pre></td></tr></table></figure>
+<h4 id="服务配置"><a href="#服务配置" class="headerlink" title="服务配置"></a>服务配置</h4><p>复制一份默认的服务端配置文件，修改配置文件<code>server.conf</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /usr/share/doc/openvpn-*/sample/sample-config-files/server.conf /etc/openvpn/</span><br></pre></td></tr></table></figure>
+<p>修改证书的路径为绝对路径。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/openvpn/</span><br><span class="line">sed -i s<span class="comment">#ca.crt#/etc/openvpn/easy-rsa/2.0/keys/ca.crt#g server.conf</span></span><br><span class="line">sed -i s<span class="comment">#server.crt#/etc/openvpn/easy-rsa/2.0/keys/server.crt#g server.conf</span></span><br><span class="line">sed -i s<span class="comment">#server.key#/etc/openvpn/easy-rsa/2.0/keys/server.key#g server.conf</span></span><br><span class="line">sed -i s<span class="comment">#dh2048.pem#/etc/openvpn/easy-rsa/2.0/keys/dh2048.pem#g server.conf</span></span><br><span class="line">sed -i s<span class="comment">#ta.key#/etc/openvpn/easy-rsa/2.0/keys/ta.key#g server.conf</span></span><br></pre></td></tr></table></figure>
+<h5 id="路由模式"><a href="#路由模式" class="headerlink" title="路由模式"></a>路由模式</h5><p><code>server.conf</code>主要配置如下，<strong>详细配置可以参考注释</strong></p>
+<ul>
+<li><strong>端口</strong>和<strong>协议</strong>可以自定义</li>
+<li><strong>dev</strong>为tun，路由模式使用tun隧道</li>
+<li><strong>server</strong>字段指定接入客户端使用的虚拟IP地址段，即<span style="color:green"><strong>办公区</strong></span>客户端接入获取的虚拟机IP地址段</li>
+<li><strong>route</strong>为向客户端推送的路由条目，即<span style="color:green"><strong>办公区</strong></span>接入客户端只会将发往<span style="color:red"><strong>服务器区</strong></span>的流量交给OpenVPN服务器进行转发。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">port 1194</span><br><span class="line">proto udp</span><br><span class="line">dev tun</span><br><span class="line">server 192.168.99.0 255.255.0.0</span><br><span class="line">push <span class="string">"route 172.18.0.0 255.255.0.0"</span></span><br></pre></td></tr></table></figure>
+<p>添加iptables条目:</p>
+<ul>
+<li>开放对应的协议和端口</li>
+<li>使用SNAT，<span style="color:green"><strong>办公区</strong></span>接入客户端获取的虚拟IP地址，通过<strong>SNAT</strong>转发方式访问<span style="color:red"><strong>服务器区</strong></span>网络172.18.0.0/16，这里需要指定IP地址，因为服务器Carol网卡拥有多个IP地址（IKEv2 VPN获取的<span style="color:green"><strong>办公区</strong></span>IP地址10.30.30.13）</li>
+<li>保存iptables条目</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT 2 -p udp --dport 1194 -j ACCEPT</span><br><span class="line">iptables -A POSTROUTING -s 192.168.99.0/24 -j SNAT --to-source  172.18.31.13</span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<p>启动服务并设置开机启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start openvpn@server</span><br><span class="line">systemctl <span class="built_in">enable</span> openvpn@server</span><br></pre></td></tr></table></figure>
+<h5 id="交换模式"><a href="#交换模式" class="headerlink" title="交换模式"></a>交换模式</h5><p>交换模式需要将<span style="color:red"><strong>服务器区</strong></span>的服务器Carol的物理网卡改为桥接模式，一般情况下，可以使用官方推荐的脚本，脚本路径为<code>/usr/share/doc/openvpn-x.x.x/sample/sample-scripts/</code>，使用脚本<strong>bridge-start</strong>启动桥接网卡，使用脚本<strong>bridge-stop</strong>关闭桥接网卡。</p>
+<p>鉴于这个情况比较复杂，<strong>因为<span style="color:green">办公区</span>接入客户端依赖于服务器通过IKEv2获取的IP地址，网卡拥有多个IP地址，但是官方脚本没有处理这种情况，因此需要手动桥接相关的网卡。</strong></p>
+<p>桥接Carol的物理网卡到网桥，这里假设物理网卡为<strong>eth0</strong>，网桥为<strong>br0</strong>。桥接后的状态应为如下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># brctl show</span></span><br><span class="line">bridge name     bridge id               STP enabled     interfaces</span><br><span class="line">br0             8000.003048fd1a58       no              eth0</span><br></pre></td></tr></table></figure>
+<p>另外，因为重启了网卡，因此IKEv2 VPN依赖的ipsec服务需要重启并重新建立连接。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ipsec restgart</span><br><span class="line">ipsec up home</span><br></pre></td></tr></table></figure>
+<p>桥接Carol的物理网卡到网桥的脚本如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">ETH=<span class="string">"eth0"</span></span><br><span class="line">BR=<span class="string">"br0"</span></span><br><span class="line"><span class="comment"># ----------------------------------------------------------------------------------------</span></span><br><span class="line">yum install BRidge-utils -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /etc/sysconfig/network-scripts/</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;&gt; ifcfg-<span class="variable">$&#123;BR&#125;</span></span><br><span class="line">TYPE=BRidge</span><br><span class="line">ONBOOT=yes</span><br><span class="line">DEVICE=<span class="variable">$&#123;BR&#125;</span></span><br><span class="line">BOOTPROTO=static</span><br><span class="line">EOF</span><br><span class="line">cat ifcfg-<span class="variable">$&#123;ETH&#125;</span> | grep IPADDR &gt;&gt; ifcfg-<span class="variable">$&#123;BR&#125;</span></span><br><span class="line">cat ifcfg-<span class="variable">$&#123;ETH&#125;</span> | grep PREFIX &gt;&gt; ifcfg-<span class="variable">$&#123;BR&#125;</span></span><br><span class="line">cat ifcfg-<span class="variable">$&#123;ETH&#125;</span> | grep GATEWAY &gt;&gt; ifcfg-<span class="variable">$&#123;BR&#125;</span></span><br><span class="line">cat ifcfg-<span class="variable">$&#123;ETH&#125;</span> | grep DNS &gt;&gt; ifcfg-<span class="variable">$&#123;BR&#125;</span></span><br><span class="line"></span><br><span class="line">sed -i s/IPADDR/<span class="comment">#IPADDR/g ifcfg-$&#123;ETH&#125;</span></span><br><span class="line">sed -i s/PREFIX/<span class="comment">#PREFIX/g ifcfg-$&#123;ETH&#125;</span></span><br><span class="line">sed -i s/GATEWAY/<span class="comment">#GATEWAY/g ifcfg-$&#123;ETH&#125;</span></span><br><span class="line">sed -i s/DNS/<span class="comment">#DNS/g ifcfg-$&#123;ETH&#125;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"BRIDGE=<span class="variable">$&#123;BR&#125;</span>"</span> &gt;&gt; ifcfg-<span class="variable">$&#123;ETH&#125;</span></span><br><span class="line"></span><br><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
+<p>创建tap网卡，这里修改了官方脚本，首先复制官方脚本到<code>/etc/openvpn</code>目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -r  /usr/share/doc/openvpn-x.x.x/sample/sample-scripts/ /etc/openvpn/scripts</span><br></pre></td></tr></table></figure>
+<p>修改后的<code>bridge-start</code>脚本如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">br=<span class="string">"br0"</span></span><br><span class="line">tap=<span class="string">"tap0"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="variable">$tap</span>; <span class="keyword">do</span></span><br><span class="line">    openvpn --mktun --dev <span class="variable">$t</span>                                                                                                                 </span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="variable">$tap</span>; <span class="keyword">do</span></span><br><span class="line">    brctl addif <span class="variable">$br</span> <span class="variable">$t</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="variable">$tap</span>; <span class="keyword">do</span></span><br><span class="line">    ifconfig <span class="variable">$t</span> 0.0.0.0 promisc up</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>执行该脚本后，状态如下，将tap0桥接到网桥br0。<strong>tap0桥接到br0之后，方可启动OpenVPN服务！</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost scripts]<span class="comment"># brctl show</span></span><br><span class="line">bridge name     bridge id               STP enabled     interfaces</span><br><span class="line">br0             8000.003048fd1a58       no              enp5s0</span><br><span class="line">                                                        tap0</span><br></pre></td></tr></table></figure>
+<p>修改后的<code>bridge-stop</code>脚本如下，用于删除tap网卡</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">br=<span class="string">"br0"</span></span><br><span class="line">tap=<span class="string">"tap0"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="variable">$tap</span>; <span class="keyword">do</span></span><br><span class="line">    openvpn --rmtun --dev <span class="variable">$t</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p><code>server.conf</code>主要配置如下，<strong>详细配置可以参考注释</strong></p>
+<ul>
+<li><strong>端口</strong>和<strong>协议</strong>可以自定义</li>
+<li><strong>dev</strong>为tap0，交换模式使用tap0进行通信</li>
+<li><strong>server-bridge</strong>字段指定接入客户端使用的IP地址段，即<span style="color:green"><strong>办公区</strong></span>客户端接入获取的<span style="color:red"><strong>服务器区</strong></span>IP地址段</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">port 1194</span><br><span class="line">proto udp</span><br><span class="line">dev tap0</span><br><span class="line">server-bridge 172.18.0.0 255.255.0.0 172.18.31.100 172.18.31.200</span><br></pre></td></tr></table></figure>
+<p>添加iptables条目:</p>
+<ul>
+<li>开放对应的协议和端口</li>
+<li>保存iptables条目</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT 2 -p udp --dport 1194 -j ACCEPT</span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<p>启动服务并设置开机启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start openvpn@server</span><br><span class="line">systemctl <span class="built_in">enable</span> openvpn@server</span><br></pre></td></tr></table></figure>
+<h4 id="Freeradius验证"><a href="#Freeradius验证" class="headerlink" title="Freeradius验证"></a>Freeradius验证</h4><p>编译Freeradius插件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget http://www.nongnu.org/radiusplugin/radiusplugin_v2.1.tar.gz</span><br><span class="line">tar -zxvf radiusplugin_v2.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> radiusplugin</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>拷贝到配置文件夹内</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp radiusplugin.so /etc/openvpn</span><br><span class="line">cp radiusplugin.cnf /etc/openvpn</span><br></pre></td></tr></table></figure>
+<p>修改配置文件<code>server.conf</code>，添加Freeradius插件相关选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"client-cert-not-required"</span> &gt;&gt; server.conf</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"username-as-common-name"</span> &gt;&gt; server.conf</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"plugin /etc/openvpn/radiusplugin.so /etc/openvpn/radiusplugin.cnf"</span> &gt;&gt; server.conf</span><br></pre></td></tr></table></figure>
+<p>修改<code>radiusplugin.cnf</code>中第一个server字段中的选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">server</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment"># The UDP port for radius accounting.</span></span><br><span class="line">    acctport=1813</span><br><span class="line">    <span class="comment"># The UDP port for radius authentication.</span></span><br><span class="line">    authport=1812</span><br><span class="line">    <span class="comment"># The name or ip address of the radius server.</span></span><br><span class="line">    name=10.30.8.8 <span class="comment">#这里改成radius服务器地址，这里是本机</span></span><br><span class="line">    <span class="comment"># How many times should the plugin send the if there is no response?</span></span><br><span class="line">    retry=1</span><br><span class="line">    <span class="comment"># How long should the plugin wait for a response?</span></span><br><span class="line">    <span class="built_in">wait</span>=1</span><br><span class="line">    <span class="comment"># The shared secret.</span></span><br><span class="line">    sharedsecret=testing123 <span class="comment">#这里改成radius的shared secret，radius默认是testing123</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重新启动openvpn服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart openvpn@server</span><br></pre></td></tr></table></figure>
+<h4 id="客户端静态IP设置"><a href="#客户端静态IP设置" class="headerlink" title="客户端静态IP设置"></a>客户端静态IP设置</h4><p>在某些情况下，需要向某些接入的<span style="color:green"><strong>办公区</strong></span>客户端分配固定的<span style="color:red"><strong>服务器区</strong></span>IP地址。</p>
+<p>在配置文件<code>server.conf</code>中的添加<strong>client-config-dir ccd</strong>字段</p>
+<p>在配置文件目录下创建<code>ccd</code>文件夹，例如要向用户<strong>user1</strong>分配固定的IP地址<strong>172.18.31.31 255.255.0.0</strong>，则在<code>ccd</code>文件夹下创建文件<code>user1</code>，内容如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig-push 172.18.31.31 255.255.0.0</span><br></pre></td></tr></table></figure>
+<h4 id="客户端之间通信"><a href="#客户端之间通信" class="headerlink" title="客户端之间通信"></a>客户端之间通信</h4><p>新的场景如下，<span style="color:blue"><strong>私有网络</strong></span>为一个小型网络，放置一些服务器，可以通过NAT方式访问<span style="color:green"><strong>办公区</strong></span>网络。在<span style="color:green"><strong>办公区</strong></span>一般都是通过同时连接<span style="color:green"><strong>办公区</strong></span>和<span style="color:blue"><strong>私有网络</strong></span>的多网卡Windows服务器访问<span style="color:blue"><strong>私有网络</strong></span>。</p>
+<p><span style="color:red"><strong>服务器区</strong></span>服务器以及<span style="color:green"><strong>办公区</strong></span>的Bob需要直接访问<span style="color:blue"><strong>私有网络</strong></span>的Alice。实现方式为Bob和Alice同时接入Carol的VPN服务，这样Bob和Alice都获取了<span style="color:red"><strong>服务器区</strong></span>的IP地址，逻辑上都在一个局域网中。</p>
+<p>PPTP VPN可以实现这种思路，但是因为PPTP未知的不稳定原因，因此这里是使用的为OpenVPN的<strong>交换模式</strong>。</p>
+<p>确定配置文件<code>/etc/openvpn/server.conf</code>中<strong>client-to-client</strong>字段启用。</p>
+<center><img src="http://blog.kompaz.win/images/pptp_over_ikev2/2-2.jpg" alt="3-1"></center><center style="color:purple"><strong>图3-1 逻辑拓扑</strong></center>
+
+<hr>
+<h3 id="4-客户端配置"><a href="#4-客户端配置" class="headerlink" title="4. 客户端配置"></a>4. 客户端配置</h3><p>在不同平台下，OpenVPN客户端连接都需要一个配置文件，配置文件后缀为<strong>.ovpn</strong>，例子如下。更多详细配置，参考官网。</p>
+<p>除了配置文件，还需要之前生成的ca.crt、ta.key文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">client</span><br><span class="line">dev tap <span class="comment">#路由模式使用tun，交换模式使用tap</span></span><br><span class="line">proto udp</span><br><span class="line">remote 10.30.30.13 1194 <span class="comment">#服务器IP以及端口</span></span><br><span class="line">resolv-retry infinite</span><br><span class="line">nobind</span><br><span class="line">persist-key</span><br><span class="line">persist-tun</span><br><span class="line">ca ca.crt <span class="comment">#CA证书</span></span><br><span class="line">tls-auth ta.key 1 <span class="comment">#加密密钥</span></span><br><span class="line">auth-user-pass    <span class="comment">#使用用户名密码验证</span></span><br><span class="line">cipher AES-256-CBC  <span class="comment">#加密方式，应该与服务器相同</span></span><br><span class="line">verb 3</span><br></pre></td></tr></table></figure>
+<h4 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h4><p><a href="https://openvpn.net/index.php/open-source/downloads.html" target="_blank" rel="noopener">下载</a>OpenVPN客户端，将配置文件、ca.crt、ta.key放入安装目录下config文件夹中，使用图形界面启动即可，因为设置了帐号密码登录，会弹出输出帐号密码提示</p>
+<h4 id="iOS-Android"><a href="#iOS-Android" class="headerlink" title="iOS/Android"></a>iOS/Android</h4><p>导入配置文件、ca.crt、ta.key到客户端</p>
+<h4 id="MacOS"><a href="#MacOS" class="headerlink" title="MacOS"></a>MacOS</h4><p>使用TunnelBlick导入配置，并安装自签名CA证书到系统</p>
+<h4 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h4><p>安装openvpn服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y openvpn</span><br></pre></td></tr></table></figure>
+<p>假设配置文件、ca.crt、ta.key都在<code>/etc/openvpn/client</code>目录下，命令行启动openvpn。更多配置参看OpenVPN的help选项。</p>
+<ul>
+<li>–daemon后台运行</li>
+<li>–config指定配置文件</li>
+<li>–log-append指定日志</li>
+<li>–auth-user-pass指定用户名密码文件。auth文件中第一行存放用户名，第二行存放密码。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/openvpn/client</span><br><span class="line">openvpn --daemon --config test.ovpn --<span class="built_in">log</span>-append /var/<span class="built_in">log</span>/openvpn.log --auth-user-pass auth</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/12/11 23:06</td>
+<td>文件创建</td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2017/12/20 9:27</td>
+<td>错误修改</td>
+</tr>
+<tr>
+<td>文档修改2</td>
+<td>2017/12/25 19:30</td>
+<td>添加交换模式，更新客户端配置</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://superlc320.gitbooks.io/openvpn-freeradius-privacyidea-mariadb-centos7/zai_centos7_shang_ce_shi_freeradius.html" target="_blank" rel="noopener">https://superlc320.gitbooks.io/openvpn-freeradius-privacyidea-mariadb-centos7/zai_centos7_shang_ce_shi_freeradius.html</a></li>
+<li><a href="https://openvpn.net/index.php/open-source/documentation/miscellaneous/76-ethernet-bridging.html" target="_blank" rel="noopener">https://openvpn.net/index.php/open-source/documentation/miscellaneous/76-ethernet-bridging.html</a></li>
+<li><a href="http://www.cnblogs.com/litifeng/p/5612244.html" target="_blank" rel="noopener">http://www.cnblogs.com/litifeng/p/5612244.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/openvpn/" rel="tag"># openvpn</a>
+          
+            <a href="/tags/IKEv2/" rel="tag"># IKEv2</a>
+          
+            <a href="/tags/vpn/" rel="tag"># vpn</a>
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/11/20171211 OpenWRT IKEv2 + Tinc远程管理/" rel="next" title="OpenWRT IKEv2 + Tinc远程管理">
+                <i class="fa fa-chevron-left"></i> OpenWRT IKEv2 + Tinc远程管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/24/20171224 非教育网科技网访问IPv6/" rel="prev" title="非教育网科技网访问IPv6网络">
+                非教育网科技网访问IPv6网络 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-背景介绍"><span class="nav-number">1.</span> <span class="nav-text">1. 背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-理论基础"><span class="nav-number">2.</span> <span class="nav-text">2. 理论基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现步骤"><span class="nav-number">3.</span> <span class="nav-text">3. 实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验环境"><span class="nav-number">3.1.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#软件安装"><span class="nav-number">3.2.</span> <span class="nav-text">软件安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#密钥-amp-证书生成"><span class="nav-number">3.3.</span> <span class="nav-text">密钥&amp;证书生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#服务配置"><span class="nav-number">3.4.</span> <span class="nav-text">服务配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#路由模式"><span class="nav-number">3.4.1.</span> <span class="nav-text">路由模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#交换模式"><span class="nav-number">3.4.2.</span> <span class="nav-text">交换模式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Freeradius验证"><span class="nav-number">3.5.</span> <span class="nav-text">Freeradius验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端静态IP设置"><span class="nav-number">3.6.</span> <span class="nav-text">客户端静态IP设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端之间通信"><span class="nav-number">3.7.</span> <span class="nav-text">客户端之间通信</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-客户端配置"><span class="nav-number">4.</span> <span class="nav-text">4. 客户端配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows"><span class="nav-number">4.1.</span> <span class="nav-text">Windows</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iOS-Android"><span class="nav-number">4.2.</span> <span class="nav-text">iOS/Android</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MacOS"><span class="nav-number">4.3.</span> <span class="nav-text">MacOS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux"><span class="nav-number">4.4.</span> <span class="nav-text">Linux</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">5.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="OSPF 模拟入侵测试4-劫持DNS服务器IP">
+<meta name="keywords" content="network,ospf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OSPF 模拟入侵测试4-劫持DNS服务器IP">
+<meta property="og:url" content="http://blog.kompaz.win/2016/07/18/OSPF 模拟入侵测试4-劫持DNS服务器IP/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="OSPF 模拟入侵测试4-劫持DNS服务器IP">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试4_DNS服务器伪装/1-1.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.740Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OSPF 模拟入侵测试4-劫持DNS服务器IP">
+<meta name="twitter:description" content="OSPF 模拟入侵测试4-劫持DNS服务器IP">
+<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试4_DNS服务器伪装/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/07/18/OSPF 模拟入侵测试4-劫持DNS服务器IP/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OSPF 模拟入侵测试4-劫持DNS服务器IP | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/07/18/OSPF 模拟入侵测试4-劫持DNS服务器IP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OSPF 模拟入侵测试4-劫持DNS服务器IP
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-07-18 14:33:46" itemprop="dateCreated datePublished" datetime="2016-07-18T14:33:46+08:00">2016-07-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">OSPF 模拟入侵测试4-劫持DNS服务器IP</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-实验环境"><a href="#1-实验环境" class="headerlink" title="1. 实验环境"></a>1. 实验环境</h3><h4 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h4><p>使用GNS3搭建实验拓扑，实验拓扑如图1-1所示，其中R1、R2为OSPF网络，CentOS_Fun为入侵主机，模拟路由器，PC3模拟一个DNS服务器，IP地址为210.76.211.7/24。CentOS7_Fun同时运行HTTP服务，DNS服务。此时假设条件如下：</p>
+<ul>
+<li>CentOS7直接获取了所有DNS服务器的流量，并冒充该DNS服务器</li>
+<li>假设CentOS7_Fun的IP地址为30.30.30.2的IP为正常网页服务器</li>
+<li>假设CentOS7_Fun的IP地址为210.76.211.7对应的IP为中间人攻击网页服务器</li>
+<li>假设正确网页服务器域名为test.edu.cn，对应IP为30.30.30.2。</li>
+</ul>
+<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试4_DNS服务器伪装/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 实验拓扑</strong></center>
+
+<h4 id="IP地址表"><a href="#IP地址表" class="headerlink" title="IP地址表"></a>IP地址表</h4><table>
+<thead>
+<tr>
+<th>设备</th>
+<th>端口</th>
+<th>IPv4地址</th>
+<th>IPv6地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway</td>
+<td>f0/0</td>
+<td>10.10.10.253/24</td>
+<td>2001:10:10:10::253/64</td>
+</tr>
+<tr>
+<td></td>
+<td>lo0</td>
+<td>1.1.1.1/32</td>
+<td>2001:1:1:1::1/64</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>f1/0</td>
+<td>10.10.10.254/24</td>
+<td>2001:10:10:10::254/64</td>
+</tr>
+<tr>
+<td></td>
+<td>f0/0</td>
+<td>20.20.20.1/24</td>
+<td>2001:20:20:20::1/64</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>f1/0</td>
+<td>30.30.30.254/24</td>
+<td>2001:30:30:30::254/64</td>
+</tr>
+<tr>
+<td></td>
+<td>f0/0</td>
+<td>20.20.20.2/24</td>
+<td>2001:20:20:20::2/64</td>
+</tr>
+<tr>
+<td></td>
+<td>f1/1</td>
+<td>210.76.211.254/24</td>
+<td>/</td>
+</tr>
+<tr>
+<td>CentOS7_fun</td>
+<td>enp0s3</td>
+<td>30.30.30.2/24</td>
+<td>eui-64</td>
+</tr>
+<tr>
+<td></td>
+<td>enp0s9</td>
+<td>210.76.211.7/24</td>
+<td>eui-64</td>
+</tr>
+<tr>
+<td>Winxp2</td>
+<td>e2</td>
+<td>30.30.30.1/24 (DHCP)</td>
+<td>eui-64</td>
+</tr>
+<tr>
+<td>DNS服务器</td>
+<td>e0</td>
+<td>210.76.211.7/24</td>
+<td>/</td>
+</tr>
+</tbody>
+</table>
+<h4 id="路由器配置"><a href="#路由器配置" class="headerlink" title="路由器配置"></a>路由器配置</h4><p>配置不变，与《OSPF 模拟入侵测试2-指定主机欺骗》中配置一样。</p>
+<hr>
+<h3 id="2-伪造DNS"><a href="#2-伪造DNS" class="headerlink" title="2. 伪造DNS"></a>2. 伪造DNS</h3><h4 id="DNS服务搭建"><a href="#DNS服务搭建" class="headerlink" title="DNS服务搭建"></a>DNS服务搭建</h4><p>安装相关服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y bind*</span><br></pre></td></tr></table></figure>
+<p>配置/etc/named.conf</p>
+<p>修改配置如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">options &#123;</span><br><span class="line">    listen-on port 53 &#123; any; &#125;;</span><br><span class="line">    listen-on-v6 port 53 &#123; any; &#125;;</span><br><span class="line">    directory   "/var/named";</span><br><span class="line">    dump-file   "/var/named/data/cache_dump.db";</span><br><span class="line">    statistics-file "/var/named/data/named_stats.txt";</span><br><span class="line">    memstatistics-file "/var/named/data/named_mem_stats.txt";</span><br><span class="line">    allow-query     &#123; any; &#125;;</span><br><span class="line"></span><br><span class="line">    recursion no; </span><br><span class="line">    dnssec-enable yes;</span><br><span class="line">    dnssec-validation yes;</span><br><span class="line"></span><br><span class="line">    /* Path to ISC DLV key */</span><br><span class="line">    bindkeys-file "/etc/named.iscdlv.key";</span><br><span class="line"></span><br><span class="line">    managed-keys-directory "/var/named/dynamic";</span><br><span class="line"></span><br><span class="line">    pid-file "/run/named/named.pid";</span><br><span class="line">    session-keyfile "/run/named/session.key";</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">logging &#123;</span><br><span class="line">        channel default_debug &#123;</span><br><span class="line">                file "data/named.run";</span><br><span class="line">                severity dynamic;</span><br><span class="line">        &#125;;</span><br><span class="line">&#125;;</span><br><span class="line">zone "." IN &#123;</span><br><span class="line">    type hint;</span><br><span class="line">    file "named.ca";</span><br><span class="line">&#125;;</span><br><span class="line">zone "edu.cn" IN &#123;</span><br><span class="line">    type master;</span><br><span class="line">    file "named.edu.cn";</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>添加数据文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash">TTL 600</span></span><br><span class="line">@ IN SOA dns.edu.cn. admin.edu.cn. (2011080401 3H 15M 1W 1D) </span><br><span class="line">@ IN NS dns.edu.cn.</span><br><span class="line">dns.edu.cn. IN A 210.76.211.1</span><br><span class="line">                                                                                                                                 </span><br><span class="line">test.edu.cn. IN A 210.76.211.7  #将正确域名指向伪装http服务器</span><br><span class="line">test2.edu.cn. IN A 30.30.30.2    #将正确http授予一个类似域名。</span><br></pre></td></tr></table></figure>
+<p>启动named服务，并开启iptables相关选项。</p>
+<hr>
+<h3 id="3-抓取数据"><a href="#3-抓取数据" class="headerlink" title="3. 抓取数据"></a>3. 抓取数据</h3><h4 id="注入路由"><a href="#注入路由" class="headerlink" title="注入路由"></a>注入路由</h4><p>在Vigilante上注入路由如下，将本来到PC3的流量引到CentOS7_Fun的enp0s9上，包括DNS流量。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route 210.76.211.7/32 enp0s9</span><br></pre></td></tr></table></figure>
+<h4 id="网页修改"><a href="#网页修改" class="headerlink" title="网页修改"></a>网页修改</h4><ul>
+<li>下载sep.ucas.edu.cn的登录主页，并把其中的名称修改为为index.html，其配置文件夹的名称也改为英文 。下载到210.76.211.7（伪造http服务器，IP为210.76.211.1，域名为test.edu.cn）</li>
+<li>修改网页跳转，选择跳转正确的网页服务器（IP为30.30.30.2，域名为test2.edu.cn），</li>
+<li>这里为了节省资源，使用了一台主机的两张网卡分别扮演正确的网页服务器和伪造网页服务器。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DirectoryIndex index.html</span><br></pre></td></tr></table></figure>
+<h4 id="tcpdump抓取POST请求"><a href="#tcpdump抓取POST请求" class="headerlink" title="tcpdump抓取POST请求"></a>tcpdump抓取POST请求</h4><p>tcpdump抓post语句如下所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i enp0s3 &apos;host 210.76.211.7 and port 80 and tcp[((tcp[12:1] &amp; 0xf0) &gt;&gt; 2):4] = 0x504f5354&apos; -w sep+.cap</span><br></pre></td></tr></table></figure>
+<p>其中0x504f5354意义为，代表POST</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">P=0x50</span><br><span class="line">O=0x4f</span><br><span class="line">S=0x53</span><br><span class="line">T=0x54</span><br></pre></td></tr></table></figure>
+<h4 id="读取结果"><a href="#读取结果" class="headerlink" title="读取结果"></a>读取结果</h4><p>讲读取文件结果使用sftp传输到本机，使用Wireshark打开抓去的POST结果。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/ospf/" rel="tag"># ospf</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/18/OSPF 模拟入侵测试1-路由表获取&路由注入/" rel="next" title="OSPF 模拟入侵测试1-路由表获取&路由注入">
+                <i class="fa fa-chevron-left"></i> OSPF 模拟入侵测试1-路由表获取&路由注入
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/18/OSPF 模拟入侵测试3-劫持网页服务器IP/" rel="prev" title="OSPF 模拟入侵测试3-劫持网页服务器IP">
+                OSPF 模拟入侵测试3-劫持网页服务器IP <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-实验环境"><span class="nav-number">1.</span> <span class="nav-text">1. 实验环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验拓扑"><span class="nav-number">1.1.</span> <span class="nav-text">实验拓扑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP地址表"><span class="nav-number">1.2.</span> <span class="nav-text">IP地址表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由器配置"><span class="nav-number">1.3.</span> <span class="nav-text">路由器配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-伪造DNS"><span class="nav-number">2.</span> <span class="nav-text">2. 伪造DNS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS服务搭建"><span class="nav-number">2.1.</span> <span class="nav-text">DNS服务搭建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-抓取数据"><span class="nav-number">3.</span> <span class="nav-text">3. 抓取数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#注入路由"><span class="nav-number">3.1.</span> <span class="nav-text">注入路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网页修改"><span class="nav-number">3.2.</span> <span class="nav-text">网页修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tcpdump抓取POST请求"><span class="nav-number">3.3.</span> <span class="nav-text">tcpdump抓取POST请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取结果"><span class="nav-number">3.4.</span> <span class="nav-text">读取结果</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

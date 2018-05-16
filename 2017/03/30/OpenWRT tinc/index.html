@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. 背景介绍在寝室部署了一个Netgear WNDR4300，固件版本为OpenWRT Chaos Calmer 15.05.1。同时在实验室也部署了两个Netgear WNDR4300，固件版本也为OpenWRT Chaos Calmer 15.05.1。现在设寝室的路由器为C，实验室的路由器分别为A、B，每个路由器的大概设置如下表所示(IP均为虚构！)：    设备 位置 WAN IPv4">
+<meta name="keywords" content="linux,openwrt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT Tinc配置">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/30/OpenWRT tinc/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. 背景介绍在寝室部署了一个Netgear WNDR4300，固件版本为OpenWRT Chaos Calmer 15.05.1。同时在实验室也部署了两个Netgear WNDR4300，固件版本也为OpenWRT Chaos Calmer 15.05.1。现在设寝室的路由器为C，实验室的路由器分别为A、B，每个路由器的大概设置如下表所示(IP均为虚构！)：    设备 位置 WAN IPv4">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/tinc/1-1.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.627Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT Tinc配置">
+<meta name="twitter:description" content="1. 背景介绍在寝室部署了一个Netgear WNDR4300，固件版本为OpenWRT Chaos Calmer 15.05.1。同时在实验室也部署了两个Netgear WNDR4300，固件版本也为OpenWRT Chaos Calmer 15.05.1。现在设寝室的路由器为C，实验室的路由器分别为A、B，每个路由器的大概设置如下表所示(IP均为虚构！)：    设备 位置 WAN IPv4">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/tinc/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/30/OpenWRT tinc/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT Tinc配置 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/30/OpenWRT tinc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT Tinc配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-30 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-30T16:29:00+08:00">2017-03-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-背景介绍"><a href="#1-背景介绍" class="headerlink" title="1. 背景介绍"></a>1. 背景介绍</h3><p>在寝室部署了一个Netgear WNDR4300，固件版本为OpenWRT <em>Chaos Calmer 15.05.1</em>。同时在实验室也部署了两个Netgear WNDR4300，固件版本也为OpenWRT <em>Chaos Calmer 15.05.1</em>。现在设寝室的路由器为C，实验室的路由器分别为A、B，每个路由器的大概设置如下表所示(IP均为虚构！)：</p>
+<table>
+<thead>
+<tr>
+<th>设备</th>
+<th>位置</th>
+<th>WAN IPv4</th>
+<th>WAN IPv6</th>
+<th>LAN IPv4</th>
+<th>LAN IPv6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>实验室</td>
+<td>10.30.5.1/19</td>
+<td>2001:1::1/64</td>
+<td>192.168.1.0/24</td>
+<td>2001:1::/64</td>
+</tr>
+<tr>
+<td>B</td>
+<td>实验室</td>
+<td>10.30.5.2/19</td>
+<td></td>
+<td>192.168.2.0/24</td>
+<td>2001:1::/64</td>
+</tr>
+<tr>
+<td>C</td>
+<td>寝室</td>
+<td>2.3.4.56/24</td>
+<td>2001:2::1/64</td>
+<td>192.168.3.0/24</td>
+<td>2001:2::/64</td>
+</tr>
+</tbody>
+</table>
+<p>需求分析：</p>
+<ul>
+<li><strong>设备[ A | B ] -&gt; IPv4 LAN</strong>之间进行通信，虽然<strong>设备[ A | B ]  -&gt; IPv4 WAN</strong>在同一个局域网，但是设备<strong>设备[ A | B ] -&gt; IPv4 LAN</strong>之间无法直接进行通信</li>
+<li><strong>设备[ A | B ] -&gt; IPv4 LAN</strong>与<strong>设备[ C ] -&gt; IPv4 LAN</strong>进行通信，因为中间隔离了无数的网络，所以也不能直接进行通信</li>
+<li>设备<strong>[ A | B | C ] -&gt; IPv6 LAN</strong> 之间可以相互通信的，但是需要在ip6tables上进行访问控制，例如文件共享samba等服务，还是不建议直接暴露在IPv6网络中</li>
+<li>因此需要<a href="https://www.tinc-vpn.org/" target="_blank" rel="noopener">Tinc</a> VPN来解决上述问题，建立site-to-site VPN，将<strong>设备[ A | B | C ] -&gt; IPv4 LAN</strong>进行互联。</li>
+</ul>
+<p>最终实现的结果如图1-1所示：</p>
+<ul>
+<li><span style="color:green">绿色线</span>代表物理链路</li>
+<li><span style="color:blue">蓝色虚线</span>代表将<strong>设备A、B</strong>之间的IPv4 Tinc虚拟链路</li>
+<li><span style="color:#3E552A">墨绿色虚线</span>代表<strong>设备B、C</strong>之间的IPv6 Tinc虚拟链路</li>
+<li><span style="color:orange">橙色区域</span>代表Tinc建立的虚拟局域网，<strong>LAN A、LAN B、LAN C</strong>之间可以通过该虚拟局域网进行路由。</li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/tinc/1-1.jpg" width="800px"></center><center style="color:purple"><strong>图1-1 拓扑</strong></center>
+
+<a id="more"></a>
+<hr>
+<h3 id="2-配置步骤"><a href="#2-配置步骤" class="headerlink" title="2. 配置步骤"></a>2. 配置步骤</h3><h4 id="软件包安装"><a href="#软件包安装" class="headerlink" title="软件包安装"></a>软件包安装</h4><p>在<strong>设备[ A | B | C ]</strong>上均安装tinc</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install tinc</span><br></pre></td></tr></table></figure>
+<h4 id="配置文件修改-1"><a href="#配置文件修改-1" class="headerlink" title="配置文件修改-1"></a>配置文件修改-1</h4><p>在OpenWRT下，tinc配置文件适配了<a href="https://wiki.openwrt.org/doc/uci" target="_blank" rel="noopener">UCI</a> 系统，配置文件为<code>/etc/config/tinc</code>，通用配置文件如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">config tinc-net NETNAME</span><br><span class="line">        option enabled 1</span><br><span class="line">        </span><br><span class="line">        <span class="comment">## Daemon Configuration (cmd arguments)</span></span><br><span class="line">        option generate_keys 1</span><br><span class="line">        option key_size 2048</span><br><span class="line">        option logfile /tmp/<span class="built_in">log</span>/tinc.tinc.log</span><br><span class="line">        option debug 3</span><br><span class="line"></span><br><span class="line">        <span class="comment">## Server Configuration (tinc.conf)</span></span><br><span class="line">        option AddressFamily any</span><br><span class="line"></span><br><span class="line">        list ConnectTo NODENAME_2</span><br><span class="line">        option GraphDumpFile /tmp/<span class="built_in">log</span>/tinc.tinc.dot</span><br><span class="line">        option Interface tun0</span><br><span class="line">        option Name NODENAME</span><br><span class="line">        option PrivateKeyFile /etc/tinc/NETNAME/rsa_key.priv</span><br><span class="line"></span><br><span class="line">config tinc-host NODENAME</span><br><span class="line">        option enabled 1</span><br><span class="line">        option net NETNAME</span><br><span class="line">        option Port 6565</span><br><span class="line">        option Subnet 192.168.X.0/24</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>在<strong>设备[ A | B | C ]</strong>上，<strong>NETNAME</strong>需要相同的，现在设<strong>NETNAME</strong>为<code>tinc</code>  </p>
+</li>
+<li><p>在<strong>设备[ A | B | C ]</strong>上，<strong>NODENAME</strong>是不同的，<strong>设备A</strong>、<strong>设备B</strong>、<strong>设备C</strong>的<strong>NODENAME</strong>分为<code>nodeA</code>、<code>nodeB</code>、<code>nodeC</code></p>
+</li>
+<li><p>在<strong>设备[ A | B | C ]</strong>上，<code>option Subnet 192.168.X.0/24</code>字段是不同的，<strong>设备[ A | B | C ]</strong>的<code>option Subnet 192.168.X.0/24</code>字段</p>
+<p>应该分别为<code>option Subnet 192.168.[ 1 | 2 | 3 ].0/24</code></p>
+</li>
+<li><p><strong>设备[ A | B | C ]</strong>均使用虚拟机网卡<code>tun0</code>进行通信</p>
+</li>
+<li><p>Tinc缺省使用<code>655</code>端口，这里<strong>设备[ A | B | C ]</strong>均使用端口<code>6565</code></p>
+</li>
+<li><p>其他设置可以具体参考官方配置</p>
+</li>
+</ul>
+<h4 id="配置文件结构"><a href="#配置文件结构" class="headerlink" title="配置文件结构"></a>配置文件结构</h4><p>非OpenWRT系统下，Tinc<strong>完整的配置文件目录结构</strong>如下所示</p>
+<ul>
+<li><strong>/etc/tinc/NETNAME/</strong><ul>
+<li>rsa_key.priv</li>
+<li>tinc-up</li>
+<li>tinc-down</li>
+<li>tinc.conf</li>
+<li><strong>hosts/</strong><ul>
+<li>NODENAME1</li>
+<li>NODENAME2</li>
+<li>NODENAME3</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>在OpenWRT系统下，没有<code>tinc.conf</code>文件，该文件被映射为<code>/etc/config/tinc</code>，所以其<strong>完整的配置文件目录结构</strong>如下</p>
+<ul>
+<li>/etc/config/tinc</li>
+<li><strong>/etc/tinc/NETNAME/</strong><ul>
+<li>rsa_key.priv</li>
+<li>tinc-up</li>
+<li>tinc-down</li>
+<li><strong>hosts/</strong><ul>
+<li>NODENAME1</li>
+<li>NODENAME2</li>
+<li>NODENAME3</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>在<strong>设备[ A | B | C ]</strong>上，均需要使用命令<code>/etc/init.d/tinc start</code>首次服务，来生成配置文件，生成配置文件目录如下，网络名称为<code>tinc</code>； <code>rsa_key.priv为</code>节点的RSA私钥文件；<code>nodeA</code>或<code>nodeB</code>或<code>nodeC</code>为节点的公钥文件；<code>tinc-up</code>、<code>tinc-down</code>启动脚本需要手动添加，并且需要添加执行权限；<code>hosts</code>目录下的其他节点公钥文件，也需要手动拷贝过来。</p>
+<ul>
+<li><strong>/etc/tinc/tinc/</strong><ul>
+<li>rsa_key.priv</li>
+<li><strong>hosts/</strong><ul>
+<li>node[A|B|C]</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="虚拟网卡添加"><a href="#虚拟网卡添加" class="headerlink" title="虚拟网卡添加"></a>虚拟网卡添加</h4><p>需要在<strong>设备[ A | B | C ]</strong>均添加一个虚拟网卡，用来进行虚拟通信，在<code>/etc/config/network</code>中添加</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">config interface <span class="string">'tinc'</span></span><br><span class="line">	option ifname <span class="string">'tun0'</span></span><br><span class="line">	option defaultroute <span class="string">'0'</span></span><br><span class="line">	option peerdns <span class="string">'0'</span></span><br><span class="line">	option proto <span class="string">'none'</span></span><br></pre></td></tr></table></figure>
+<h4 id="配置文件修改-2"><a href="#配置文件修改-2" class="headerlink" title="配置文件修改-2"></a>配置文件修改-2</h4><p><code>tinc-up</code>、<code>tinc-down</code>脚本需要添加执行权限，脚本中以<code>ip</code>开头的命令使用需要安装<code>ip-full</code>，若没有安装使用命令<code>opkg install ip-full</code></p>
+<p><code>tinc-up</code>脚本添加</p>
+<ul>
+<li><code>$INTERFACE</code>为代表上文虚拟网卡的变量</li>
+<li><code>$ip</code>为分配给虚拟机网卡的IP地址，<strong>设备[ A | B | C ]</strong>虚拟机网卡使用的IP地址段为<code>172.18.1.0/24</code>，如图1-1中橙色部分所示</li>
+<li><code>ip route add 192.168.X.0/24 dev $INTERFACE</code>为添加到其他节点路由条目的命令</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ip=<span class="string">'172.18.1.X'</span></span><br><span class="line">ip link <span class="built_in">set</span> <span class="variable">$INTERFACE</span> up</span><br><span class="line">ip addr add <span class="variable">$ip</span>/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.X.0/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.X.0/24 dev <span class="variable">$INTERFACE</span></span><br></pre></td></tr></table></figure>
+<p><code>tinc-down</code>脚本添加，关闭虚拟网卡，添加的IP地址以及路由条目会自动消失</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ip link <span class="built_in">set</span> <span class="variable">$INTERFACE</span> down</span><br></pre></td></tr></table></figure>
+<p>公钥文件<code>hosts/node[A|B|C]</code>修改，下文以<strong>设备A</strong>为例，<code>Address</code>为连接所用的IP地址，<code>Subnet</code>字段为宣告的可路由地址，关于虚拟网卡IP的路由，路由精度宣告为32，虽然其掩码为24，但是只有一个该网段的地址，所以为<code>Subnet = 172.18.1.1/32</code>。还要添加需要宣告的其他IP地址范围。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address = 2001:1::1/64</span><br><span class="line">Subnet = 172.18.1.1/32</span><br><span class="line">Subnet = 192.168.1.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<h4 id="配置文件交换"><a href="#配置文件交换" class="headerlink" title="配置文件交换"></a>配置文件交换</h4><ul>
+<li><strong>设备[ A | B ]</strong>之间使用IPv4建立连接，<strong>设备[ A | B ]</strong>的<code>/etc/tinc/tinc/hosts</code>目录下需要有彼此的公钥文件，因为使用<strong>IPv4</strong>连接，所以公钥文件中<code>Address</code>字段为<strong>IPv4地址</strong>！</li>
+<li><strong>设备[ B | C ]</strong>之间使用IPv6建立连接，<strong>设备[ B | C ]</strong>的<code>/etc/tinc/tinc/hosts</code>目录下需要有彼此的公钥文件，因为使用<strong>IPv6</strong>连接，所以公钥文件中<code>Address</code>字段为<strong>IPv6地址</strong>！</li>
+<li><strong>设备[ A | C ]</strong>没有直接的WAN连接，因此不需要交换公钥文件。</li>
+<li>在<strong>设备[ A |  B | C ]</strong>上，非本设备的公钥文件中<code>Subnet</code>、<code>Port</code>等字段不要添加或者修改</li>
+</ul>
+<p>只有交换过公钥文件的节点的局域网直接可以相互通信，例如<strong>设备B-&gt; IPv4 LAN</strong>可以访问<strong>设备[ A | C ] -&gt; IPv4 LAN</strong>。但是<strong>设备[ A | C ] -&gt; IPv4 LAN</strong>之间不可相互访问，即使添加了路由。</p>
+<h4 id="防火墙设置"><a href="#防火墙设置" class="headerlink" title="防火墙设置"></a>防火墙设置</h4><p><strong>在设备[ A | B | C ]</strong>的网页管理端进行如下操作</p>
+<ul>
+<li>在<code>Network &gt; Interfaces &gt; NETNAME &gt; Firewall Settings</code>设置中 ，创建新的防火墙区域<code>tinc</code></li>
+<li>在 <code>Network &gt; Firewall &gt; General Settings &gt; Zones</code>设置中，编辑防火墙区域<code>tinc</code>，使其能和区域<code>lan</code>进行相互转发</li>
+<li>在<code>Network &gt; Firewall &gt; Traffic Rules</code>设置中，打开TCP、UDP的6565端口，如果为了保证安全性，可以限制源和目的IP地址</li>
+</ul>
+<h4 id="服务启动"><a href="#服务启动" class="headerlink" title="服务启动"></a>服务启动</h4><p>在<strong>设备[ A | B | C ]</strong>分别执行命令重启tinc服务，服务启动后，服务最终读取的配置文件为<code>/var/tinc</code>，该目录根据<code>/etc/config/tinc</code>与<code>/etc/tinc/</code>生成的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/tinc restart</span><br></pre></td></tr></table></figure>
+<p>如果<strong>设备[ A | B | C ]</strong>能分别ping通彼此的<strong>IPv4 LAN</strong>，则搭建成功</p>
+<h4 id="排错"><a href="#排错" class="headerlink" title="排错"></a>排错</h4><p>如果连接失败，请查看错误信息日志<code>/tmp/log/tinc.tinc.log</code></p>
+<hr>
+<h3 id="3-配置文件样例"><a href="#3-配置文件样例" class="headerlink" title="3. 配置文件样例"></a>3. 配置文件样例</h3><p>下面只列出在<strong>设备[ A | B | C ]</strong>有不同的配置文件，下文<code>/etc/config/tinc</code>也删除了大部分相同的内容，完整配置参考<a href="https://www.tinc-vpn.org/documentation/tinc.conf.5" target="_blank" rel="noopener">官方文档</a></p>
+<h4 id="设备A"><a href="#设备A" class="headerlink" title="设备A"></a>设备A</h4><h5 id="etc-config-tinc"><a href="#etc-config-tinc" class="headerlink" title="/etc/config/tinc"></a>/etc/config/tinc</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">config tinc-net tinc</span><br><span class="line">        list ConnectTo nodeB</span><br><span class="line">        option Name nodeA</span><br><span class="line">         option Interface tun0</span><br><span class="line">        option PrivateKeyFile /etc/tinc/tinc/rsa_key.priv</span><br><span class="line"></span><br><span class="line">config tinc-host nodeA</span><br><span class="line">        option enabled 1</span><br><span class="line">        option net tinc</span><br><span class="line">        option Port 6565</span><br><span class="line">        option Subnet 192.168.1.0/24</span><br></pre></td></tr></table></figure>
+<h5 id="tinc-up"><a href="#tinc-up" class="headerlink" title="tinc-up"></a>tinc-up</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ip=<span class="string">'172.18.1.1'</span></span><br><span class="line">ip link <span class="built_in">set</span> <span class="variable">$INTERFACE</span> up</span><br><span class="line">ip addr add <span class="variable">$ip</span>/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.2.0/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.100.0/24 dev <span class="variable">$INTERFACE</span></span><br></pre></td></tr></table></figure>
+<h5 id="etc-tinc-tinc-hosts-nodeA"><a href="#etc-tinc-tinc-hosts-nodeA" class="headerlink" title="/etc/tinc/tinc/hosts/nodeA"></a>/etc/tinc/tinc/hosts/nodeA</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address = 10.30.5.1</span><br><span class="line">Subnet = 172.18.1.1/32</span><br><span class="line">Subnet = 192.168.1.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<h5 id="etc-tinc-tinc-hosts-nodeB"><a href="#etc-tinc-tinc-hosts-nodeB" class="headerlink" title="/etc/tinc/tinc/hosts/nodeB"></a>/etc/tinc/tinc/hosts/nodeB</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address = 10.30.5.2</span><br><span class="line">Subnet = 172.18.1.2/32</span><br><span class="line">Subnet = 192.168.2.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<h4 id="设备B"><a href="#设备B" class="headerlink" title="设备B"></a>设备B</h4><h5 id="etc-config-tinc-1"><a href="#etc-config-tinc-1" class="headerlink" title="/etc/config/tinc"></a>/etc/config/tinc</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">config tinc-net tinc</span><br><span class="line">        list ConnectTo nodeA</span><br><span class="line">        list ConnectTo nodeC</span><br><span class="line">        option Name nodeB</span><br><span class="line">        option Interface tun0</span><br><span class="line">        option PrivateKeyFile /etc/tinc/tinc/rsa_key.priv</span><br><span class="line"></span><br><span class="line">config tinc-host nodeB</span><br><span class="line">        option enabled 1</span><br><span class="line">        option net tinc</span><br><span class="line">        option Port 6565</span><br><span class="line">        option Subnet 192.168.2.0/24</span><br></pre></td></tr></table></figure>
+<h5 id="tinc-up-1"><a href="#tinc-up-1" class="headerlink" title="tinc-up"></a>tinc-up</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ip=<span class="string">'172.18.1.2'</span></span><br><span class="line">ip link <span class="built_in">set</span> <span class="variable">$INTERFACE</span> up</span><br><span class="line">ip addr add <span class="variable">$ip</span>/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.1.0/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.100.0/24 dev <span class="variable">$INTERFACE</span></span><br></pre></td></tr></table></figure>
+<h5 id="etc-tinc-tinc-hosts-nodeA-1"><a href="#etc-tinc-tinc-hosts-nodeA-1" class="headerlink" title="/etc/tinc/tinc/hosts/nodeA"></a>/etc/tinc/tinc/hosts/nodeA</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address = 10.30.5.1</span><br><span class="line">Subnet = 172.18.1.1/32</span><br><span class="line">Subnet = 192.168.1.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<h5 id="etc-tinc-tinc-hosts-nodeB-1"><a href="#etc-tinc-tinc-hosts-nodeB-1" class="headerlink" title="/etc/tinc/tinc/hosts/nodeB"></a>/etc/tinc/tinc/hosts/nodeB</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Address = 10.30.5.2</span><br><span class="line">Address = 2001:1::1</span><br><span class="line">Subnet = 172.18.1.2/32</span><br><span class="line">Subnet = 192.168.2.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<h5 id="etc-tinc-tinc-hosts-nodeC"><a href="#etc-tinc-tinc-hosts-nodeC" class="headerlink" title="/etc/tinc/tinc/hosts/nodeC"></a>/etc/tinc/tinc/hosts/nodeC</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address = 2001:2::1</span><br><span class="line">Subnet = 172.18.1.3/32</span><br><span class="line">Subnet = 192.168.3.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<h4 id="设备C"><a href="#设备C" class="headerlink" title="设备C"></a>设备C</h4><h5 id="etc-config-tinc-2"><a href="#etc-config-tinc-2" class="headerlink" title="/etc/config/tinc"></a>/etc/config/tinc</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">config tinc-net tinc</span><br><span class="line">        list ConnectTo nodeB</span><br><span class="line">        option Name nodeC</span><br><span class="line">        option Interface tun0</span><br><span class="line">        option PrivateKeyFile /etc/tinc/tinc/rsa_key.priv</span><br><span class="line"></span><br><span class="line">config tinc-host nodeC</span><br><span class="line">        option enabled 1</span><br><span class="line">        option net tinc</span><br><span class="line">        option Port 6565</span><br><span class="line">        option Subnet 192.168.100.0/24</span><br></pre></td></tr></table></figure>
+<h5 id="tinc-up-2"><a href="#tinc-up-2" class="headerlink" title="tinc-up"></a>tinc-up</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ip=<span class="string">'172.16.1.3'</span></span><br><span class="line">ip link <span class="built_in">set</span> <span class="variable">$INTERFACE</span> up</span><br><span class="line">ip addr add <span class="variable">$ip</span>/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.1.0/24 dev <span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.2.0/24 dev <span class="variable">$INTERFACE</span></span><br></pre></td></tr></table></figure>
+<h5 id="etc-tinc-tinc-hosts-nodeB-2"><a href="#etc-tinc-tinc-hosts-nodeB-2" class="headerlink" title="/etc/tinc/tinc/hosts/nodeB"></a>/etc/tinc/tinc/hosts/nodeB</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address = 2001:1::1</span><br><span class="line">Subnet = 172.18.1.2/32</span><br><span class="line">Subnet = 192.168.2.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<h5 id="etc-tinc-tinc-hosts-nodeC-1"><a href="#etc-tinc-tinc-hosts-nodeC-1" class="headerlink" title="/etc/tinc/tinc/hosts/nodeC"></a>/etc/tinc/tinc/hosts/nodeC</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address = 2001:2::1</span><br><span class="line">Subnet = 172.18.1.3/32</span><br><span class="line">Subnet = 192.168.3.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h3><p>在<code>/etc/tinc/NETNAME/hosts</code>目录下，以本节点的公钥文件中宣告的内容为准。</p>
+<p>例如：节点nodeA、nodeB之间建立tinc链路，nodeA的IP地址为<code>10.1.1.1/24</code>，nodeB的IP地址为<code>10.1.1.2/24</code></p>
+<ul>
+<li><p>在节点nodeA，nodeA的公钥文件内容如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Address =10.1.1.1</span><br><span class="line">Subnet = 192.168.1.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<p>nodeB的公钥内容如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Address =10.1.1.2</span><br><span class="line">Subnet = 192.168.2.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在节点nodeB，nodeB的公钥文件内容如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Address =10.1.1.2</span><br><span class="line">Subnet = 192.168.2.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<p>nodeA的公钥内容本应该与在nodeA的公钥相同的，但是如果添加了其他条目。如下所示，添加了<code>Subnet = 192.168.3.0/24</code>，即使添加了该路由条目，在nodeB也无法与该地址段进行通信，因为nodeA不认为这是它宣告的地址范围。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Address =10.1.1.1</span><br><span class="line">Subnet = 192.168.1.0/24</span><br><span class="line">Subnet = 192.168.3.0/24</span><br><span class="line">Port = 6565</span><br><span class="line">-----BEGIN RSA PUBLIC KEY-----</span><br><span class="line">………………</span><br><span class="line">-----END RSA PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h3 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h3><ul>
+<li><a href="https://wiki.openwrt.org/doc/howto/vpn.tinc" target="_blank" rel="noopener">https://wiki.openwrt.org/doc/howto/vpn.tinc</a></li>
+<li><a href="http://zhiwei.li/text/2015/06/17/tinc-vpn%E9%85%8D%E7%BD%AE%E5%8F%98%E9%87%8F/" target="_blank" rel="noopener">http://zhiwei.li/text/2015/06/17/tinc-vpn%E9%85%8D%E7%BD%AE%E5%8F%98%E9%87%8F/</a></li>
+<li><a href="http://ostolc.org/site-to-site-vpn-with-tinc.html" target="_blank" rel="noopener">http://ostolc.org/site-to-site-vpn-with-tinc.html</a></li>
+<li><a href="https://github.com/qmcclab/blog/blob/master/2013-09-20-a-mesh-network.md" target="_blank" rel="noopener">https://github.com/qmcclab/blog/blob/master/2013-09-20-a-mesh-network.md</a></li>
+<li><a href="http://www.rendoumi.com/ling-wai-yi-chong-vpnfang-shi-tinc/" target="_blank" rel="noopener">http://www.rendoumi.com/ling-wai-yi-chong-vpnfang-shi-tinc/</a></li>
+<li><a href="http://www.rendoumi.com/ling-wai-yi-chong-vpnfang-shi-tinc/" target="_blank" rel="noopener">http://www.rendoumi.com/ling-wai-yi-chong-vpnfang-shi-tinc/</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/openwrt/" rel="tag"># openwrt</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/24/OpenWRT Shadowsocks+GFWList 流量自动分流/" rel="next" title="OpenWRT Shadowsocks+GFWList 流量自动分流">
+                <i class="fa fa-chevron-left"></i> OpenWRT Shadowsocks+GFWList 流量自动分流
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/31/OpenWRT Python安装 & 网络验证自动登录/" rel="prev" title="OpenWRT Python安装 & 网络验证自动登录">
+                OpenWRT Python安装 & 网络验证自动登录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-背景介绍"><span class="nav-number">1.</span> <span class="nav-text">1. 背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-配置步骤"><span class="nav-number">2.</span> <span class="nav-text">2. 配置步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#软件包安装"><span class="nav-number">2.1.</span> <span class="nav-text">软件包安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件修改-1"><span class="nav-number">2.2.</span> <span class="nav-text">配置文件修改-1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件结构"><span class="nav-number">2.3.</span> <span class="nav-text">配置文件结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟网卡添加"><span class="nav-number">2.4.</span> <span class="nav-text">虚拟网卡添加</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件修改-2"><span class="nav-number">2.5.</span> <span class="nav-text">配置文件修改-2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件交换"><span class="nav-number">2.6.</span> <span class="nav-text">配置文件交换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#防火墙设置"><span class="nav-number">2.7.</span> <span class="nav-text">防火墙设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#服务启动"><span class="nav-number">2.8.</span> <span class="nav-text">服务启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#排错"><span class="nav-number">2.9.</span> <span class="nav-text">排错</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-配置文件样例"><span class="nav-number">3.</span> <span class="nav-text">3. 配置文件样例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#设备A"><span class="nav-number">3.1.</span> <span class="nav-text">设备A</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-config-tinc"><span class="nav-number">3.1.1.</span> <span class="nav-text">/etc/config/tinc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#tinc-up"><span class="nav-number">3.1.2.</span> <span class="nav-text">tinc-up</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-tinc-tinc-hosts-nodeA"><span class="nav-number">3.1.3.</span> <span class="nav-text">/etc/tinc/tinc/hosts/nodeA</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-tinc-tinc-hosts-nodeB"><span class="nav-number">3.1.4.</span> <span class="nav-text">/etc/tinc/tinc/hosts/nodeB</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设备B"><span class="nav-number">3.2.</span> <span class="nav-text">设备B</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-config-tinc-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">/etc/config/tinc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#tinc-up-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">tinc-up</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-tinc-tinc-hosts-nodeA-1"><span class="nav-number">3.2.3.</span> <span class="nav-text">/etc/tinc/tinc/hosts/nodeA</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-tinc-tinc-hosts-nodeB-1"><span class="nav-number">3.2.4.</span> <span class="nav-text">/etc/tinc/tinc/hosts/nodeB</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-tinc-tinc-hosts-nodeC"><span class="nav-number">3.2.5.</span> <span class="nav-text">/etc/tinc/tinc/hosts/nodeC</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设备C"><span class="nav-number">3.3.</span> <span class="nav-text">设备C</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-config-tinc-2"><span class="nav-number">3.3.1.</span> <span class="nav-text">/etc/config/tinc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#tinc-up-2"><span class="nav-number">3.3.2.</span> <span class="nav-text">tinc-up</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-tinc-tinc-hosts-nodeB-2"><span class="nav-number">3.3.3.</span> <span class="nav-text">/etc/tinc/tinc/hosts/nodeB</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#etc-tinc-tinc-hosts-nodeC-1"><span class="nav-number">3.3.4.</span> <span class="nav-text">/etc/tinc/tinc/hosts/nodeC</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-总结"><span class="nav-number">4.</span> <span class="nav-text">4. 总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-参考"><span class="nav-number">5.</span> <span class="nav-text">5. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

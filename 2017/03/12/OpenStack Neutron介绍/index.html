@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. 概述Neutron与传统网络管理传统网络管理方式为网络管理员直接对网络硬件设备进行配置。云环境下情况下，用户众多以及网络场景复杂。特别是在多租户场景里，用户随时都可能需要创建、修改和删除网络，网络的连通性和隔离不已经太可能通过手工配置来保证了。 Neutron的主要功能实现了“网络即服务（Networking as a Service）”，该服务充分利用了Linux系统上网络相关的各种技术，">
+<meta name="keywords" content="network,openstack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenStack Neutron介绍">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/12/OpenStack Neutron介绍/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. 概述Neutron与传统网络管理传统网络管理方式为网络管理员直接对网络硬件设备进行配置。云环境下情况下，用户众多以及网络场景复杂。特别是在多租户场景里，用户随时都可能需要创建、修改和删除网络，网络的连通性和隔离不已经太可能通过手工配置来保证了。 Neutron的主要功能实现了“网络即服务（Networking as a Service）”，该服务充分利用了Linux系统上网络相关的各种技术，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/1-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/2-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/2-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/3-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/3-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/3-3.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/3-4.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/3-5.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/3-6.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/neutron/3-7.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.513Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenStack Neutron介绍">
+<meta name="twitter:description" content="1. 概述Neutron与传统网络管理传统网络管理方式为网络管理员直接对网络硬件设备进行配置。云环境下情况下，用户众多以及网络场景复杂。特别是在多租户场景里，用户随时都可能需要创建、修改和删除网络，网络的连通性和隔离不已经太可能通过手工配置来保证了。 Neutron的主要功能实现了“网络即服务（Networking as a Service）”，该服务充分利用了Linux系统上网络相关的各种技术，">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/neutron/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/12/OpenStack Neutron介绍/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenStack Neutron介绍 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/12/OpenStack Neutron介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenStack Neutron介绍
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-12 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-12T16:29:00+08:00">2017-03-12</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><h4 id="Neutron与传统网络管理"><a href="#Neutron与传统网络管理" class="headerlink" title="Neutron与传统网络管理"></a>Neutron与传统网络管理</h4><p>传统网络管理方式为网络管理员直接对网络硬件设备进行配置。云环境下情况下，用户众多以及网络场景复杂。特别是在多租户场景里，用户随时都可能需要创建、修改和删除网络，网络的连通性和隔离不已经太可能通过手工配置来保证了。</p>
+<p>Neutron的主要功能实现了“网络即服务（Networking as a Service）”，该服务充分利用了Linux系统上网络相关的各种技术，例如<strong>Linux bridge</strong>、<strong>OpenvSwitch</strong>、<strong>Linux network namespace</strong>，<strong>iptables</strong>等</p>
+<p>宏观上，Neutron虚拟网络与物理网络实现的功能是一样的，例如二层交换、三层路由、防火墙、负载均衡以及VPN。但是Neutron不是使用硬件设备来实现这些网络功能，而是利用Linux系统上各种网络相关技术实现的。关于更多关于二层交换、三层路由等网络概念，自行去搜索资料学习，只有深刻地理解了这些概念，才会理解Neutron的虚拟网络技术如何实现的。</p>
+<a id="more"></a>
+<h4 id="Neutron功能"><a href="#Neutron功能" class="headerlink" title="Neutron功能"></a>Neutron功能</h4><h5 id="二层交换-Switching"><a href="#二层交换-Switching" class="headerlink" title="二层交换 Switching"></a>二层交换 Switching</h5><p>Nova的虚拟机通过虚拟机交换机进行二层通信，Neutron支持多种虚拟机交换机，包括 Linux 原生的 <strong>Linux Bridge</strong> 和 <strong>OpenvSwitch</strong>。<strong>OpenvSwitch（OVS）</strong>是一个开源的虚拟交换机，它支持标准的管理接口和协议，后面简称<strong>OVS</strong>。</p>
+<p>利用<strong>Linux Bridge</strong> 和 <strong>OpenvSwitch</strong>，Neutron可以创建的VLAN、Overlay网络，例如VXLAN和GRE（Linux Bridge 目前只支持 VxLAN）</p>
+<h5 id="三层路由-Routing"><a href="#三层路由-Routing" class="headerlink" title="三层路由 Routing"></a>三层路由 Routing</h5><p>Neutron的虚拟路由器以<strong>Linux network namespace</strong>实现的，利用<strong>Linux network namespace</strong>的虚拟网络功能，实现了虚拟机实例的路由通信。虚拟路由器以<strong>Linux IP forwarding、iptables</strong>等技术实现了NAT功能。</p>
+<h5 id="负载均衡-Load-Balancing"><a href="#负载均衡-Load-Balancing" class="headerlink" title="负载均衡 Load Balancing"></a>负载均衡 Load Balancing</h5><p>将网络负载分发到多个虚拟机实例，可以通过不同的插件实现，目前默认插件为<strong>Haproxy</strong></p>
+<h5 id="防火墙-Firing"><a href="#防火墙-Firing" class="headerlink" title="防火墙 Firing"></a>防火墙 Firing</h5><ul>
+<li><strong>安全组（Security Group）：</strong>利用Openstack宿主机的<strong>iptables</strong>和<strong>Linux network namespace</strong>限制虚拟机实例的网络数据包</li>
+<li><strong>防火墙即服务（Firewall-as-a-Service）：</strong>利用Openstack宿主机的<strong>iptables</strong>和<strong>Linux network namespace</strong>限制虚拟路由器的网络数据包</li>
+</ul>
+<h4 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h4><p>Openstack版本为<strong>Mitaka</strong>，Neutron使用二层的虚拟交换机为<strong>OVS</strong>，网络类型为<strong>VXLAN</strong>。并且为单一服务器安装所有OpenStack服务，如图1-1所示。</p>
+<center><img src="http://blog.kompaz.win/images/neutron/1-1.jpg" width="600px"></center><center style="color:purple"><strong>图1-1 网络架构图</strong></center>
+
+<hr>
+<h3 id="2-Neutron网络初始化"><a href="#2-Neutron网络初始化" class="headerlink" title="2. Neutron网络初始化"></a>2. Neutron网络初始化</h3><h4 id="使用iproute2"><a href="#使用iproute2" class="headerlink" title="使用iproute2"></a>使用iproute2</h4><p>为什么要使用<code>iproute2</code>？ Linux的<code>ip</code>命令和<code>ifconfig</code>类似，但是<code>ip</code>功能更为强大，<code>ifconfig</code>是<code>net-tools</code>中已被废弃使用的一个命令，许多年前就已经没有维护了。<code>iproute2</code>套件里提供了许多增强功能的命令，<code>ip</code>命令即是其中之一。<code>ifconfig</code>命令已经不能完全适应于Neutron网络查看以及维护，因此不推荐继续使用<code>ifconfig</code>等命令。</p>
+<p>图2-1为<code>net-tools</code>与<code>iproute2</code>命令对照图。</p>
+<center><img src="http://blog.kompaz.win/images/neutron/2-1.jpg" width="600px"></center><center style="color:purple"><strong>图2-1  net-tools vs iproute2</strong></center>
+
+<h4 id="Neutron状态初始化"><a href="#Neutron状态初始化" class="headerlink" title="Neutron状态初始化"></a>Neutron状态初始化</h4><p>删除在自动化安装OpenStack所创建的所有虚拟机实例、虚拟网络以及虚拟路由器，然后查看主机上的网络配置。查看安装OpenStack宿主机所有的网络链路，其中<code>enp2s0f0</code>为物理网卡，<code>br-int</code>、<code>br-tun</code>、<code>br-ex</code>为<strong>OVS</strong>创建的虚拟机接口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ip addr</span></span><br><span class="line">......</span><br><span class="line">8: ovs-system: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN qlen 1000</span><br><span class="line">    link/ether 0a:8f:d8:cf:f0:7d brd ff:ff:ff:ff:ff:ff</span><br><span class="line">9: br-int: &lt;BROADCAST,MULTICAST&gt; mtu 1450 qdisc noop state DOWN qlen 1000</span><br><span class="line">    link/ether b2:5a:46:2b:f1:4b brd ff:ff:ff:ff:ff:ff</span><br><span class="line">10: br-tun: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN qlen 1000</span><br><span class="line">    link/ether 2e:21:86:14:76:4a brd ff:ff:ff:ff:ff:ff</span><br><span class="line">12: br-ex: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether ec:38:8f:7b:fb:12 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 172.18.31.16/16 brd 172.18.255.255 scope global br-ex</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::ee38:8fff:fe7b:fb12/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>查看<strong>OVS</strong>状态，Neutron自动创建了三个网桥<code>br-int</code>、<code>br-tun</code>、<code>br-ex</code></p>
+<ul>
+<li><strong>网桥 br-ex：</strong>连接外部（external）网络的网桥<ul>
+<li><strong>端口 br-ex：</strong>该虚拟端口用于配置物理网络中服务器的IP地址，这里为<code>172.18.31.16</code></li>
+<li><strong>端口 “enp2s0f0”:</strong>  物理网卡，<code>端口br-ex</code>与物理网卡桥接到同一个网桥，这样<code>端口br-ex</code>可以直接与物理网络进行通信。</li>
+</ul>
+</li>
+<li><strong>网桥br-int：</strong>集成（integration）网桥，所有虚拟机实例的虚拟网卡以及其他虚拟机网络设备网卡均连接到该网桥<ul>
+<li><strong>端口 br-int：</strong>虚拟端口，用途不明确</li>
+<li><strong>端口 patch-tun：</strong>patch port是成对出现的，可以理解为虚拟网线，连接两个网桥，与<code>端口patch-int</code>为一对，该链路连接了<code>网桥br-ex</code>与<code>网桥br-tun</code></li>
+</ul>
+</li>
+<li><strong>网桥 br-tun：</strong>隧道（tunnel）网桥，基于隧道技术的 VxLAN 和 GRE 网络将使用该网桥进行通信<ul>
+<li><strong>端口 patch-int：</strong>patch port是成对出现的，可以理解为虚拟网线，连接两个网桥，与<code>端口patch-tun</code>为一对，该链路连接了<code>网桥br-ex</code>与<code>网桥br-tun</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ovs-vsctl show</span></span><br><span class="line">963c3d27-74db-4e15-a6a8-505f2db9644e</span><br><span class="line">    Bridge br-tun</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port patch-int</span><br><span class="line">            Interface patch-int</span><br><span class="line">                <span class="built_in">type</span>: patch</span><br><span class="line">                options: &#123;peer=patch-tun&#125;</span><br><span class="line">        Port br-tun</span><br><span class="line">            Interface br-tun</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">    Bridge br-ex</span><br><span class="line">        Port br-ex</span><br><span class="line">            Interface br-ex</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port <span class="string">"enp2s0f0"</span></span><br><span class="line">            Interface <span class="string">"enp2s0f0"</span></span><br><span class="line">    Bridge br-int</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port br-int</span><br><span class="line">            Interface br-int</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port patch-tun</span><br><span class="line">            Interface patch-tun</span><br><span class="line">                <span class="built_in">type</span>: patch</span><br><span class="line">                options: &#123;peer=patch-int&#125;</span><br><span class="line">    ovs_version: <span class="string">"2.4.0"</span></span><br></pre></td></tr></table></figure>
+<p>拓扑图如图2-2所示</p>
+<center><img src="http://blog.kompaz.win/images/neutron/2-2.jpg" width="600px"></center><center style="color:purple"><strong>图2-2 OVS拓扑</strong></center>
+
+<hr>
+<h3 id="3-网络创建"><a href="#3-网络创建" class="headerlink" title="3. 网络创建"></a>3. 网络创建</h3><h4 id="创建第一个内部网络"><a href="#创建第一个内部网络" class="headerlink" title="创建第一个内部网络"></a>创建第一个内部网络</h4><p>在命令行创建一个内部网络，命令如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">neutron net-create private</span><br><span class="line">neutron subnet-create --name net_10_10_10 --allocation-pool start=10.10.10.2,end=10.10.10.254 \</span><br><span class="line">--gateway 10.10.10.1 --dns-nameserver 8.8.8.8 --enable_dhcp=<span class="literal">true</span> --ip-version 4 private 10.10.10.0/24</span><br></pre></td></tr></table></figure>
+<p>此时查看<strong>OVS</strong>，可以发现多了一个<code>端口tapba1869d7-3f</code>，该端口为虚拟网络提供DHCP服务的端口。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ovs-vsctl show</span></span><br><span class="line"> ......</span><br><span class="line"> Bridge br-int</span><br><span class="line">    fail_mode: secure</span><br><span class="line">    Port br-int</span><br><span class="line">        Interface br-int</span><br><span class="line">            <span class="built_in">type</span>: internal</span><br><span class="line">    Port patch-tun</span><br><span class="line">        Interface patch-tun</span><br><span class="line">            <span class="built_in">type</span>: patch</span><br><span class="line">            options: &#123;peer=patch-int&#125;</span><br><span class="line">    Port <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">        tag: 3</span><br><span class="line">        Interface <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">            <span class="built_in">type</span>: internal</span><br><span class="line">ovs_version: <span class="string">"2.4.0"</span></span><br></pre></td></tr></table></figure>
+<p>Neutron通过dnsmasq提供DHCP服务，dnsmasq 如何为每个独立的network服务呢？是通过 <strong>Linux Network Namespace</strong> 进行网络隔离。</p>
+<p>在三层网络上，<strong>Linux network namespace</strong> 可以将一个物理三层网络分割成几个独立的虚拟三层网络。每个 <code>namespace</code> 都有自己独立的网络栈，包括端口、路由表、iptables。宿主机自己以有一个<code>namespace</code>，为<code>root namespace</code>，拥有所有的物理和虚拟网络端口，物理端口只能位于<code>root namespace</code>。利用<strong>Linux network namespace</strong>，租户可以创建重叠的私有网络。</p>
+<p>通过命令查看 <strong>Linux network namespace</strong> ，可以发现新创建的namespace <code>qdhcp-b1e991be-ca2e-4db2-a0e0-0e235fdf3503</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns list</span></span><br><span class="line">qdhcp-b1e991be-ca2e-4db2-a0e0-0e235fdf3503</span><br></pre></td></tr></table></figure>
+<p>查看<code>qdhcp-b1e991be-ca2e-4db2-a0e0-0e235fdf3503</code>的端口，注意，<code>端口tapba1869d7-3f</code>也在其中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns exec qdhcp-b1e991be-ca2e-4db2-a0e0-0e235fdf3503  ip addr</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">32: tapba1869d7-3f: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether fa:16:3e:27:4a:ee brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.10.10.2/24 brd 10.10.10.255 scope global tapba1869d7-3f</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::f816:3eff:fe27:4aee/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>因此在创建一个内部网络后，拓扑图如图3-1所示</p>
+<center><img src="http://blog.kompaz.win/images/neutron/3-1.jpg" width="600px"></center><center style="color:purple"><strong>图3-1 创建第一个内部网络</strong></center>
+
+<h4 id="添加虚拟机实例到第一个内部网络"><a href="#添加虚拟机实例到第一个内部网络" class="headerlink" title="添加虚拟机实例到第一个内部网络"></a>添加虚拟机实例到第一个内部网络</h4><p>创建第一个虚拟机实例并添加到内部网络之后，<strong>OVS</strong>变化如下，在<code>网桥br-int</code>上新增加了一个<code>端口qvo970b8b37-b4</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ovs-vsctl show</span></span><br><span class="line">963c3d27-74db-4e15-a6a8-505f2db9644e</span><br><span class="line">    .....</span><br><span class="line">    Bridge br-int</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port br-int</span><br><span class="line">            Interface br-int</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port patch-tun</span><br><span class="line">            Interface patch-tun</span><br><span class="line">                <span class="built_in">type</span>: patch</span><br><span class="line">                options: &#123;peer=patch-int&#125;</span><br><span class="line">        Port <span class="string">"qvo970b8b37-b4"</span></span><br><span class="line">            tag: 3</span><br><span class="line">            Interface <span class="string">"qvo970b8b37-b4"</span></span><br><span class="line">        Port <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">            tag: 3</span><br><span class="line">            Interface <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">    ovs_version: <span class="string">"2.4.0"</span></span><br></pre></td></tr></table></figure>
+<p>查看宿主机网络链接，发现新增了四个虚拟网卡<code>qbr970b8b37-b4</code>、<code>qvo970b8b37-b4</code>、<code>qvb970b8b37-b4</code>、<code>tap970b8b37-b4</code>。其中<code>qvo970b8b37-b4</code>、<code>qvb970b8b37-b4</code>是成对出现的，为<code>veth pair</code>设备，类似于虚拟网线，<code>qvo970b8b37-b4</code>连接到<strong>OVS</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip link</span></span><br><span class="line">......</span><br><span class="line">33: qbr970b8b37-b4: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UP mode DEFAULT qlen 1000</span><br><span class="line">    link/ether a2:fa:17:cf:13:bc brd ff:ff:ff:ff:ff:ff</span><br><span class="line">34: qvo970b8b37-b4@qvb970b8b37-b4: &lt;BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue master ovs-system state UP mode DEFAULT qlen 1000</span><br><span class="line">    link/ether 22:83:de:4e:b2:77 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">35: qvb970b8b37-b4@qvo970b8b37-b4: &lt;BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue master qbr970b8b37-b4 state UP mode DEFAULT qlen 1000</span><br><span class="line">    link/ether a2:fa:17:cf:13:bc brd ff:ff:ff:ff:ff:ff</span><br><span class="line">36: tap970b8b37-b4: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc pfifo_fast master qbr970b8b37-b4 state UNKNOWN mode DEFAULT qlen 1000</span><br><span class="line">    link/ether fe:16:3e:8d:a1:a7 brd ff:ff:ff:ff:ff:ff</span><br></pre></td></tr></table></figure>
+<p><code>qvb970b8b37-b4</code>连接到了哪里？查看<strong>Linux bridge</strong>，发现Neutron创建了一个<code>网桥qbr970b8b37-b4</code>，也是上文提到的增加四个虚拟网卡之一。<code>端口qvb970b8b37-b4</code>连接到该网桥，同时还有一个<code>端口tap970b8b37-b4</code>连接到该网桥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># brctl show</span></span><br><span class="line">bridge name	bridge id		STP enabled	interfaces</span><br><span class="line">qbr970b8b37-b4		8000.a2fa17cf13bc	no		qvb970b8b37-b4</span><br><span class="line">							tap970b8b37-b4</span><br></pre></td></tr></table></figure>
+<p><code>端口tap970b8b37-b4</code>对应为虚拟机实例的网卡，<code>970b8b37-b4</code>为虚拟机实例网卡ID的前11位，查看虚拟机实例网卡</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># nova interface-list t</span></span><br><span class="line">+------------+--------------------------------------+--------------------------------------+--------------+-------------------+</span><br><span class="line">| Port State | Port ID                              | Net ID                               | IP addresses | MAC Addr          |</span><br><span class="line">+------------+--------------------------------------+--------------------------------------+--------------+-------------------+</span><br><span class="line">| ACTIVE     | 970b8b37-b467-4d46-a88e-061e7209d206 | b1e991be-ca2e-4db2-a0e0-0e235fdf3503 | 10.10.10.3   | fa:16:3e:8d:a1:a7 |</span><br><span class="line">+------------+--------------------------------------+--------------------------------------+--------------+-------------------+</span><br></pre></td></tr></table></figure>
+<p>此时对应的拓扑图如图3-2所示</p>
+<center><img src="http://blog.kompaz.win/images/neutron/3-2.jpg" width="600px"></center><center style="color:purple"><strong>图3-2 添加第一个实例</strong></center>
+
+<p>为什么不将<code>tap970b8b37-b4</code>直接连接到<strong>OVS</strong>的<code>网桥br-int</code>上呢？这是为了实现<strong>安全组（Security Group）</strong>功能，虚拟机实例的<strong>安全组</strong>功能以宿主机的<code>iptables实现</code>的，<strong>OVS</strong>还不支持将 <code>iptables</code> 规则放在与它直接相连的 tap 设备，这样无法实现<strong>安全组</strong>功能。</p>
+<h4 id="创建第二个内部网络"><a href="#创建第二个内部网络" class="headerlink" title="创建第二个内部网络"></a>创建第二个内部网络</h4><p>创建命令如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">neutron net-create private2</span><br><span class="line">neutron subnet-create --name net_10_10_20 --allocation-pool start=10.10.20.2,end=10.10.20.254 \</span><br><span class="line">--gateway 10.10.20.1 --dns-nameserver 8.8.8.8 --enable_dhcp=<span class="literal">true</span> --ip-version 4 private2 10.10.20.0/24</span><br></pre></td></tr></table></figure>
+<p>查看<strong>OVS</strong>，多个一个<code>端口tapc9a6c753-7e</code>，tag为4，之前创建的网络tag为3，该端口为虚拟网络提供DHCP服务。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ovs-vsctl show</span></span><br><span class="line">963c3d27-74db-4e15-a6a8-505f2db9644e</span><br><span class="line">   </span><br><span class="line">   ......</span><br><span class="line">   </span><br><span class="line">    Bridge br-int</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port br-int</span><br><span class="line">            Interface br-int</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port <span class="string">"tapc9a6c753-7e"</span></span><br><span class="line">            tag: 4</span><br><span class="line">            Interface <span class="string">"tapc9a6c753-7e"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port patch-tun</span><br><span class="line">            Interface patch-tun</span><br><span class="line">                <span class="built_in">type</span>: patch</span><br><span class="line">                options: &#123;peer=patch-int&#125;</span><br><span class="line">        Port <span class="string">"qvo970b8b37-b4"</span></span><br><span class="line">            tag: 3</span><br><span class="line">            Interface <span class="string">"qvo970b8b37-b4"</span></span><br><span class="line">        Port <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">            tag: 3</span><br><span class="line">            Interface <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">    ovs_version: <span class="string">"2.4.0"</span></span><br></pre></td></tr></table></figure>
+<p>通过命令查看 <strong>Linux network namespace</strong> ，可以发现新创建的namespace <code>qdhcp-35bfaa47-85bf-487f-abb1-eaf9950ad08b</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns list</span></span><br><span class="line">qdhcp-35bfaa47-85bf-487f-abb1-eaf9950ad08b</span><br><span class="line">qdhcp-b1e991be-ca2e-4db2-a0e0-0e235fdf3503</span><br></pre></td></tr></table></figure>
+<p>查看<code>qdhcp-35bfaa47-85bf-487f-abb1-eaf9950ad08b</code>的端口，注意，<code>端口tapc9a6c753-7e</code>也在其中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns exec qdhcp-35bfaa47-85bf-487f-abb1-eaf9950ad08b ip addr</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">37: tapc9a6c753-7e: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether fa:16:3e:9e:56:69 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.10.20.2/24 brd 10.10.20.255 scope global tapc9a6c753-7e</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::f816:3eff:fe9e:5669/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>此时对应的拓扑图如图3-3所示</p>
+<center><img src="http://blog.kompaz.win/images/neutron/3-3.jpg" width="600px"></center><center style="color:purple"><strong>图3-3 创建第二个内部网络</strong></center>
+
+<h4 id="添加虚拟机实例到第二个内部网络"><a href="#添加虚拟机实例到第二个内部网络" class="headerlink" title="添加虚拟机实例到第二个内部网络"></a>添加虚拟机实例到第二个内部网络</h4><p>创建第二个虚拟机实例并添加到内部网络之后，<strong>OVS</strong>变化如下，在<code>网桥br-int</code>上新增加了一个<code>qvoa14c2e53-77</code>，tag为4</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ovs-vsctl show</span></span><br><span class="line">    ......</span><br><span class="line">    Bridge br-int</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port br-int</span><br><span class="line">            Interface br-int</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port <span class="string">"qvoa14c2e53-77"</span></span><br><span class="line">            tag: 4</span><br><span class="line">            Interface <span class="string">"qvoa14c2e53-77"</span></span><br><span class="line">        Port <span class="string">"tapc9a6c753-7e"</span></span><br><span class="line">            tag: 4</span><br><span class="line">            Interface <span class="string">"tapc9a6c753-7e"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port patch-tun</span><br><span class="line">            Interface patch-tun</span><br><span class="line">                <span class="built_in">type</span>: patch</span><br><span class="line">                options: &#123;peer=patch-int&#125;</span><br><span class="line">        Port <span class="string">"qvo970b8b37-b4"</span></span><br><span class="line">            tag: 3</span><br><span class="line">            Interface <span class="string">"qvo970b8b37-b4"</span></span><br><span class="line">        Port <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">            tag: 3</span><br><span class="line">            Interface <span class="string">"tapba1869d7-3f"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">    ovs_version: <span class="string">"2.4.0"</span></span><br></pre></td></tr></table></figure>
+<p>查看宿主机网络链接，又新增了四个虚拟网卡<code>qbra14c2e53-77</code>、<code>qvoa14c2e53-77</code>、<code>qvba14c2e53-77</code>、<code>tapa14c2e53-77</code>，其中<code>qvoa14c2e53-77</code>、<code>qvba14c2e53-77</code>是成对出现的，为<code>veth pair</code>设备，类似与虚拟网线，其中<code>qvoa14c2e53-77</code>连接到<strong>OVS</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip link</span></span><br><span class="line">......</span><br><span class="line">38: qbra14c2e53-77: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UP mode DEFAULT qlen 1000</span><br><span class="line">    link/ether fa:72:51:14:04:db brd ff:ff:ff:ff:ff:ff</span><br><span class="line">39: qvoa14c2e53-77@qvba14c2e53-77: &lt;BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue master ovs-system state UP mode DEFAULT qlen 1000</span><br><span class="line">    link/ether 7e:39:35:1b:b8:e4 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">40: qvba14c2e53-77@qvoa14c2e53-77: &lt;BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue master qbra14c2e53-77 state UP mode DEFAULT qlen 1000</span><br><span class="line">    link/ether fa:72:51:14:04:db brd ff:ff:ff:ff:ff:ff</span><br><span class="line">41: tapa14c2e53-77: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc pfifo_fast master qbra14c2e53-77 state UNKNOWN mode DEFAULT qlen 1000</span><br><span class="line">    link/ether fe:16:3e:33:b5:32 brd ff:ff:ff:ff:ff:ff</span><br></pre></td></tr></table></figure>
+<p>查看Linux bridge，发现Neutron创建了一个<code>网桥qbra14c2e53-77</code>，宿主机增加四个虚拟网卡之一。<code>端口qvba14c2e53-77</code>连接到该网桥，同时还有一个<code>端口tapa14c2e53-77</code>连接到该网桥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># brctl show</span></span><br><span class="line">bridge name	bridge id		STP enabled	interfaces</span><br><span class="line">qbr970b8b37-b4		8000.a2fa17cf13bc	no		qvb970b8b37-b4</span><br><span class="line">							tap970b8b37-b4</span><br><span class="line">qbra14c2e53-77		8000.fa72511404db	no		qvba14c2e53-77</span><br><span class="line">							tapa14c2e53-77</span><br></pre></td></tr></table></figure>
+<p><code>端口tapa14c2e53-77</code>对应为虚拟机实例的网卡，<code>a14c2e53-77</code>为虚拟机实例网卡ID的前11位，查看虚拟机实例网卡</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># nova interface-list t2</span></span><br><span class="line">+------------+--------------------------------------+--------------------------------------+--------------+-------------------+</span><br><span class="line">| Port State | Port ID                              | Net ID                               | IP addresses | MAC Addr          |</span><br><span class="line">+------------+--------------------------------------+--------------------------------------+--------------+-------------------+</span><br><span class="line">| ACTIVE     | a14c2e53-77a8-44a2-85e8-a87026a6e706 | 35bfaa47-85bf-487f-abb1-eaf9950ad08b | 10.10.20.3   | fa:16:3e:33:b5:32 |</span><br><span class="line">+------------+--------------------------------------+--------------------------------------+--------------+-------------------+</span><br></pre></td></tr></table></figure>
+<p>此时对应的拓扑图如图3-4所示</p>
+<center><img src="http://blog.kompaz.win/images/neutron/3-4.jpg" width="600px"></center><center style="color:purple"><strong>图3-4 添加第二个实例</strong></center>
+
+<h4 id="创建虚拟机路由器"><a href="#创建虚拟机路由器" class="headerlink" title="创建虚拟机路由器"></a>创建虚拟机路由器</h4><p>此时已经创建了两个内部网络，但是两个内部网络之间还不能进行通信，因为在<code>网桥br-int</code>上，两个网络是隔离，属于不同的VLAN。因此需要创建三层网络设备，可以让两个内部网络之间进行通信。</p>
+<p>创建虚拟路由器，并添加两个内部网络的接口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">neutron router-create router</span><br><span class="line">neutron router-interface-add router net_10_10_10</span><br><span class="line">neutron router-interface-add router net_10_10_20</span><br></pre></td></tr></table></figure>
+<p>查看<strong>OVS</strong>的变化，增加了<code>端口qr-c26528a2-4d</code>、<code>端口qr-9924110a-29</code>，两个端口的tag标记分别属于两个内部网络</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ovs-vsctl show</span></span><br><span class="line">963c3d27-74db-4e15-a6a8-505f2db9644e</span><br><span class="line">    ......</span><br><span class="line">    Bridge br-int</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        ......</span><br><span class="line">        Port <span class="string">"qr-c26528a2-4d"</span></span><br><span class="line">            tag: 4</span><br><span class="line">            Interface <span class="string">"qr-c26528a2-4d"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port <span class="string">"qr-9924110a-29"</span></span><br><span class="line">            tag: 3</span><br><span class="line">            Interface <span class="string">"qr-9924110a-29"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">       ......</span><br></pre></td></tr></table></figure>
+<p>查看namespace，新增了namespace <code>qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns list</span></span><br><span class="line">qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</span><br><span class="line">qdhcp-35bfaa47-85bf-487f-abb1-eaf9950ad08b</span><br><span class="line">qdhcp-b1e991be-ca2e-4db2-a0e0-0e235fdf3503</span><br></pre></td></tr></table></figure>
+<p>查看namespace <code>qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</code>链路信息，<code>端口qr-c26528a2-4d</code>、<code>端口qr-9924110a-29</code>在其中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns exec qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce ip addr</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">42: qr-9924110a-29: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether fa:16:3e:7b:ee:b4 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.10.10.1/24 brd 10.10.10.255 scope global qr-9924110a-29</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::f816:3eff:fe7b:eeb4/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">43: qr-c26528a2-4d: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether fa:16:3e:35:42:73 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.10.20.1/24 brd 10.10.20.255 scope global qr-c26528a2-4d</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::f816:3eff:fe35:4273/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>namespace <code>qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</code>路由表如下所示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns exec qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce ip route</span></span><br><span class="line">10.10.10.0/24 dev qr-9924110a-29  proto kernel  scope link  src 10.10.10.1 </span><br><span class="line">10.10.20.0/24 dev qr-c26528a2-4d  proto kernel  scope link  src 10.10.20.1</span><br></pre></td></tr></table></figure>
+<p>当前拓扑图如图3-5所示，左面圈出部分为第一个内部网络，右面圈出的为第二个内部网络，两个网络之间通过路由器进行通信。</p>
+<center><img src="http://blog.kompaz.win/images/neutron/3-5.jpg" width="600px"></center><center style="color:purple"><strong>图3-5 添加虚拟路由器</strong></center>
+
+<h4 id="创建外部网络"><a href="#创建外部网络" class="headerlink" title="创建外部网络"></a>创建外部网络</h4><p>根据之前步骤创建的虚拟机实例，无法连接互联网，因此需要创建一个外部网络，可以让内部网络访问互联网，以及创建浮动IP，让外部网络访问内部网络的虚拟机实例。创建命令如下，外部网络不需要DHCP服务。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">neutron net-create --router:external=<span class="literal">true</span>  public</span><br><span class="line">neutron subnet-create --name net-ext --allocation-pool start=172.18.31.176,end=172.18.18.253 \</span><br><span class="line">--gateway 172.18.31.254 --dns-nameserver 8.8.8.8 --enable_dhcp=False --ip-version 4 public 172.18.0.0/16</span><br></pre></td></tr></table></figure>
+<p><code>172.18.0.0/16</code>是物理网络的地址段，<code>172.18.31.254</code>是物理网络的网关，<code>172.18.31.176~172.18.18.253</code>为物理网络的管理员给分配的地址池</p>
+<p>此时<strong>OVS</strong>、<strong>Linux bridge</strong>以及<strong>namespace</strong>没有任何变化。</p>
+<p>为路由器设置网关，命令如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">neutron router-gateway-set router public</span><br></pre></td></tr></table></figure>
+<p>查看<strong>OVS</strong>，在<code>网桥br-ex</code>下增加了<code>端口qg-605ddf68-3f</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ovs-vsctl show</span></span><br><span class="line">963c3d27-74db-4e15-a6a8-505f2db9644e</span><br><span class="line">    Bridge br-tun</span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port patch-int</span><br><span class="line">            Interface patch-int</span><br><span class="line">                <span class="built_in">type</span>: patch</span><br><span class="line">                options: &#123;peer=patch-tun&#125;</span><br><span class="line">        Port br-tun</span><br><span class="line">            Interface br-tun</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">    Bridge br-ex</span><br><span class="line">        Port <span class="string">"qg-605ddf68-3f"</span></span><br><span class="line">            Interface <span class="string">"qg-605ddf68-3f"</span></span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port br-ex</span><br><span class="line">            Interface br-ex</span><br><span class="line">                <span class="built_in">type</span>: internal</span><br><span class="line">        Port <span class="string">"enp2s0f0"</span></span><br></pre></td></tr></table></figure>
+<p>查看路由器对应到namespace <code>qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</code>的链路信息，增加了<code>端口qg-605ddf68-3f</code>，即为OVS <code>网桥br-ex</code>新增的端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns exec qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce ip addr</span></span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">42: qr-9924110a-29: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether fa:16:3e:7b:ee:b4 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.10.10.1/24 brd 10.10.10.255 scope global qr-9924110a-29</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::f816:3eff:fe7b:eeb4/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">43: qr-c26528a2-4d: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether fa:16:3e:35:42:73 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.10.20.1/24 brd 10.10.20.255 scope global qr-c26528a2-4d</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::f816:3eff:fe35:4273/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">44: qg-605ddf68-3f: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN qlen 1000</span><br><span class="line">    link/ether fa:16:3e:93:8a:fe brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 172.18.31.176/16 brd 172.18.255.255 scope global qg-605ddf68-3f</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::f816:3eff:fe93:8afe/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>查看namespace <code>qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</code>的路由信息，增加了到外部网络的路由条目，以及默认网关</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~(keystone_admin)]<span class="comment"># ip netns exec qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce ip route</span></span><br><span class="line">default via 172.18.31.254 dev qg-605ddf68-3f </span><br><span class="line">10.10.10.0/24 dev qr-9924110a-29  proto kernel  scope link  src 10.10.10.1 </span><br><span class="line">10.10.20.0/24 dev qr-c26528a2-4d  proto kernel  scope link  src 10.10.20.1 </span><br><span class="line">172.18.0.0/16 dev qg-605ddf68-3f  proto kernel  scope link  src 172.18.18.1</span><br></pre></td></tr></table></figure>
+<p>此时本地网络可以通过外部网络进行访问互联网，<code>qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</code>的iptables实现了该功能，将所有的内部地址通过SNAT将源地址转化为<code>172.18.31.176</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ip netns exec qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce iptables -t nat -nvL</span></span><br><span class="line">......</span><br><span class="line">Chain Neutron-l3-agent-snat (1 references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </span><br><span class="line">   84 44763 Neutron-l3-agent-float-snat  all  --  *      *       0.0.0.0/0            0.0.0.0/0           </span><br><span class="line">    1    69 SNAT       all  --  *      qg-605ddf68-3f  0.0.0.0/0            0.0.0.0/0            to:172.18.31.176</span><br><span class="line">    0     0 SNAT       all  --  *      *       0.0.0.0/0            0.0.0.0/0            mark match ! 0x2/0xffff ctstate DNAT to:172.18.31.176</span><br><span class="line"> ......</span><br></pre></td></tr></table></figure>
+<p>使用Dashboard，以控制台登录IP地址为<code>10.10.10.6</code>的虚拟机实例，执行<code>ping 8.8.8.8</code>，在宿主机上使用<strong>tcpdump</strong>进行抓包，发现内部网络数据包的源被转化为<code>172.18.31.176</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># tcpdump -i enp2s0f0 icmp -n</span></span><br><span class="line">tcpdump: WARNING: enp2s0f0: no IPv4 address assigned</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on enp2s0f0, link-type EN10MB (Ethernet), capture size 65535 bytes</span><br><span class="line">20:46:11.414251 IP 172.18.31.176 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 7992, seq 15, length 64</span><br><span class="line">20:46:11.465107 IP 8.8.8.8 &gt; 172.18.31.176: ICMP <span class="built_in">echo</span> reply, id 7992, seq 15, length 64</span><br><span class="line">20:46:12.416063 IP 172.18.31.176 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 7992, seq 16, length 64</span><br><span class="line">20:46:12.463058 IP 8.8.8.8 &gt; 172.18.31.176: ICMP <span class="built_in">echo</span> reply, id 7992, seq 16, length 64</span><br><span class="line">20:46:13.417996 IP 172.18.31.176 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 7992, seq 17, length 64</span><br><span class="line">20:46:13.467402 IP 8.8.8.8 &gt; 172.18.31.176: ICMP <span class="built_in">echo</span> reply, id 7992, seq 17, length 64</span><br><span class="line">20:46:14.419352 IP 172.18.31.176 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 7992, seq 18, length 64</span><br><span class="line">20:46:14.471452 IP 8.8.8.8 &gt; 172.18.31.176: ICMP <span class="built_in">echo</span> reply, id 7992, seq 18, length 64</span><br></pre></td></tr></table></figure>
+<p>当前拓扑图如图3-6所示</p>
+<center><img src="http://blog.kompaz.win/images/neutron/3-6.jpg" width="600px"></center><center style="color:purple"><strong>图3-6 连接外部网络</strong></center>
+
+<h4 id="创建浮动IP"><a href="#创建浮动IP" class="headerlink" title="创建浮动IP"></a>创建浮动IP</h4><p>由于虚拟机实例位于内部网络，无法在外部网络进行访问，浮动IP可以绑定在虚拟机实例上，实现外部网络对位于内部网络的虚拟机实例的访问。</p>
+<p>namespace <code>qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce</code>的<code>iptables</code>实现了该功能，使用DNAT将浮动IP地址与私有IP地址进行一对一的映射。如下所示，将<code>浮动IP 172.18.31.177</code> 绑定到<code>私有IP 10.10.10.5</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ip netns exec qrouter-ffd79e21-444f-4509-a2a2-ebca27c4b4ce iptables -t nat -nvL</span></span><br><span class="line">......</span><br><span class="line">Chain Neutron-l3-agent-OUTPUT (1 references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </span><br><span class="line">    0     0 DNAT       all  --  *      *       0.0.0.0/0            172.18.18.2          to:10.10.10.5</span><br><span class="line"></span><br><span class="line">Chain Neutron-l3-agent-POSTROUTING (1 references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </span><br><span class="line">    0     0 ACCEPT     all  --  !qg-605ddf68-3f !qg-605ddf68-3f  0.0.0.0/0            0.0.0.0/0            ! ctstate DNAT</span><br><span class="line"></span><br><span class="line">Chain Neutron-l3-agent-PREROUTING (1 references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </span><br><span class="line">    0     0 REDIRECT   tcp  --  qr-+   *       0.0.0.0/0            169.254.169.254      tcp dpt:80 redir ports 9697</span><br><span class="line">    0     0 DNAT       all  --  *      *       0.0.0.0/0            172.18.18.2          to:10.10.10.5</span><br><span class="line"></span><br><span class="line">Chain Neutron-l3-agent-float-snat (1 references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     <span class="built_in">source</span>               destination         </span><br><span class="line">   15 16248 SNAT       all  --  *      *       10.10.10.5           0.0.0.0/0            to:172.18.18.2</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>使用浮动IP登录<code>172.18.31.177</code>登录内部网络虚拟机实例，执行<code>ping 8.8.8.8</code>，在宿主机上使用<strong>tcpdump</strong>进行抓包，发现内部网络数据包的源被转化为浮动IP地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># tcpdump -i enp2s0f0 icmp -n</span></span><br><span class="line">tcpdump: WARNING: enp2s0f0: no IPv4 address assigned</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on enp2s0f0, link-type EN10MB (Ethernet), capture size 65535 bytes</span><br><span class="line">20:48:10.944442 IP 172.18.31.177 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 8060, seq 28, length 64</span><br><span class="line">20:48:10.992068 IP 8.8.8.8 &gt; 172.18.31.177: ICMP <span class="built_in">echo</span> reply, id 8060, seq 28, length 64</span><br><span class="line">20:48:11.946437 IP 172.18.31.177 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 8060, seq 29, length 64</span><br><span class="line">20:48:11.996243 IP 8.8.8.8 &gt; 172.18.31.177: ICMP <span class="built_in">echo</span> reply, id 8060, seq 29, length 64</span><br><span class="line">20:48:12.947441 IP 172.18.31.177 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 8060, seq 30, length 64</span><br><span class="line">20:48:12.999582 IP 8.8.8.8 &gt; 172.18.31.177: ICMP <span class="built_in">echo</span> reply, id 8060, seq 30, length 64</span><br><span class="line">20:48:13.948849 IP 172.18.31.177 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 8060, seq 31, length 64</span><br><span class="line">20:48:14.031387 IP 8.8.8.8 &gt; 172.18.31.177: ICMP <span class="built_in">echo</span> reply, id 8060, seq 31, length 64</span><br><span class="line">20:48:14.949703 IP 172.18.31.177 &gt; 8.8.8.8: ICMP <span class="built_in">echo</span> request, id 8060, seq 32, length 64</span><br></pre></td></tr></table></figure>
+<h4 id="创建NAT外部网络"><a href="#创建NAT外部网络" class="headerlink" title="*创建NAT外部网络"></a>*创建NAT外部网络</h4><p>在物理网络没有给分配外部地址范围的情况下，可以使用一段私有的外部网络地址。但是创建的浮动IP，也只能在宿主机上进行访问虚拟机实例。</p>
+<p>首先删除之前创建的外部网络，然后创建一个外部网络，该地址段与物理网络不在同一个网段。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">neutron net-create --router:external=<span class="literal">true</span> public</span><br><span class="line">neutron subnet-create --name net-ext --allocation-pool start=172.25.4.2,end=172.25.4.254 \</span><br><span class="line">--gateway 172.25.4.1 --dns-nameserver 8.8.8.8 --enable_dhcp=False --ip-version 4 public2 172.25.4.0/24</span><br></pre></td></tr></table></figure>
+<p>为路由器设置网关，命令如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">neutron router-gateway-set router public</span><br></pre></td></tr></table></figure>
+<p>在<code>网桥br-ex</code>下增加了私有IP地址段的网关地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr add 172.24.4.1/24 dev br-ex</span><br></pre></td></tr></table></figure>
+<p>现在宿主机可以访问该网段，但是内部网络无法访问互联网，因此需要在宿主机的<code>iptables</code>上添加NAT条目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -s 172.24.4.0/24 -o br-ex -m comment --comment <span class="string">"000 nat"</span> -j MASQUERADE</span><br></pre></td></tr></table></figure>
+<center><img src="http://blog.kompaz.win/images/neutron/3-7.jpg" width="600px"></center><center style="color:purple"><strong>图3-7 NAT外部网络</strong></center>
+
+<h3 id="4-常用命令"><a href="#4-常用命令" class="headerlink" title="4. 常用命令"></a>4. 常用命令</h3><h4 id="OVS"><a href="#OVS" class="headerlink" title="OVS"></a>OVS</h4><p>添加网桥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-br br1  </span><br><span class="line">ovs-vsctl add-br br2</span><br></pre></td></tr></table></figure>
+<p>添加内部tap端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port br1 tap1 -- <span class="built_in">set</span> Interface tap1 <span class="built_in">type</span>=internal  </span><br><span class="line">ovs-vsctl add-port br2 tap2 -- <span class="built_in">set</span> Interface tap2 <span class="built_in">type</span>=internal</span><br></pre></td></tr></table></figure>
+<p>创建patch类型端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port br1 patch-ovs-1 -- <span class="built_in">set</span> Interface patch-ovs-1 <span class="built_in">type</span>=patch -- <span class="built_in">set</span> Interface patch-ovs-1 options:peer=patch-ovs-2</span><br><span class="line">ovs-vsctl add-port br2 patch-ovs-2 -- <span class="built_in">set</span> Interface patch-ovs-2 <span class="built_in">type</span>=patch -- <span class="built_in">set</span> Interface patch-ovs-2 options:peer=patch-ovs-1</span><br></pre></td></tr></table></figure>
+<h4 id="namespace"><a href="#namespace" class="headerlink" title="namespace"></a>namespace</h4><p>添加namespace</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip netns add server</span><br><span class="line">ip netns add gateway</span><br><span class="line">ip netns add client</span><br></pre></td></tr></table></figure>
+<p>激活lo端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip netns <span class="built_in">exec</span> server ip link <span class="built_in">set</span> dev lo up</span><br><span class="line">ip netns <span class="built_in">exec</span> gateway ip link <span class="built_in">set</span> dev lo up</span><br><span class="line">ip netns <span class="built_in">exec</span> client ip link <span class="built_in">set</span> dev lo up</span><br></pre></td></tr></table></figure>
+<h4 id="iproute2"><a href="#iproute2" class="headerlink" title="iproute2"></a>iproute2</h4><p>添加veth pair</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link add svr-veth <span class="built_in">type</span> veth peer name svrgw-veth</span><br><span class="line">ip link add cli-veth <span class="built_in">type</span> veth peer name cligw-veth</span><br></pre></td></tr></table></figure>
+<p>设置ip地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr add 172.24.4.1/24 dev svr-veth</span><br></pre></td></tr></table></figure>
+<p>添加链路到namespace</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ip link <span class="built_in">set</span> svr-veth netns server</span><br><span class="line">ip link <span class="built_in">set</span> svrgw-veth netns gateway</span><br><span class="line">ip link <span class="built_in">set</span> cligw-veth netns gateway</span><br><span class="line">ip link <span class="built_in">set</span> cli-veth netns client</span><br></pre></td></tr></table></figure>
+<h4 id="Neutron"><a href="#Neutron" class="headerlink" title="Neutron"></a>Neutron</h4><p>创建内部网络</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">neutron net-create private</span><br><span class="line">neutron subnet-create --name net_10_10_10 --allocation-pool start=10.10.10.2,end=10.10.10.254 \</span><br><span class="line">--gateway 10.10.10.1 --dns-nameserver 8.8.8.8 --enable_dhcp=<span class="literal">true</span> --ip-version 4 private 10.10.10.0/24</span><br></pre></td></tr></table></figure>
+<p>创建外部网络</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">neutron net-create --router:external=<span class="literal">true</span>  public</span><br><span class="line">neutron subnet-create --name net-ext --allocation-pool start=172.24.4.2,end=172.24.4.254 \</span><br><span class="line">--gateway 172.24.4.1 --dns-nameserver 8.8.8.8 --enable_dhcp=False --ip-version 4 public 172.24.4.0/24</span><br></pre></td></tr></table></figure>
+<p>创建路由器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">neutron router-create router</span><br></pre></td></tr></table></figure>
+<p>路由器添加端口并设置网关</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">neutron router-interface-add router net_10_10_10</span><br><span class="line">neutron router-gateway-set router public</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h3><ul>
+<li><a href="http://www.rendoumi.com/open-vswitchzhong-de-patch-portshi-shi-yao-yi-ji-zen-yao-yong/" target="_blank" rel="noopener">http://www.rendoumi.com/open-vswitchzhong-de-patch-portshi-shi-yao-yi-ji-zen-yao-yong/</a></li>
+<li><a href="https://linux.cn/article-3144-1.html" target="_blank" rel="noopener">https://linux.cn/article-3144-1.html</a></li>
+<li><a href="http://www.aboutyun.com/thread-8973-1-1.html" target="_blank" rel="noopener">http://www.aboutyun.com/thread-8973-1-1.html</a></li>
+<li><a href="https://xiaofandh12.github.io/OpenStack-Nutron-Learning-Material" target="_blank" rel="noopener">https://xiaofandh12.github.io/OpenStack-Nutron-Learning-Material</a></li>
+<li><a href="https://segmentfault.com/a/1190000004059167" target="_blank" rel="noopener">https://segmentfault.com/a/1190000004059167</a></li>
+<li><a href="http://www.aboutyun.com/thread-11769-1-1.html" target="_blank" rel="noopener">http://www.aboutyun.com/thread-11769-1-1.html</a></li>
+<li><a href="http://www.cnblogs.com/CloudMan6/" target="_blank" rel="noopener">http://www.cnblogs.com/CloudMan6/</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/openstack/" rel="tag"># openstack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/08/Tmux 配置使用/" rel="next" title="Tmux配置使用">
+                <i class="fa fa-chevron-left"></i> Tmux配置使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/19/OpenVSwitch基本使用/" rel="prev" title="OpenVSwitch基本使用">
+                OpenVSwitch基本使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-概述"><span class="nav-number">1.</span> <span class="nav-text">1. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Neutron与传统网络管理"><span class="nav-number">1.1.</span> <span class="nav-text">Neutron与传统网络管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Neutron功能"><span class="nav-number">1.2.</span> <span class="nav-text">Neutron功能</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#二层交换-Switching"><span class="nav-number">1.2.1.</span> <span class="nav-text">二层交换 Switching</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三层路由-Routing"><span class="nav-number">1.2.2.</span> <span class="nav-text">三层路由 Routing</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#负载均衡-Load-Balancing"><span class="nav-number">1.2.3.</span> <span class="nav-text">负载均衡 Load Balancing</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#防火墙-Firing"><span class="nav-number">1.2.4.</span> <span class="nav-text">防火墙 Firing</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试环境"><span class="nav-number">1.3.</span> <span class="nav-text">测试环境</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Neutron网络初始化"><span class="nav-number">2.</span> <span class="nav-text">2. Neutron网络初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用iproute2"><span class="nav-number">2.1.</span> <span class="nav-text">使用iproute2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Neutron状态初始化"><span class="nav-number">2.2.</span> <span class="nav-text">Neutron状态初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-网络创建"><span class="nav-number">3.</span> <span class="nav-text">3. 网络创建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建第一个内部网络"><span class="nav-number">3.1.</span> <span class="nav-text">创建第一个内部网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加虚拟机实例到第一个内部网络"><span class="nav-number">3.2.</span> <span class="nav-text">添加虚拟机实例到第一个内部网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建第二个内部网络"><span class="nav-number">3.3.</span> <span class="nav-text">创建第二个内部网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加虚拟机实例到第二个内部网络"><span class="nav-number">3.4.</span> <span class="nav-text">添加虚拟机实例到第二个内部网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建虚拟机路由器"><span class="nav-number">3.5.</span> <span class="nav-text">创建虚拟机路由器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建外部网络"><span class="nav-number">3.6.</span> <span class="nav-text">创建外部网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建浮动IP"><span class="nav-number">3.7.</span> <span class="nav-text">创建浮动IP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建NAT外部网络"><span class="nav-number">3.8.</span> <span class="nav-text">*创建NAT外部网络</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-常用命令"><span class="nav-number">4.</span> <span class="nav-text">4. 常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OVS"><span class="nav-number">4.1.</span> <span class="nav-text">OVS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#namespace"><span class="nav-number">4.2.</span> <span class="nav-text">namespace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iproute2"><span class="nav-number">4.3.</span> <span class="nav-text">iproute2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Neutron"><span class="nav-number">4.4.</span> <span class="nav-text">Neutron</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-参考"><span class="nav-number">5.</span> <span class="nav-text">5. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

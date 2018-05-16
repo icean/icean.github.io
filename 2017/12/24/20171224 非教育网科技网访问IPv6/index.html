@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="毕业之后就要没有IPv6网络环境了，因此需要思索几种方式可以在非教育网科技网的情况下，访问IPv6网络。">
+<meta name="keywords" content="IPv6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="非教育网科技网访问IPv6网络">
+<meta property="og:url" content="http://blog.kompaz.win/2017/12/24/20171224 非教育网科技网访问IPv6/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="毕业之后就要没有IPv6网络环境了，因此需要思索几种方式可以在非教育网科技网的情况下，访问IPv6网络。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:32.928Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="非教育网科技网访问IPv6网络">
+<meta name="twitter:description" content="毕业之后就要没有IPv6网络环境了，因此需要思索几种方式可以在非教育网科技网的情况下，访问IPv6网络。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/12/24/20171224 非教育网科技网访问IPv6/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>非教育网科技网访问IPv6网络 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/12/24/20171224 非教育网科技网访问IPv6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">非教育网科技网访问IPv6网络
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-12-24 22:30:00" itemprop="dateCreated datePublished" datetime="2017-12-24T22:30:00+08:00">2017-12-24</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:32" itemprop="dateModified" datetime="2018-05-08T09:52:32+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">毕业之后就要没有IPv6网络环境了，因此需要思索几种方式可以在非教育网科技网的情况下，访问IPv6网络。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h3><p>毕业之后就要没有IPv6网络环境了，因此需要思索几种方式可以在非教育网科技网的情况下，访问IPv6网络。</p>
+<h3 id="2-访问方式"><a href="#2-访问方式" class="headerlink" title="2. 访问方式"></a>2. 访问方式</h3><ul>
+<li>代理，购买一个双栈主机，在主机上搭建代理服务，例如shadowsocks，终端设备可以通过代理访问IPv6站点。但是也有局限性，国外的IPv6主机，无法访问一些国内的IPv6站点，例如六维空间。</li>
+<li>VPN，仍需要购买一个双栈主机，在主机上搭建VPN，将IPv6封装在IPv4中转发</li>
+<li>HE + TINC VPN，购买一个主机，使用<a href="https://tunnelbroker.net/" target="_blank" rel="noopener">IPv6 Tunnel Broker</a>获取IPv6地址段，并通过TINC VPN的交换机模式与家用路由器连接，接入设备获取IPv6地址。</li>
+<li>电信IPv6，还没体验，后续更新</li>
+</ul>
+<h3 id="3-代理"><a href="#3-代理" class="headerlink" title="3. 代理"></a>3. 代理</h3><p>代理搭建方式众多，最简单的是使用shadowsocks。</p>
+<p>该方式只能通过终端设备登录VPN获取IPv6网络访问权限，没有实现透明配置。</p>
+<h3 id="4-VPN"><a href="#4-VPN" class="headerlink" title="4. VPN"></a>4. VPN</h3><p>这里使用的主要是IKEv2和Ocserv，可以使用可路由全局IPv6地址块和<a href="https://github.com/DanielAdolfsson/ndppd" target="_blank" rel="noopener">ndppd</a>方式。</p>
+<p>该方式只能通过终端设备登录VPN获取IPv6网络访问权限，没有实现透明配置。</p>
+<h4 id="IPv6转发开启"><a href="#IPv6转发开启" class="headerlink" title="IPv6转发开启"></a>IPv6转发开启</h4><p>开启IPv6的转发。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net.ipv6.conf.all.accept_ra = 2</span><br><span class="line">net.ipv6.conf.eth0.accept_ra = 2</span><br><span class="line">net.ipv6.conf.default.forwarding = 1</span><br></pre></td></tr></table></figure>
+<h4 id="可路由全局IPv6地址块"><a href="#可路由全局IPv6地址块" class="headerlink" title="可路由全局IPv6地址块"></a>可路由全局IPv6地址块</h4><p>想服务器运营商申请或者购买，例如Linode。</p>
+<h4 id="ndppd安装"><a href="#ndppd安装" class="headerlink" title="ndppd安装"></a>ndppd安装</h4><p><a href="https://github.com/DanielAdolfsson/ndppd" target="_blank" rel="noopener">ndppd</a>全称为NDP Proxy Daemon，为IPv6中NDP代理守护进程。详情参见<a href="https://github.com/DanielAdolfsson/ndppd。" target="_blank" rel="noopener">https://github.com/DanielAdolfsson/ndppd。</a></p>
+<p>只能通过编译安装，安装方式如下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/DanielAdolfsson/ndppd/archive/0.2.5.tar.gz</span><br><span class="line">tar xvzf 0.2.5.tar.gz</span><br><span class="line"><span class="built_in">cd</span> ndppd-0.2.5</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>编辑<code>/etc/ndppd.conf</code>文件，最重要的为rule字段后面对应IPv6地址段，为该地址段提供NDP代理。</p>
+<p>假设云服务器IPv6地址为<code>2001:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/64</code>，我们想使用其中的一部分作为VPN客户端获取的IPv6地址池，例如<code>2001:xxxx:xxxx:xxxx:1234:4321:1234::/116</code>,则对应的规则如下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">route-ttl 30000</span><br><span class="line">proxy eth0 &#123;</span><br><span class="line">router yes</span><br><span class="line">timeout 500</span><br><span class="line">ttl 30000</span><br><span class="line">rule 2001:xxxx:xxxx:xxxx:1234:4321:1234::/116 &#123;</span><br><span class="line">	static</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动ndppd</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ndppd -d</span><br></pre></td></tr></table></figure>
+<h4 id="IKEv2设置"><a href="#IKEv2设置" class="headerlink" title="IKEv2设置"></a>IKEv2设置</h4><p>修改配置文件<code>ipsec.conf</code></p>
+<p>修改<strong>leftsubnet</strong>字段，添加<code>::/0</code>，代表转发所有IPv6流量。</p>
+<p>修改<strong>rightsourceip</strong>字段，添加可路由全局IPv6地址块或者ndppd设置的IPv6地址块。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">leftsubnet = 0.0.0.0/0,::/0</span><br><span class="line">rightsourceip = 192.168.81.0/24,2001:xxxx:xxxx:xxxx:1234:4321:1234::/116</span><br></pre></td></tr></table></figure>
+<p>重启服务</p>
+<h4 id="Ocserv设置"><a href="#Ocserv设置" class="headerlink" title="Ocserv设置"></a>Ocserv设置</h4><p>修改配置文件<code>/etc/ocserv/ocserv.conf</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ipv6-network = 2001:xxxx:xxxx:xxxx:1234:4321:1234::</span><br><span class="line">ipv6-prefix = 112</span><br><span class="line">ipv6-dns = 2001:4860:4860::8888</span><br></pre></td></tr></table></figure>
+<p>重启服务</p>
+<h4 id="客户端连接"><a href="#客户端连接" class="headerlink" title="客户端连接"></a>客户端连接</h4><p>在windows下，可以指定不转发IPv4流量到VPN网关，这样IPv6流量仍然走正常的链路，IPv6虽然获取全球可路由IPv6地址，但是没有默认路由条目，因此在VPN连接成功后，需要以管理员方式启动命令行，添加IPv6的默认路由，如下例子，<code>2001:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/64</code>为云服务器的IPv6地址。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route add ::/<span class="number">0</span> <span class="number">2001</span>:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx</span><br></pre></td></tr></table></figure>
+<p>其他平台根据IKEv2的<strong>leftsubnet</strong>字段决定可以访问哪些网段。</p>
+<h3 id="5-HE-TINC-VPN"><a href="#5-HE-TINC-VPN" class="headerlink" title="5. HE + TINC VPN"></a>5. HE + TINC VPN</h3><p>后续更新</p>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/12/24</td>
+<td>文档创建</td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2018/1/1</td>
+<td>错误修改</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="http://blog.iopsl.com/ndppd-on-vultr-to-enable-fully-routed-64-for-ipv6/" target="_blank" rel="noopener">http://blog.iopsl.com/ndppd-on-vultr-to-enable-fully-routed-64-for-ipv6/</a></li>
+<li><a href="https://cyyself.name/2016/07/strongswan-ipv6/" target="_blank" rel="noopener">https://cyyself.name/2016/07/strongswan-ipv6/</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/IPv6/" rel="tag"># IPv6</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/11/20171211 OpenVPN over IKEv2/" rel="next" title="OpenVPN over IKEv2 配置">
+                <i class="fa fa-chevron-left"></i> OpenVPN over IKEv2 配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/01/Demo/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-前言"><span class="nav-number">1.</span> <span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-访问方式"><span class="nav-number">2.</span> <span class="nav-text">2. 访问方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-代理"><span class="nav-number">3.</span> <span class="nav-text">3. 代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-VPN"><span class="nav-number">4.</span> <span class="nav-text">4. VPN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv6转发开启"><span class="nav-number">4.1.</span> <span class="nav-text">IPv6转发开启</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可路由全局IPv6地址块"><span class="nav-number">4.2.</span> <span class="nav-text">可路由全局IPv6地址块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ndppd安装"><span class="nav-number">4.3.</span> <span class="nav-text">ndppd安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IKEv2设置"><span class="nav-number">4.4.</span> <span class="nav-text">IKEv2设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ocserv设置"><span class="nav-number">4.5.</span> <span class="nav-text">Ocserv设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端连接"><span class="nav-number">4.6.</span> <span class="nav-text">客户端连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-HE-TINC-VPN"><span class="nav-number">5.</span> <span class="nav-text">5. HE + TINC VPN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">6.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="通过云服务器和路由器之间配置tinc VPN，终端设备通过IKEv2登录云服务器，访问路由器。">
+<meta name="keywords" content="IKEv2,OpenWRT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT IKEv2 + Tinc远程管理">
+<meta property="og:url" content="http://blog.kompaz.win/2017/12/11/20171211 OpenWRT IKEv2 + Tinc远程管理/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="通过云服务器和路由器之间配置tinc VPN，终端设备通过IKEv2登录云服务器，访问路由器。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ikev2_tinc\1.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:32.896Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT IKEv2 + Tinc远程管理">
+<meta name="twitter:description" content="通过云服务器和路由器之间配置tinc VPN，终端设备通过IKEv2登录云服务器，访问路由器。">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/openwrt_ikev2_tinc\1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/12/11/20171211 OpenWRT IKEv2 + Tinc远程管理/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT IKEv2 + Tinc远程管理 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/12/11/20171211 OpenWRT IKEv2 + Tinc远程管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT IKEv2 + Tinc远程管理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-12-11 10:28:00" itemprop="dateCreated datePublished" datetime="2017-12-11T10:28:00+08:00">2017-12-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:32" itemprop="dateModified" datetime="2018-05-08T09:52:32+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/解决/" itemprop="url" rel="index"><span itemprop="name">解决</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">通过云服务器和路由器之间配置tinc VPN，终端设备通过IKEv2登录云服务器，访问路由器。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>远程管理实验室的路由器。路由器不是通过ADSL上网，因此无法使用DDNS方式进行解析。</p>
+<p>构思的方案为：</p>
+<ul>
+<li><strong>云服务器A</strong>和<strong>路由器B</strong>之间配置<strong>tinc VPN</strong>，因此<strong>云服务器A</strong>可以通过<strong>tinc VPN</strong>访问<strong>路由器B</strong></li>
+<li><strong>云服务器A</strong>配置为<strong>IKEv2 VPN</strong>服务器，<strong>终端设备C</strong>登录该<strong>IKEv2 VPN</strong>， 然后<strong>访问路由器B</strong></li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/openwrt_ikev2_tinc\1.jpg" width="600px"></center><center style="color:purple"><strong>图1-1 拓扑图</strong></center>
+
+<h3 id="云服务器A配置"><a href="#云服务器A配置" class="headerlink" title="云服务器A配置"></a>云服务器A配置</h3><h4 id="tinc-VPN配置"><a href="#tinc-VPN配置" class="headerlink" title="tinc VPN配置"></a>tinc VPN配置</h4><p>关于tinc VPN更多的配置，参考官方网站<a href="https://www.tinc-vpn.org/" target="_blank" rel="noopener">https://www.tinc-vpn.org/</a></p>
+<p>脚本变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## variables</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># tinc.conf</span></span><br><span class="line"><span class="comment"># NET_NAME 网络名字 例如 NET_NAME="tinc"</span></span><br><span class="line"><span class="comment"># NODE_NAME 节点名字 例如 NODE_NAME="aliyun"</span></span><br><span class="line"><span class="comment"># PORT 使用端口 例如 PORT="6565"</span></span><br><span class="line"><span class="comment"># INTERFACE 虚拟网卡名字 例如 INTERFACE="tun0"</span></span><br><span class="line"><span class="comment"># CONNECT_TO 连接到的节点 空格分割 如 CONNECT_TO="netgear onion"</span></span><br><span class="line"></span><br><span class="line">NET_NAME=<span class="string">"tinc"</span></span><br><span class="line">NODE_NAME=<span class="string">"aliyun"</span></span><br><span class="line">PORT=<span class="string">"6565"</span></span><br><span class="line">INTERFACE=<span class="string">"tun0"</span></span><br><span class="line">CONNECT_TO=<span class="string">"netgear"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># tinc-up</span></span><br><span class="line"><span class="comment"># TUNNEL_IP 虚拟网卡IP地址 例如 TUNNEL_IP="172.16.1.10"</span></span><br><span class="line"><span class="comment"># ROUTES 需要路由的条路 使用空格分割 例如 ROUTES="192.168.1.0/24 192.168.2.10/24 192.168.3.0/24"</span></span><br><span class="line"></span><br><span class="line">TUNNEL_IP=<span class="string">"172.16.1.100"</span></span><br><span class="line">ROUTES=<span class="string">"192.168.2.0/24"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># hosts</span></span><br><span class="line"><span class="comment"># SUBNETS 宣告的本地路由条目 使用空格分割 例如 SUBNETS="10.10.10.0/24 10.10.20.0/24"</span></span><br><span class="line"><span class="comment"># IP_ADDR 连接tinc使用的IP地址， 例如 IP_ADDR="1.2.3.4"</span></span><br><span class="line"></span><br><span class="line">SUBNETS=<span class="string">""</span></span><br><span class="line">IP_ADDR=<span class="string">"112.113.114.115"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># vpn</span></span><br><span class="line"><span class="comment"># VIRTUAL_SUBNET VPN使用的虚拟ip地址 例如 VIRTUAL_SUBNET="192.168.81.0/24"</span></span><br><span class="line"></span><br><span class="line">VIRTUAL_SUBNET=<span class="string">"192.168.81.0/24"</span></span><br></pre></td></tr></table></figure>
+<p><strong>source变量文件</strong>，然后安装并创建配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yum install tinc -y</span><br><span class="line"></span><br><span class="line">mkdir -p /etc/tinc/<span class="variable">$&#123;NET_NAME&#125;</span>/hosts</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /etc/tinc/<span class="variable">$&#123;NET_NAME&#125;</span></span><br><span class="line">touch tinc.conf</span><br><span class="line">touch tinc-up tinc-down</span><br><span class="line">chmod u+x tinc-*</span><br></pre></td></tr></table></figure>
+<p>编辑<code>tinc.conf</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF &gt;&gt; tinc.conf</span><br><span class="line">Name = <span class="variable">$&#123;NODE_NAME&#125;</span></span><br><span class="line">Port = <span class="variable">$&#123;PORT&#125;</span></span><br><span class="line">Interface = <span class="variable">$&#123;INTERFACE&#125;</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> CONNECT <span class="keyword">in</span> <span class="variable">$&#123;CONNECT_TO&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"ConnectTo = <span class="variable">$CONNECT</span>"</span> &gt;&gt; tinc.conf</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>编辑<code>tinc-up</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF &gt;&gt; tinc-up</span><br><span class="line"><span class="comment">#/bin/bash</span></span><br><span class="line"></span><br><span class="line">IP=<span class="variable">$&#123;TUNNEL_IP&#125;</span></span><br><span class="line">ip link <span class="built_in">set</span> \<span class="variable">$INTERFACE</span> up</span><br><span class="line">ip addr add \<span class="variable">$IP</span> dev \<span class="variable">$INTERFACE</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ROUTE <span class="keyword">in</span> <span class="variable">$&#123;ROUTES&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"ip route add <span class="variable">$&#123;ROUTE&#125;</span> dev \$INTERFACE"</span> &gt;&gt; tinc-up</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>编辑<code>tinc-down</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF &gt;&gt; tinc-down</span><br><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">ip link <span class="built_in">set</span> \<span class="variable">$INTERFACE</span> down</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>生成密钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tincd -n <span class="variable">$&#123;NET_NAME&#125;</span> -K</span><br></pre></td></tr></table></figure>
+<p>修改生成后的公钥文件，添加自己的IP地址<code>${IP_ADDR}</code>、使用端口<code>${PORT}</code>、虚拟机接口使用的IP地址<code>${TUNNEL_IP}</code>、以及其他需要宣告的子网<code>${SUBNETS}</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> hosts</span><br><span class="line">mv <span class="variable">$&#123;NODE_NAME&#125;</span> <span class="variable">$&#123;NODE_NAME&#125;</span>.bak</span><br><span class="line">touch <span class="variable">$&#123;NODE_NAME&#125;</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;&gt; <span class="variable">$&#123;NODE_NAME&#125;</span></span><br><span class="line">Address = <span class="variable">$&#123;IP_ADDR&#125;</span></span><br><span class="line">Port = <span class="variable">$&#123;PORT&#125;</span></span><br><span class="line">Subnet = <span class="variable">$&#123;TUNNEL_IP&#125;</span>/32</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> SUBNETS <span class="keyword">in</span> <span class="variable">$&#123;SUBNETS&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"Subnet = <span class="variable">$&#123;SUBNETS&#125;</span>"</span> &gt;&gt; <span class="variable">$&#123;NODE_NAME&#125;</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">cat <span class="variable">$&#123;NODE_NAME&#125;</span>.bak &gt;&gt; <span class="variable">$&#123;NODE_NAME&#125;</span></span><br><span class="line"></span><br><span class="line">mkdir /root/tinc_hosts_backup</span><br><span class="line">mv <span class="variable">$&#123;NODE_NAME&#125;</span>.bak /root/tinc_hosts_backup</span><br></pre></td></tr></table></figure>
+<p>复制<strong>路由器B</strong>的tinc VPN公钥文件到<code>/etc/tinc/${NET_NAME}/hosts</code>目录下，因为<strong>路由器B</strong> WAN接口的IP为私有IP地址段，<strong>所以删除公钥中Address字段</strong>。</p>
+<p>添加iptables条目，开放相应的端口<code>${PORT}</code>，同时将IKEv2 VPN虚拟机网络<code>${VIRTUAL_SUBNET}</code>通过对tinc VPN虚拟端口<code>${INTERFACE}</code>的NAT方式，访问<strong>路由器B</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT 2 -p tcp --dport <span class="variable">$&#123;PORT&#125;</span> -j ACCEPT</span><br><span class="line">iptables -I INPUT 2 -p udp --dport <span class="variable">$&#123;PORT&#125;</span> -j ACCEPT</span><br><span class="line">iptables -A POSTROUTING -s <span class="variable">$&#123;VIRTUAL_SUBNET&#125;</span> -o <span class="variable">$&#123;INTERFACE&#125;</span> -j MASQUERADE</span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<p>启动服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## CentOS 7</span></span><br><span class="line">systemctl start tinc@<span class="variable">$&#123;NET_NAME&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## CentOS 6</span></span><br><span class="line">tinc -n <span class="variable">$&#123;NET_NAME&#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="IKEv2-VPN配置"><a href="#IKEv2-VPN配置" class="headerlink" title="IKEv2 VPN配置"></a>IKEv2 VPN配置</h4><p>参考《<a href="http://blog.kompaz.win/2017/01/26/CentOS%206.x7.x%20Strongswan%205.5.1%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85+Freeradius%E9%AA%8C%E8%AF%81/">CentOS 6.x/7.x Strongswan 5.5.1编译安装 + Freeradius验证</a>》</p>
+<p>注意控制<code>leftsubnet</code>字段，该字段自定了VPN接入设备可以访问哪些网络！</p>
+<p>这里定义为<strong>leftsubnet = 192.168.2.0/24</strong></p>
+<h3 id="路由器B配置"><a href="#路由器B配置" class="headerlink" title="路由器B配置"></a>路由器B配置</h3><p>具体配置参考《<a href="http://blog.kompaz.win/2017/03/30/OpenWRT%20tinc/">OpenWRT Tinc配置</a>》</p>
+<p>修改当前tinc VPN配置步骤</p>
+<ul>
+<li>添加<strong>云服务器A</strong>的tinc VPN公钥<strong>路由器B</strong></li>
+<li>修改配置文件<code>/etc/config/tinc</code>，添加连接到<strong>云服务器A</strong>的条目</li>
+<li>重启tinc VPN服务</li>
+</ul>
+<h3 id="接入终端C配置"><a href="#接入终端C配置" class="headerlink" title="接入终端C配置"></a>接入终端C配置</h3><p>配置IKEv2 VPN，参考《<a href="http://blog.kompaz.win/2017/01/29/IKEv2%20Manual%20v2/">IKEv2 用户配置手册（图文版）v2</a>》</p>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/12/11</td>
+<td>文档</td>
+</tr>
+<tr>
+<td>修改1</td>
+<td>2017/12/20</td>
+<td>添加配图</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/IKEv2/" rel="tag"># IKEv2</a>
+          
+            <a href="/tags/OpenWRT/" rel="tag"># OpenWRT</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/21/20171225 CentOS7 命令行使用PPTP客户端/" rel="next" title="CentOS7命令模式使用PPTP客户端">
+                <i class="fa fa-chevron-left"></i> CentOS7命令模式使用PPTP客户端
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/11/20171211 OpenVPN over IKEv2/" rel="prev" title="OpenVPN over IKEv2 配置">
+                OpenVPN over IKEv2 配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#云服务器A配置"><span class="nav-number">2.</span> <span class="nav-text">云服务器A配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tinc-VPN配置"><span class="nav-number">2.1.</span> <span class="nav-text">tinc VPN配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IKEv2-VPN配置"><span class="nav-number">2.2.</span> <span class="nav-text">IKEv2 VPN配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由器B配置"><span class="nav-number">3.</span> <span class="nav-text">路由器B配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接入终端C配置"><span class="nav-number">4.</span> <span class="nav-text">接入终端C配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">5.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

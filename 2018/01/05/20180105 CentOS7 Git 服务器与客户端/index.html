@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Git 服务器与客户端使用">
+<meta name="keywords" content="linux,git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git服务器搭建与常见问题总结">
+<meta property="og:url" content="http://blog.kompaz.win/2018/01/05/20180105 CentOS7 Git 服务器与客户端/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="Git 服务器与客户端使用">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://i.imgur.com/BPXfTmi.png">
+<meta property="og:image" content="http://i.imgur.com/nmpak8V.png">
+<meta property="og:updated_time" content="2018-05-08T01:52:32.954Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git服务器搭建与常见问题总结">
+<meta name="twitter:description" content="Git 服务器与客户端使用">
+<meta name="twitter:image" content="http://i.imgur.com/BPXfTmi.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2018/01/05/20180105 CentOS7 Git 服务器与客户端/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Git服务器搭建与常见问题总结 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2018/01/05/20180105 CentOS7 Git 服务器与客户端/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git服务器搭建与常见问题总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-01-05 09:07:14" itemprop="dateCreated datePublished" datetime="2018-01-05T09:07:14+08:00">2018-01-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:32" itemprop="dateModified" datetime="2018-05-08T09:52:32+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">Git 服务器与客户端使用</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-Git数据传输协议"><a href="#1-Git数据传输协议" class="headerlink" title="1. Git数据传输协议"></a>1. Git数据传输协议</h3><p>Git 支持的数据传输协议有下面这些</p>
+<ul>
+<li>本地传输</li>
+<li>SSH 协议（最常见）</li>
+<li>Git 协议</li>
+<li>HTTP/HTTPS 协议（速度最慢）</li>
+</ul>
+<p>本地传输、SSH 协议与 Git 协议在传输数据时都会尽可能对数据压缩，所以相对于 HTTP/HTTPS 协议这三个协议在传输文件时会快好多。本文配置 Git 服务器，使得它支持 SSH 与 Git 协议，并通过这两种协议 Clone 上面建立的远程仓库。</p>
+<hr>
+<h3 id="2-Git协议"><a href="#2-Git协议" class="headerlink" title="2. Git协议"></a>2. Git协议</h3><p>为了使 Git 服务器支持 Git 协议，需要在 Git 服务器上安装 git-daemon。git-daemon 是 Git 自带的一项功能，它能够让所有人都能拥有读取仓库的权限。</p>
+<p>安装 git-daemon</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install git-daemon -y</span><br></pre></td></tr></table></figure>
+<p>修改 git-daemon 的 systemd 配置文件 <code>/usr/lib/systemd/system/git@.service</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /usr/lib/systemd/system/git@.service</span><br></pre></td></tr></table></figure>
+<p>内容如下，<code>--base-path=/home/git/repositories</code>对应为下面介绍的<strong>Gitosis</strong>路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Git Repositories Server Daemon</span><br><span class="line">Documentation=man:git-daemon(1)</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User=git</span><br><span class="line">ExecStart=-/usr/libexec/git-core/git-daemon --base-path=/home/git/repositories</span><br><span class="line">--syslog --inetd --verbose</span><br><span class="line">StandardInput=socket</span><br></pre></td></tr></table></figure>
+<p>启动 git-daemon</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start git.socket</span><br></pre></td></tr></table></figure>
+<p>如果启用了防火墙，则需要开放 <code>9418</code> 端口</p>
+<hr>
+<h3 id="3-Gitosis"><a href="#3-Gitosis" class="headerlink" title="3. Gitosis"></a>3. Gitosis</h3><h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>把所有用户的公钥保存在 <code>authorized_keys</code> 文件的做法，当用户数量达到几百人的规模时，管理十分不利。每次改删用户都必须登录服务器，这种做法还缺少必要的权限管理 — 每个人都对所有项目拥有完整的读写权限。</p>
+<p>Gitosis 就是一套用来管理 <code>authorized_keys</code>文件和实现简单连接限制的脚本。用来添加用户和设定权限的并非通过网页程序，是管理一个特殊的 Git 仓库。管理员只需要在这个特殊仓库内做好相应的设定，然后推送到服务器上，Gitosis 就会随之改变运行策略。</p>
+<h4 id="软件安装-amp-初始化"><a href="#软件安装-amp-初始化" class="headerlink" title="软件安装&amp;初始化"></a>软件安装&amp;初始化</h4><p>以root用户安装gitosis，显示Finished processing dependencies for gitosis==0.2即表示成功<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install python python-setuptools -y</span><br><span class="line">git <span class="built_in">clone</span> git://github.com/res0nat0r/gitosis.git</span><br><span class="line"><span class="built_in">cd</span> gitosis</span><br><span class="line">python setup.py install</span><br></pre></td></tr></table></figure></p>
+<p>创建git用户<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd -c <span class="string">'git version manage'</span> -m -d /home/git -s /bin/bash  git</span><br></pre></td></tr></table></figure></p>
+<p>切换到git用户，这里使用git用户来管理gitosis权限管理仓库，因此初始化ssh密钥。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">su - git</span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line">chmod 700 .ssh</span><br></pre></td></tr></table></figure>
+<p>在git用户目录下，使用命令<code>gitosis-init &lt; ~/.ssh/id_rsa.pub</code>初始化gitosis，显示以下信息即表示成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/git/repositories/gitosis-admin.git/</span><br><span class="line">Reinitialized existing Git repository <span class="keyword">in</span> /home/git/repositories/gitosis-admin.git/</span><br></pre></td></tr></table></figure>
+<p>则在当前目录下生成了两个文件夹<code>gitosis</code>、<code>repositories</code>，其中<code>repositories</code>是存放软件仓库的地方。</p>
+<p>为了安全，建议删除公钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -rf /home/git/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<h4 id="gitosis-admin管理"><a href="#gitosis-admin管理" class="headerlink" title="gitosis-admin管理"></a>gitosis-admin管理</h4><p>在git用户目录下，将<code>/home/git/repositories/</code>目录下的<code>gitosis-admin</code>项目clone到本地</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">git <span class="built_in">clone</span> git@localhost:gitosis-admin.git</span><br></pre></td></tr></table></figure>
+<p>clone的项目中，<code>gitosis.conf</code>保存的是关于git用户相关的设置，<code>keydir</code>保存的是用户公钥。</p>
+<h4 id="gitosis-admin管理员添加"><a href="#gitosis-admin管理员添加" class="headerlink" title="gitosis-admin管理员添加"></a>gitosis-admin管理员添加</h4><p>修改<code>gitosis.conf</code>，添加<code>test@localhost</code>用户为<code>gitosis-admin</code>仓库的管理员</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[gitosis]                                </span><br><span class="line">                                         </span><br><span class="line">[group gitosis-admin]                    </span><br><span class="line">members = git@localhost <span class="built_in">test</span>@localhost</span><br><span class="line">writable = gitosis-admin</span><br></pre></td></tr></table></figure>
+<p>将<code>test</code>账户的公钥，拷贝到<code>~/gitosis-admin/keydir</code>中，修改用书属主和属组为git，并重命名为<a href="mailto:`test@localhost.pub" target="_blank" rel="noopener">`test@localhost.pub</a>`，公钥的文件名需要和members参数对应的用户名一致！</p>
+<p>完成上述修改后，将本地修改推送到仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"add new Administrator"</span></span><br><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
+<p>这时候<code>test</code>账户下可以管理gitosis-admin仓库了！</p>
+<h4 id="增加及设置管理项目"><a href="#增加及设置管理项目" class="headerlink" title="增加及设置管理项目"></a>增加及设置管理项目</h4><p>查看git服务器已经上传密钥,<a href="mailto:`root@tokyo.pub" target="_blank" rel="noopener">`root@tokyo.pub</a>`为已经上传的客户端生成的公钥。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls keydir  </span><br><span class="line">cat keydir/root@tokyo.pub</span><br></pre></td></tr></table></figure>
+<p>编辑项目管理配置文件，在文件尾增加以下内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[group <span class="built_in">test</span>]            <span class="comment"># 具有写权限的组名称</span></span><br><span class="line">writable = <span class="built_in">test</span>         <span class="comment"># 该组可写的项目名称</span></span><br><span class="line">members = user1@xyz user2@xyz    <span class="comment">#该组的成员(密钥用户名) 多个用户协同开发时，以空格分隔</span></span><br></pre></td></tr></table></figure>
+<p> 如果要增加只读的组 参考如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[group <span class="built_in">test</span>-readnoly]          <span class="comment"># 具有都权限的组名称 </span></span><br><span class="line"><span class="built_in">readonly</span> = <span class="built_in">test</span>               <span class="comment"># 该组只读的项目名称 </span></span><br><span class="line">members = user3@xyz     <span class="comment"># 该组的成员</span></span><br></pre></td></tr></table></figure>
+<p>在<code>gitosis-admin/keydir</code>中加入公钥<a href="mailto:`usr1@xyz.pub" target="_blank" rel="noopener">`usr1@xyz.pub</a><code>,</code><a href="mailto:user2@xyz.pub" target="_blank" rel="noopener">user2@xyz.pub</a><code>,项目成员的名字为与公钥文件名需要一样。例如</code>user1@xyz<code>对应的公钥为</code>user1.xyz.pub`</p>
+<p>提交修改，这样增加了一个test的git项目，并增加了一个<code>user1@xzy</code>、<code>user2@xzy</code>的可写权限成员，以及一个<code>user3@xzy</code>的只读权限成员。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"add test repo"</span></span><br><span class="line">git push</span><br></pre></td></tr></table></figure></p>
+<h4 id="初始，增加及使用项目test"><a href="#初始，增加及使用项目test" class="headerlink" title="初始，增加及使用项目test"></a>初始，增加及使用项目test</h4><p>在客户端初始化，增加以及使用test项目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/repo  </span><br><span class="line">mkdir <span class="built_in">test</span>  </span><br><span class="line"><span class="built_in">cd</span> <span class="built_in">test</span> </span><br><span class="line">git init  </span><br><span class="line">touch readme  </span><br><span class="line">git add .   </span><br><span class="line">git commit -a -m <span class="string">"init test-git"</span>  </span><br><span class="line">git remote add origin git@qingdao:test.git  </span><br><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
+<h4 id="启用Git协议"><a href="#启用Git协议" class="headerlink" title="启用Git协议"></a>启用Git协议</h4><p>使用密钥管理代码仓库可以保证私密性和安全性，但是有些情况下需要代码仓库的匿名读权限，可以通过git协议来实现</p>
+<p>修改<code>gitosis.conf</code>，将项目test加入git协议</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[repo <span class="built_in">test</span>]</span><br><span class="line">owner = user3 &lt;user3@xyz&gt;</span><br><span class="line">description = <span class="built_in">test</span></span><br><span class="line">daemon = yes</span><br></pre></td></tr></table></figure>
+<p>则可以通过<code>git://&lt;git服务器地址&gt;/test</code>访问该项目。</p>
+<hr>
+<h3 id="4-Gitweb"><a href="#4-Gitweb" class="headerlink" title="4. Gitweb"></a>4. Gitweb</h3><h4 id="gitweb安装配置"><a href="#gitweb安装配置" class="headerlink" title="gitweb安装配置"></a>gitweb安装配置</h4><p>安装gitweb以及代码高亮插件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install gitweb -y</span><br><span class="line">yum install highlight -y</span><br></pre></td></tr></table></figure>
+<p>编辑gitweb配置文件<code>/etc/gitweb.conf</code></p>
+<ul>
+<li><strong>projectroot</strong>：所有项目的路径</li>
+<li><strong>git_base_url_list</strong>：可以访问git服务器的url</li>
+<li><strong>projects_list</strong>：如果想让所有项目直接出现在gitweb页面之上，不添加变量<strong>projects_list</strong>；如果想通过Gitosis的配置文件控制哪些项目出现在gitweb页面之上，启用<strong>projects_list</strong>。</li>
+<li><strong>feature{‘highlight’}{‘default’}</strong>：代码高亮</li>
+<li><strong>feature{‘avatar’}{‘default’}</strong> ：添加用户头像</li>
+<li><strong>home_link_str</strong>: 主页名字</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">our $projectroot = &quot;/home/git/repositories&quot;;</span><br><span class="line"></span><br><span class="line">our @git_base_url_list = qw(ssh://192.168.1.151</span><br><span class="line">                            git://192.168.1.151</span><br><span class="line">                            ssh://172.18.42.10</span><br><span class="line">                            git://172.18.42.10);</span><br><span class="line"></span><br><span class="line">our $projects_list = &quot;/home/git/gitosis/projects.list&quot;; </span><br><span class="line"></span><br><span class="line">$feature&#123;&apos;highlight&apos;&#125;&#123;&apos;default&apos;&#125; = [1];</span><br><span class="line">$feature&#123;&apos;avatar&apos;&#125;&#123;&apos;default&apos;&#125; = [&apos;gravatar&apos;];</span><br><span class="line">$home_link_str = &quot;Bread&quot;;</span><br></pre></td></tr></table></figure>
+<h4 id="http服务安装配置"><a href="#http服务安装配置" class="headerlink" title="http服务安装配置"></a>http服务安装配置</h4><p>需要安装http服务器，这里使用的是apache</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install -y httpd</span><br><span class="line">systemctl start httpd</span><br><span class="line">systemctl <span class="built_in">enable</span> httpd</span><br></pre></td></tr></table></figure>
+<p>将http服务的apache用户加入到git用户组，并修改<code>/home/git</code>的权限，给予属组用户执行权限。<strong>否则http服务器无权限读取git目录！</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usermod -a -G git apache </span><br><span class="line">chmod 750 /home/git</span><br></pre></td></tr></table></figure>
+<p>修改http服务配置文件，在apache配置文件夹<code>/etc/httpd/conf.d</code>中创建git.conf文件，内容如下。</p>
+<p><code>Alias /git /var/www/git</code>的路径为安装gitweb自动创建。<code>AuthType</code>到<code>Require</code>字段是关于访问验证，使用<strong>htpasswd</strong>工具创建验证文件<code>/etc/httpd/.htpasswd</code>。这样访问gitweb页面需要进行验证。</p>
+<p>然后重启http服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Alias /git /var/www/git</span><br><span class="line">&lt;Directory /var/www/git&gt;</span><br><span class="line">  Options +ExecCGI +FollowSymLinks</span><br><span class="line">  AddHandler cgi-script .cgi</span><br><span class="line">  DirectoryIndex gitweb.cgi                                                                                                                                          </span><br><span class="line">  AuthType Basic</span><br><span class="line">  AuthUserFile /etc/httpd/.htpasswd</span><br><span class="line">  AuthName &quot;Sign In Here To Gain Access To the Site&quot;</span><br><span class="line">  Require valid-user</span><br><span class="line">&lt;/Directory&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="Gitweb美化"><a href="#Gitweb美化" class="headerlink" title="Gitweb美化"></a>Gitweb美化</h4><p>下载并安装，不要将项目克隆到<code>/root</code>目录下，因为软链接的管理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/kogakure/gitweb-theme</span><br><span class="line"><span class="built_in">cd</span> gitweb-theme</span><br><span class="line">./setup -t /var/www/git -vi --install</span><br></pre></td></tr></table></figure>
+<p>重启http服务</p>
+<p>更多详情参考<a href="https://github.com/kogakure/gitweb-theme" target="_blank" rel="noopener">https://github.com/kogakure/gitweb-theme</a></p>
+<h4 id="Gitosis设置"><a href="#Gitosis设置" class="headerlink" title="Gitosis设置"></a>Gitosis设置</h4><p>在gitweb配置文件中启用了变量<strong>projects_list</strong>的情况下，如果想将某个项目在gitweb页面上显示，需要在Gitosis配置文件中添加</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[repo <span class="built_in">test</span>]</span><br><span class="line">owner = user3 &lt;user3@xyz&gt;</span><br><span class="line">description = <span class="built_in">test</span></span><br><span class="line">gitweb = yes</span><br></pre></td></tr></table></figure>
+<p>则这里将test项目显示在gitweb页面之上了。</p>
+<hr>
+<h3 id="5-Git常用命令"><a href="#5-Git常用命令" class="headerlink" title="5. Git常用命令"></a>5. Git常用命令</h3><h4 id="远程仓库相关命令"><a href="#远程仓库相关命令" class="headerlink" title="远程仓库相关命令"></a>远程仓库相关命令</h4><ul>
+<li><p>检出仓库：        $ git clone git://github.com/jQuery/jquery.git</p>
+</li>
+<li><p>查看远程仓库：$ git remote -v</p>
+</li>
+<li><p>添加远程仓库：$ git remote add [name] [url]</p>
+</li>
+<li><p>删除远程仓库：$ git remote rm [name]</p>
+</li>
+<li><p>修改远程仓库：$ git remote set-url –push [name] [newUrl]</p>
+</li>
+<li><p>拉取远程仓库：$ git pull [remoteName] [localBranchName]</p>
+</li>
+<li><p>推送远程仓库：$ git push [remoteName] [localBranchName]</p>
+</li>
+</ul>
+<p>如果想把本地的某个分支test提交到远程仓库，并作为远程仓库的master分支，或者作为另外一个名叫test的分支，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$git push origin test:master         // 提交本地test分支作为远程的master分支</span><br><span class="line">$git push origin test:test              // 提交本地test分支作为远程的test分支</span><br></pre></td></tr></table></figure></p>
+<h4 id="分支-branch-操作相关命令"><a href="#分支-branch-操作相关命令" class="headerlink" title="分支(branch)操作相关命令"></a>分支(branch)操作相关命令</h4><ul>
+<li><p>查看本地分支：$ git branch</p>
+</li>
+<li><p>查看远程分支：$ git branch -r</p>
+</li>
+<li><p>创建本地分支：$ git branch [name] —-注意新分支创建后不会自动切换为当前分支</p>
+</li>
+<li><p>切换分支：$ git checkout [name]</p>
+</li>
+<li><p>创建新分支并立即切换到新分支：$ git checkout -b [name]</p>
+</li>
+<li><p>删除分支：$ git branch -d [name] —-d选项只能删除已经参与了合并的分支，对于未有合并的分支是无法删除的。如果想强制删除一个分支，可以使用-D选项</p>
+</li>
+<li><p>合并分支：$ git merge [name] —-将名称为[name]的分支与当前分支合并</p>
+</li>
+<li><p>创建远程分支(本地分支push到远程)：$ git push origin [name]</p>
+</li>
+<li><p>删除远程分支：$ git push origin :heads/[name] 或 $ gitpush origin :[name] </p>
+</li>
+</ul>
+<p>创建空的分支：(执行命令之前记得先提交你当前分支的修改，否则会被强制删干净没得后悔)</p>
+<pre><code>$git symbolic-ref HEAD refs/heads/[name]
+$rm .git/index
+$git clean -fdx
+</code></pre><h4 id="版本-tag-操作相关命令"><a href="#版本-tag-操作相关命令" class="headerlink" title="版本(tag)操作相关命令"></a>版本(tag)操作相关命令</h4><ul>
+<li><p>查看版本：$ git tag</p>
+</li>
+<li><p>创建版本：$ git tag [name]</p>
+</li>
+<li><p>删除版本：$ git tag -d [name]</p>
+</li>
+<li><p>查看远程版本：$ git tag -r</p>
+</li>
+<li><p>创建远程版本(本地版本push到远程)：$ git push origin [name]</p>
+</li>
+<li><p>删除远程版本：$ git push origin :refs/tags/[name]</p>
+</li>
+<li><p>合并远程仓库的tag到本地：$ git pull origin –tags</p>
+</li>
+<li><p>上传本地tag到远程仓库：$ git push origin –tags</p>
+</li>
+<li><p>创建带注释的tag：$ git tag -a [name] -m ‘yourMessage’</p>
+</li>
+</ul>
+<h4 id="子模块-submodule-相关操作命令"><a href="#子模块-submodule-相关操作命令" class="headerlink" title="子模块(submodule)相关操作命令"></a>子模块(submodule)相关操作命令</h4><ul>
+<li><p>添加子模块：$ git submodule add [url] [path]<br> 如：$git submodule add git://github.com/soberh/ui-libs.git src/main/webapp/ui-libs</p>
+</li>
+<li><p>初始化子模块：$ git submodule init  —-只在首次检出仓库时运行一次就行</p>
+</li>
+<li><p>更新子模块：$ git submodule update —-每次更新或切换分支后都需要运行一下</p>
+</li>
+<li><p>删除子模块：（分4步走哦）<br>1) $ git rm –cached [path]<br>2) 编辑“.gitmodules”文件，将子模块的相关配置节点删除掉<br>3) 编辑“ .git/config”文件，将子模块的相关配置节点删除掉<br>4) 手动删除子模块残留的目录</p>
+</li>
+</ul>
+<h4 id="忽略一些文件、文件夹不提交"><a href="#忽略一些文件、文件夹不提交" class="headerlink" title="忽略一些文件、文件夹不提交"></a>忽略一些文件、文件夹不提交</h4><p>在仓库根目录下创建名称为“.gitignore”的文件，写入不需要的文件夹名或文件，每个元素占一行即可</p>
+<hr>
+<h3 id="6-Git命令详解"><a href="#6-Git命令详解" class="headerlink" title="6. Git命令详解"></a>6. Git命令详解</h3><ul>
+<li><p><strong>git pull</strong>：从其他的版本库（既可以是远程的也可以是本地的）将代码更新到本地，例如：’git pull origin master’就是将origin这个版本库的代码更新到本地的master主枝，该功能类似于SVN的update</p>
+</li>
+<li><p><strong>git add</strong>：是将当前更改或者新增的文件加入到Git的索引中，加入到Git的索引中就表示记入了版本历史中，这也是提交之前所需要执行的一步，例如’git add app/model/user.rb’就会增加app/model/user.rb文件到Git的索引中，该功能类似于SVN的add</p>
+</li>
+<li><p><strong>git rm</strong>：从当前的工作空间中和索引中删除文件，例如’git rm app/model/user.rb’，该功能类似于SVN的rm、del</p>
+</li>
+<li><p><strong>git commit</strong>：提交当前工作空间的修改内容，类似于SVN的commit命令，例如’git commit -m story #3, add user model’，提交的时候必须用-m来输入一条提交信息，该功能类似于SVN的commit</p>
+</li>
+<li><p><strong>git push</strong>：将本地commit的代码更新到远程版本库中，例如’git push origin’就会将本地的代码更新到名为orgin的远程版本库中</p>
+</li>
+<li><p><strong>git log</strong>：查看历史日志，该功能类似于SVN的log</p>
+</li>
+<li><p><strong>git revert</strong>：还原一个版本的修改，必须提供一个具体的Git版本号，例如’git revert bbaf6fb5060b4875b18ff9ff637ce118256d6f20’，Git的版本号都是生成的一个哈希值</p>
+</li>
+</ul>
+<p>上面的命令几乎都是每个版本控制工具所公有的，下面就开始尝试一下Git独有的一些命令：</p>
+<ul>
+<li><p><strong>git branch</strong>：对分支的增、删、查等操作，例如’git branch new_branch’会从当前的工作版本创建一个叫做new_branch的新分支，’git branch -D new_branch’就会强制删除叫做new_branch的分支，’git branch’就会列出本地所有的分支</p>
+</li>
+<li><p><strong>git checkout</strong>：Git的checkout有两个作用，其一是在不同的branch之间进行切换，例如’git checkout new_branch’就会切换到new_branch的分支上去；另一个功能是还原代码的作用，例如’git checkout app/model/user.rb’就会将user.rb文件从上一个已提交的版本中更新回来，未提交的内容全部会回滚</p>
+</li>
+<li><p><strong>git rebase</strong>：用下图解释会比较清楚一些，rebase命令执行后，实际上是将分支点从C移到了G，这样分支也就具有了从C到G的功能</p>
+</li>
+</ul>
+<p><strong><em>图4-1</em></strong><br><img src="http://i.imgur.com/BPXfTmi.png" alt=""></p>
+<ul>
+<li><p><strong>git reset</strong>：将当前的工作目录完全回滚到指定的版本号，假设如图4-2，我们有A-G五次提交的版本，其中C的版本号是 bbaf6fb5060b4875b18ff9ff637ce118256d6f20，我们执行了’git reset bbaf6fb5060b4875b18ff9ff637ce118256d6f20’那么结果就只剩下了A-C三个提交的版本</p>
+<ul>
+<li><p>git reset –soft 只撤销commit，保留working tree和index file。</p>
+</li>
+<li><p>git reset –hard 撤销commit、index file和working tree，即撤销销毁最近一次的commit</p>
+</li>
+<li><p>git reset –mixed 撤销commit和index file，保留working tree</p>
+</li>
+<li><p>git reset和git reset –mixed完全一样</p>
+</li>
+<li><p>git reset –用于删除登记在index file里的某个文件</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong><em>图4-2</em></strong><br><img src="http://i.imgur.com/nmpak8V.png" alt=""></p>
+<ul>
+<li><p><strong>git stash</strong>：将当前未提交的工作存入Git工作栈中，时机成熟的时候再应用回来，这里暂时提一下这个命令的用法，后面在技巧篇会重点讲解</p>
+</li>
+<li><p><strong>git config</strong>：利用这个命令可以新增、更改Git的各种设置，例如’git config branch.master.remote origin’就将master的远程版本库设置为别名叫做origin版本库，后面在技巧篇会利用这个命令个性化设置你的Git，为你打造独一无二的 Git</p>
+</li>
+<li><p><strong> git tag</strong>：可以将某个具体的版本打上一个标签，这样你就不需要记忆复杂的版本号哈希值了，例如你可以使用’git tag revert_version bbaf6fb5060b4875b18ff9ff637ce118256d6f20’来标记这个被你还原的版本，那么以后你想查看该版本时，就可以使用 revert_version标签名，而不是哈希值了</p>
+</li>
+</ul>
+<hr>
+<h3 id="7-Git服务器搭建排错"><a href="#7-Git服务器搭建排错" class="headerlink" title="7. Git服务器搭建排错"></a>7. Git服务器搭建排错</h3><h4 id="Untracked-working-tree-file-‘external-broadcom-Android-mk’-would-be-overwritten-by-merge-Aborting"><a href="#Untracked-working-tree-file-‘external-broadcom-Android-mk’-would-be-overwritten-by-merge-Aborting" class="headerlink" title="Untracked working tree file ‘external/broadcom/Android.mk’ would be overwritten by merge.  Aborting"></a>Untracked working tree file ‘external/broadcom/Android.mk’ would be overwritten by merge.  Aborting</h4><p>需要执行下面的命令才能修复：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard HEAD    </span><br><span class="line">git clean -f -d    </span><br><span class="line">git pull</span><br></pre></td></tr></table></figure>
+<h4 id="Please-commit-your-changes-or-stash-them-before-you-can-merge"><a href="#Please-commit-your-changes-or-stash-them-before-you-can-merge" class="headerlink" title="Please, commit your changes or stash them before you can merge."></a>Please, commit your changes or stash them before you can merge.</h4><p>如果希望保留生产服务器上所做的改动,仅仅并入新配置项, 处理方法如下:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git stash</span><br><span class="line">git pull</span><br><span class="line">git stash pop</span><br></pre></td></tr></table></figure>
+<p>然后可以使用Git diff -w +文件名 来确认代码自动合并的情况.</p>
+<p>反过来,如果希望用代码库中的文件完全覆盖本地工作版本. 方法如下:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard</span><br><span class="line">git pull</span><br></pre></td></tr></table></figure>
+<p>其中git reset是针对版本,如果想针对文件回退本地修改,使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout HEAD file/to/restore</span><br></pre></td></tr></table></figure>
+<h4 id="does-not-appear-to-be-a-git-repository"><a href="#does-not-appear-to-be-a-git-repository" class="headerlink" title="does not appear to be a git repository"></a>does not appear to be a git repository</h4><p>路径错误，可以分别尝试绝对路径或者相对路径</p>
+<p>如果是把另一个服务器的纯仓库弄到服务器，也会出现这种情况。我的临时做法是把另一个服务器的内容clone到本地服务器，然后在本地服务器创建纯仓库，放到repository的路径下，就可以了。有关这个错误，我在这篇文章里尝试寻找原因：</p>
+<p><a href="http://blog.csdn.net/xzongyuan/article/details/9366873" target="_blank" rel="noopener">http://blog.csdn.net/xzongyuan/article/details/9366873</a></p>
+<h4 id="ERROR-gitosis-serve-main-Repository-read-access-denied"><a href="#ERROR-gitosis-serve-main-Repository-read-access-denied" class="headerlink" title="ERROR:gitosis.serve.main:Repository read access denied"></a>ERROR:gitosis.serve.main:Repository read access denied</h4><p>修改本地gitosis-admin的gitosis-conf后（如下），push到仓库中，还会遇到该问题</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[group customer]</span><br><span class="line">members = nexus b</span><br><span class="line"><span class="built_in">readonly</span> = box_4.2</span><br></pre></td></tr></table></figure>
+<p><strong>原因1：gitosis.conf写错</strong><br>gitosis.conf中的members与keydir中的用户名不一致，如gitosis中的members = foo@bar，但keydir中的公密名却叫foo.pub<br>解决<br>使keydir的名称与gitosis中members所指的名称一致。<br>改为members = foo 或 公密名称改为<a href="mailto:foo@bar.pub" target="_blank" rel="noopener">foo@bar.pub</a></p>
+<p>参考<br><a href="http://blog.csdn.net/lixinso/article/details/6526643" target="_blank" rel="noopener">http://blog.csdn.net/lixinso/article/details/6526643</a></p>
+<p>注意，中间如果遇到这样的错误，很可能是gitosis.conf配置的不对<br>ERROR:gitosis.serve.main:Repository read access denied<br>fatal: The remote end hung up unexpectedly</p>
+<p>有可能是：</p>
+<ul>
+<li>gitosis 中写的用户名，和keydir里面的key的名字没有完全对应上</li>
+<li>有的地方写错了，比如我把members写成了member</li>
+</ul>
+<p><strong>**原因2：地址错误：</strong></p>
+<p>虽然有时候，地址错误时，会提示did not apear to be a git repositry。但我也遇到这个错误，写错了相对路径，就会提示没有权限，因为gitosis.conf根本就没有这个文件的配置嘛。可以看看我的记录：</p>
+<p>第一次，写错相对路径，自己不知道：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">norton@norton-laptop:~/work$ git <span class="built_in">clone</span> git@192.168.0.3:/repositories/gitosis-admin.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/norton/work/gitosis-admin/.git/</span><br><span class="line">ERROR:gitosis.serve.main:Repository <span class="built_in">read</span> access denied</span><br><span class="line">fatal: The remote end hung up unexpectedly</span><br></pre></td></tr></table></figure>
+<p>第二次，故意写个不存在的路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">norton@norton-laptop:~/work$ git <span class="built_in">clone</span> git@192.168.0.3:/repositories/gitosis-admin.git2</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/norton/work/gitosis-admin.git2/.git/</span><br><span class="line">ERROR:gitosis.serve.main:Repository <span class="built_in">read</span> access denied</span><br><span class="line">fatal: The remote end hung up unexpectedly</span><br></pre></td></tr></table></figure>
+<p>第三次，写对相对路径。可见，相对路径的根目录是/home/git/repositories，记得不要多写了不必要的路径。提示一下，repositories是在初始化gitosis前就已经手动建立的，是一个软链接，链接到/home/repo。如果没做这一步，初始化的时候就会建立一个repositories文件夹，那么gitosis-admin这个仓库就会在这个实在的文件夹下，而不会通过软连接放到/home/repo中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">norton@norton-laptop:~/work$ git <span class="built_in">clone</span> git@192.168.0.3:gitosis-admin.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/norton/work/gitosis-admin/.git/</span><br><span class="line">remote: Counting objects: 5, <span class="keyword">done</span>.</span><br><span class="line">remote: Compressing objects: 100% (5/5), <span class="keyword">done</span>.</span><br><span class="line">remote: Total 5 (delta 0), reused 5 (delta 0)</span><br><span class="line">Receiving objects: 100% (5/5), <span class="keyword">done</span>.</span><br></pre></td></tr></table></figure>
+<p><strong>原因3：开错账户</strong></p>
+<p>有时候，头脑不清醒了，就会弄错账户，所以犯这个错，要思考下是不是搞错账户了，在主帐号admin中，不断地测试下载，而我的目的其实是用b的帐号测试下载。如配置如下（并没有给admin读取teamwork的权限，而我却一直在clone teamwork）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[gitosis]</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[group gitosis-admin]</span><br><span class="line">members = admin</span><br><span class="line">writable = gitosis-admin <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">[group RK_Download]</span><br><span class="line">members = b nexus</span><br><span class="line"><span class="built_in">readonly</span> = teamwork box_4.2</span><br></pre></td></tr></table></figure>
+<p>测试结果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">admin@admin:~/work/<span class="built_in">test</span>$ git <span class="built_in">clone</span> git@192.168.0.3:test.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/admin/work/<span class="built_in">test</span>/<span class="built_in">test</span>/.git/</span><br><span class="line">remote: Counting objects: 3, <span class="keyword">done</span>.</span><br><span class="line">remote: Total 3 (delta 0), reused 0 (delta 0)</span><br><span class="line">Receiving objects: 100% (3/3), <span class="keyword">done</span>.</span><br><span class="line">admin@admin:~/work/<span class="built_in">test</span>$ git <span class="built_in">clone</span> git@192.168.0.3:teamwork.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/admin/work/<span class="built_in">test</span>/teamwork/.git/</span><br><span class="line">ERROR:gitosis.serve.main:Repository <span class="built_in">read</span> access denied</span><br><span class="line">fatal: The remote end hung up unexpectedly</span><br><span class="line"></span><br><span class="line">admin@admin:~/work/<span class="built_in">test</span>$ git <span class="built_in">clone</span> git@192.168.0.3:teamwork.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/admin/work/<span class="built_in">test</span>/teamwork/.git/</span><br><span class="line">ERROR:gitosis.serve.main:Repository <span class="built_in">read</span> access denied</span><br><span class="line">fatal: The remote end hung up unexpectedly</span><br><span class="line"></span><br><span class="line">admin@admin:~/work/<span class="built_in">test</span>$ git <span class="built_in">clone</span> git@192.168.0.3:teamwork.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/admin/work/<span class="built_in">test</span>/teamwork/.git/</span><br><span class="line">ERROR:gitosis.serve.main:Repository <span class="built_in">read</span> access denied</span><br><span class="line">fatal: The remote end hung up unexpectedly</span><br></pre></td></tr></table></figure>
+<p>刚记录完，又犯傻逼了，clone 了N次test，都不行，结果发现，自己根本没有把给b设定test的权限。再次说明头脑要清醒。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> git@192.168.0.3:test.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /tmp/<span class="built_in">test</span>/.git/</span><br><span class="line">ERROR:gitosis.serve.main:Repository <span class="built_in">read</span> access denied</span><br><span class="line">fatal: The remote end hung up unexpectedly</span><br></pre></td></tr></table></figure>
+<p>修改后<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Initialized empty Git repository <span class="keyword">in</span> /tmp/teamwork/<span class="built_in">test</span>/.git/</span><br><span class="line">remote: Counting objects: 3, <span class="keyword">done</span>.</span><br><span class="line">remote: Total 3 (delta 0), reused 0 (delta 0)</span><br><span class="line">Receiving objects: 100% (3/3), <span class="keyword">done</span>.</span><br></pre></td></tr></table></figure></p>
+<p><strong>原因4： 不能写绝对路径</strong></p>
+<p>暂时不知道为啥，反正路径写了git@<server ip="">:/home/repo/xxx.git就会出现这个错误。貌似如果你如果密钥验证失败，要求你输入密码的情况下，是输入绝对路径的，而如果密钥验证成功，输入绝对路径，它就不认了。我想，这是为了保证系统安全，不让客户端用git账户乱clone不在repositories下的文件，即限定在repositories下了，所以只能用相对路径。</server></p>
+<h4 id="SSH-The-authenticity-of-host-can’t-be-established"><a href="#SSH-The-authenticity-of-host-can’t-be-established" class="headerlink" title="SSH: The authenticity of host  can’t be established"></a>SSH: The authenticity of host <host> can’t be established</host></h4><p>0 down vote<br>This message is just SSH telling you that it’s never seen this particular host key before, so it isn’t able to truly verify that you’re connecting to the host you think you are. When you say “Yes” it puts the ssh key into your known_hosts file, and then on subsequent connections will compare the key it gets from the host to the one in the known_hosts file.</p>
+<p>There was a related article on stack overflow showing how to disable this warning,<a href="http://stackoverflow.com/questions/3663895/ssh-the-authenticity-of-host-hostname-cant-be-established" target="_blank" rel="noopener">http://stackoverflow.com/questions/3663895/ssh-the-authenticity-of-host-hostname-cant-be-established</a>.</p>
+<h4 id="unrecognized-command-‘gitosis-serve-b’-amp-amp-每次登录要求输入密码"><a href="#unrecognized-command-‘gitosis-serve-b’-amp-amp-每次登录要求输入密码" class="headerlink" title="unrecognized command ‘gitosis-serve b’ &amp;&amp; 每次登录要求输入密码"></a>unrecognized command ‘gitosis-serve b’ &amp;&amp; 每次登录要求输入密码</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> git@192.168.0.3:/home/repo/teamwork.git</span><br><span class="line">Initialized empty Git repository <span class="keyword">in</span> /home/b/work/teamwork/.git/</span><br><span class="line">fatal: unrecognized <span class="built_in">command</span> <span class="string">'gitosis-serve b'</span></span><br><span class="line">fatal: The remote end hung up unexpectedly</span><br></pre></td></tr></table></figure>
+<p>遇到这个问题，b是我一个普通账户，而另一个admin每次登录都要求输入密码（ssh有两种登录方式：要求输入密码，和不需要输入密码——利用密钥），我就怀疑，gitosis的配置已经给我弄乱了，所以无法识别正确的密钥。<br>这个时候，我已经改了好多次密钥对，gitosis已经配置过好多次。通过gitosis-init是不会修复该问题的，于是，我删掉/home/git/下和repository有关的文件夹，包括.ssh下的authoritykey。还要删掉在/home/repo下的gitosis-admin.git。这样重新gitosis-init一下，就可以了。</p>
+<p>如果server端的/etc/passwd中git的账户设置中，git使用的是/usr/bin/git-shell，而不是/bin/sh，也会报这个错误。</p>
+<h4 id="Agent-admitted-failure-to-sign-using-the-key"><a href="#Agent-admitted-failure-to-sign-using-the-key" class="headerlink" title="Agent admitted failure to sign using the key."></a>Agent admitted failure to sign using the key.</h4><p>通过图形界面切换到b用户时，遇到这个问题，在原来到界面中，su b是可以clone的。<br>解決方式 使用 ssh-add 指令将私钥 加进来 （根据个人的密匙命名不同更改 id_rsa）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-add   ~/.ssh/id_rsa</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="订版本信息"><a href="#订版本信息" class="headerlink" title="订版本信息"></a>订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2016/6/18</td>
+<td>文件创建</td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2018/1/5</td>
+<td>添加Gitosis以及git协议</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://shenyu.me/2017/01/03/git-server.html" target="_blank" rel="noopener">https://shenyu.me/2017/01/03/git-server.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/git/" rel="tag"># git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/01/Demo/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/11/20180111 CentOS7 rsyslog +loganalyzer配置/" rel="prev" title="CentOS7 rsyslog +loganalyzer配置">
+                CentOS7 rsyslog +loganalyzer配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Git数据传输协议"><span class="nav-number">1.</span> <span class="nav-text">1. Git数据传输协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Git协议"><span class="nav-number">2.</span> <span class="nav-text">2. Git协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Gitosis"><span class="nav-number">3.</span> <span class="nav-text">3. Gitosis</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简介"><span class="nav-number">3.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#软件安装-amp-初始化"><span class="nav-number">3.2.</span> <span class="nav-text">软件安装&amp;初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gitosis-admin管理"><span class="nav-number">3.3.</span> <span class="nav-text">gitosis-admin管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gitosis-admin管理员添加"><span class="nav-number">3.4.</span> <span class="nav-text">gitosis-admin管理员添加</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#增加及设置管理项目"><span class="nav-number">3.5.</span> <span class="nav-text">增加及设置管理项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始，增加及使用项目test"><span class="nav-number">3.6.</span> <span class="nav-text">初始，增加及使用项目test</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启用Git协议"><span class="nav-number">3.7.</span> <span class="nav-text">启用Git协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Gitweb"><span class="nav-number">4.</span> <span class="nav-text">4. Gitweb</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gitweb安装配置"><span class="nav-number">4.1.</span> <span class="nav-text">gitweb安装配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#http服务安装配置"><span class="nav-number">4.2.</span> <span class="nav-text">http服务安装配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gitweb美化"><span class="nav-number">4.3.</span> <span class="nav-text">Gitweb美化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gitosis设置"><span class="nav-number">4.4.</span> <span class="nav-text">Gitosis设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Git常用命令"><span class="nav-number">5.</span> <span class="nav-text">5. Git常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#远程仓库相关命令"><span class="nav-number">5.1.</span> <span class="nav-text">远程仓库相关命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分支-branch-操作相关命令"><span class="nav-number">5.2.</span> <span class="nav-text">分支(branch)操作相关命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#版本-tag-操作相关命令"><span class="nav-number">5.3.</span> <span class="nav-text">版本(tag)操作相关命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#子模块-submodule-相关操作命令"><span class="nav-number">5.4.</span> <span class="nav-text">子模块(submodule)相关操作命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#忽略一些文件、文件夹不提交"><span class="nav-number">5.5.</span> <span class="nav-text">忽略一些文件、文件夹不提交</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Git命令详解"><span class="nav-number">6.</span> <span class="nav-text">6. Git命令详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Git服务器搭建排错"><span class="nav-number">7.</span> <span class="nav-text">7. Git服务器搭建排错</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Untracked-working-tree-file-‘external-broadcom-Android-mk’-would-be-overwritten-by-merge-Aborting"><span class="nav-number">7.1.</span> <span class="nav-text">Untracked working tree file ‘external/broadcom/Android.mk’ would be overwritten by merge.  Aborting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Please-commit-your-changes-or-stash-them-before-you-can-merge"><span class="nav-number">7.2.</span> <span class="nav-text">Please, commit your changes or stash them before you can merge.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#does-not-appear-to-be-a-git-repository"><span class="nav-number">7.3.</span> <span class="nav-text">does not appear to be a git repository</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ERROR-gitosis-serve-main-Repository-read-access-denied"><span class="nav-number">7.4.</span> <span class="nav-text">ERROR:gitosis.serve.main:Repository read access denied</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSH-The-authenticity-of-host-can’t-be-established"><span class="nav-number">7.5.</span> <span class="nav-text">SSH: The authenticity of host  can’t be established</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unrecognized-command-‘gitosis-serve-b’-amp-amp-每次登录要求输入密码"><span class="nav-number">7.6.</span> <span class="nav-text">unrecognized command ‘gitosis-serve b’ &amp;&amp; 每次登录要求输入密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Agent-admitted-failure-to-sign-using-the-key"><span class="nav-number">7.7.</span> <span class="nav-text">Agent admitted failure to sign using the key.</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#订版本信息"><span class="nav-number">8.</span> <span class="nav-text">订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

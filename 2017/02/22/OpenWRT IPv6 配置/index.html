@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="OpenWRT配置IPv6的三种方式">
+<meta name="keywords" content="network,openwrt,router">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT IPv6 三种配置方式">
+<meta property="og:url" content="http://blog.kompaz.win/2017/02/22/OpenWRT IPv6 配置/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="OpenWRT配置IPv6的三种方式">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ipv6\1.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ipv6\2.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ipv6\4.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ipv6/3-3.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ipv6/3-4.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ipv6/3-5.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_ipv6\3.png">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.570Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT IPv6 三种配置方式">
+<meta name="twitter:description" content="OpenWRT配置IPv6的三种方式">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/openwrt_ipv6\1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/02/22/OpenWRT IPv6 配置/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT IPv6 三种配置方式 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/02/22/OpenWRT IPv6 配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT IPv6 三种配置方式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-02-22 20:33:00" itemprop="dateCreated datePublished" datetime="2017-02-22T20:33:00+08:00">2017-02-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">OpenWRT配置IPv6的三种方式</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-OpenWRT-IPv6"><a href="#1-OpenWRT-IPv6" class="headerlink" title="1. OpenWRT IPv6"></a>1. OpenWRT IPv6</h3><p>科技网或者教育网有原生的IPv6，其他方式例如VPN或者隧道等亦可以获得IPv6网络的访问。本文介绍了如何通过OpenWRT，让接入的终端也可以获得IPv6网络的访问。主要实现方式有以下几种：</p>
+<ul>
+<li>IPv6 中继</li>
+<li>IPv6 穿透</li>
+<li>IPv6 NAT</li>
+</ul>
+<p>下文皆假设OpenWRT为初始化配置</p>
+<h3 id="2-IPv6-中继"><a href="#2-IPv6-中继" class="headerlink" title="2. IPv6 中继"></a>2. IPv6 中继</h3><h4 id="2-1-简介"><a href="#2-1-简介" class="headerlink" title="2.1 简介"></a>2.1 简介</h4><p>中继模式可以让接入客户端获取原生的IPv6地址，OpenWRT路由器也获取了一个IPv6地址。如图2-1所示，所有接入的客户端将IPv6流量转发到OpenWRT路由器的IPv6地址，然后OpenWRT路由器再将流量转发到其IPv6网关，同时IPv4的NAT模式不受影响。</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_ipv6\1.png" width="720px"></center><center style="color:purple"><strong>图2-1 IPv6中继模式流量示意图</strong></center>
+
+<h4 id="2-2-配置"><a href="#2-2-配置" class="headerlink" title="2.2 配置"></a>2.2 配置</h4><h5 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h5><p>有两种方式可以实现IPv6中继：</p>
+<ul>
+<li><a href="https://wiki.openwrt.org/doc/uci/6relayd" target="_blank" rel="noopener">6relay</a>，OpenWRT到<strong>Barrier Breaker 14.07</strong>版本之后，不再支持，不推荐使用</li>
+<li><a href="https://wiki.openwrt.org/doc/techref/odhcpd" target="_blank" rel="noopener">odhcpd</a>，OpenWRT<strong>Barrier Breaker 14.07</strong>版本之后推荐使用，不是很稳定。升级到<strong>Chaos Calmer 15.05.1</strong>稳定性提高很多，但是IPv6网络仍会偶尔中断</li>
+</ul>
+<h5 id="配置文件修改"><a href="#配置文件修改" class="headerlink" title="配置文件修改"></a>配置文件修改</h5><p>OpenWRT在默认情况下，会分配一个IPv6私网地址段，登录网页管理，在<strong>Network-&gt;Interfaces</strong>页面底下有<strong>Global network options-&gt;IPv6 ULA-Prefix</strong>这里应该有一个随机的<code>fd</code>开头的<code>/64</code>IPv6地址段，清空该地址并保存</p>
+<p>SSH登录路由器，修改<code>/etc/config/dhcp</code>文件，添加如下部分，使用无状态地址自动配置（<em>SLAAC</em>）IPv6，不使用DHCPv6。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">config dhcp <span class="string">'lan'</span></span><br><span class="line">	option dhcpv6 <span class="string">'disabled'</span></span><br><span class="line">	option ra <span class="string">'relay'</span></span><br><span class="line">	option ndp <span class="string">'relay'</span></span><br><span class="line"></span><br><span class="line">config dhcp <span class="string">'wan6'</span></span><br><span class="line">	option interface <span class="string">'wan'</span></span><br><span class="line">	option dhcpv6 <span class="string">'disabled'</span></span><br><span class="line">	option ra <span class="string">'relay'</span></span><br><span class="line">	option ndp <span class="string">'relay'</span></span><br><span class="line">	option master <span class="string">'1'</span></span><br></pre></td></tr></table></figure>
+<p>修改之后保存，重启odhcpd服务，否则接入终端无法获取IPv6地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/odhcpd restart</span><br></pre></td></tr></table></figure>
+<h5 id="配置保存"><a href="#配置保存" class="headerlink" title="配置保存"></a>配置保存</h5><p>这种方式可以让接入路由器的终端，获取原生的IPv6地址。需要注意的是，每次路由器重启上述配置并不会生效，需要重启下odhcpd服务，接入路由器的终端方可获取IPv6地址。</p>
+<p>可以在开机启动脚本<code>/etc/rc.local</code>中添加如下脚本，每次开机系统启动30秒后重启odhcpd服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sleep 30</span><br><span class="line">/etc/init.d/odhcpd restart</span><br></pre></td></tr></table></figure>
+<h4 id="2-3-总结"><a href="#2-3-总结" class="headerlink" title="2.3 总结"></a>2.3 总结</h4><p>以下为个人测试的一些经历</p>
+<ul>
+<li>IPv6中继方式在Netgear路由器上测试成功，其他品牌路由器以IPv6中继方式可以获取IPv6原生地址，但是无法访问IPv6网络</li>
+<li>会偶尔无法访问IPv6网络，重启接入终端的网络适配器之后，又可以访问IPv6网络</li>
+</ul>
+<hr>
+<h3 id="3-IPv6-穿透"><a href="#3-IPv6-穿透" class="headerlink" title="3. IPv6 穿透"></a>3. IPv6 穿透</h3><h4 id="3-1-简介"><a href="#3-1-简介" class="headerlink" title="3.1 简介"></a>3.1 简介</h4><p>NetGear官方固件支持IPv6穿透模式，接入终端可以获取原生IPv6地址。基于OpenWRT固件也可以配置IPv6穿透模式，具体参考<a href="https://www.polarxiong.com/archives/%E6%95%99%E8%82%B2%E7%BD%91DD-WRT-OpenWrt%E7%94%A8%E4%B8%8AIPv6-%E4%BB%A5%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E4%B8%BA%E4%BE%8B.html" target="_blank" rel="noopener">这篇博客</a>。</p>
+<p>解决思路：</p>
+<ul>
+<li>将路由器的<strong>WAN</strong>口、<strong>LAN</strong>口以及<strong>WiFi</strong>桥接起来，以<code>brctl</code>实现</li>
+<li><strong>WAN</strong>口、<strong>LAN</strong>口以及<strong>WiFi</strong>桥接之后，此时OpenWRT相当于一个交换机，此时<strong>WAN</strong>口、<strong>LAN</strong>口以及<strong>WiFi</strong>都相当于交换机接口。</li>
+<li><code>ebtables</code>工作在数据链路层，利用<code>ebtables</code>控制所有非IPv6流量进行路由，IPv6流量仍为交换模式</li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/openwrt_ipv6\2.png" width="720px"></center><center style="color:purple"><strong>图3-1 IPv6穿透模式流量示意图</strong></center>
+
+<p>更多关于Linux网络数据包过滤的流程，请查看图3-2</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_ipv6\4.png" width="720px"></center><center style="color:purple"><strong>图3-2 Linux网络数据包过滤流程</strong></center>
+
+
+<h4 id="3-2-配置"><a href="#3-2-配置" class="headerlink" title="3.2 配置"></a>3.2 配置</h4><h5 id="软件包安装"><a href="#软件包安装" class="headerlink" title="软件包安装"></a>软件包安装</h5><p>安装<code>ebtables</code>，安装之后，会自动加载相关的模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install ebtables</span><br></pre></td></tr></table></figure>
+<h5 id="网卡查看"><a href="#网卡查看" class="headerlink" title="网卡查看"></a>网卡查看</h5><p>查看当前桥接，其中<code>eth0.1</code>为OpenWRT缺省使用的<strong>VLAN1（LAN）</strong>对应的虚拟网卡，<code>wlan0</code>、<code>wlan1</code>为无线网卡，三者共同桥接到网桥<code>br-lan</code>上，<code>br-lan</code>同时提供了DHCP功能，为接入终端提供IPv4私有IP地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment">#brctl show</span></span><br><span class="line">bridge name	bridge id		STP enabled	interfaces</span><br><span class="line">br-lan		7fff.e4f4c6e90d5a	no		eth0.1</span><br><span class="line">							wlan0</span><br><span class="line">							wlan1</span><br></pre></td></tr></table></figure>
+<p>通过ifconfig命令或者OpenWRT网页管理页面，可以知晓OpenWRT缺省使用<strong>VLAN2（WAN）</strong>的虚拟网卡为<code>eth0.2</code></p>
+<h5 id="ebtables配置"><a href="#ebtables配置" class="headerlink" title="ebtables配置"></a>ebtables配置</h5><p><code>ebtables</code>工作在数据链路层，有三个表： <strong>filter</strong>, <strong>nat</strong> 和<strong>broute</strong>。这里使用<strong>broute（Bridge table）</strong>表，将所有来自<strong>WAN口（eth0.2）</strong>的非IPv6流量进行路由</p>
+<p>根据<a href="http://ebtables.netfilter.org/misc/ebtables-man.html" target="_blank" rel="noopener">官方使用手册</a>的说明，<strong>broute</strong>表有内建的链：<strong>BROUTING</strong>。在broute表中，<strong>DROP</strong>和<strong>ACCEPT</strong>有特殊的意义（为了保持通用实现性，没有增加其他字段），<strong>DROP</strong>字段的意思为数据帧需要被路由，<strong>ACCEPT</strong>字段的意思为数据被桥接传输（交换模式）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ebtables -t broute -A BROUTING -p ! ipv6 -j DROP -i eth0.2</span><br></pre></td></tr></table></figure>
+<p>现在需要将<code>eth0.2</code>桥接到<code>br-lan</code>，使得<strong>LAN</strong>能接收到<strong>WAN</strong>的IPv6数据包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brctl addif br-lan eth0.2</span><br></pre></td></tr></table></figure>
+<p>此时已经实现了IPv4路由模式，IPv6交换模式</p>
+<h5 id="odhcp服务关闭"><a href="#odhcp服务关闭" class="headerlink" title="odhcp服务关闭"></a>odhcp服务关闭</h5><p>此时应该关闭<code>odhcpd</code>服务，同时将<code>br-lan</code>所有关于IPv6选项均置为<code>disabled</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/odhcpd stop</span><br><span class="line">/etc/init.d/odhcpd <span class="built_in">disable</span></span><br></pre></td></tr></table></figure>
+<p>若不关闭odhcp服务，<code>logread</code>命令查看，会产生大量相关的日志</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Fri Apr 21 15:45:07 2017 daemon.warn odhcpd[1262]: DHCPV6 SOLICIT IA_NA from 0001000111111111111111 on br-lan: no addresses available </span><br><span class="line">Fri Apr 21 15:45:07 2017 daemon.warn odhcpd[1262]: DHCPV6 SOLICIT IA_PD from 0001000111111111111111 on br-lan: no prefix available </span><br><span class="line">Fri Apr 21 15:45:11 2017 daemon.warn odhcpd[1262]: DHCPV6 SOLICIT IA_NA from 0001000111111111111111 on br-lan: no addresses available </span><br><span class="line">Fri Apr 21 15:45:12 2017 daemon.warn odhcpd[1262]: DHCPV6 SOLICIT IA_NA from 0001000111111111111111 on br-lan: no addresses available </span><br><span class="line">Fri Apr 21 15:45:12 2017 daemon.warn odhcpd[1262]: DHCPV6 SOLICIT IA_NA from 0001000111111111111111 on br-lan: no addresses available </span><br><span class="line">Fri Apr 21 15:45:12 2017 daemon.warn odhcpd[1262]: DHCPV6 SOLICIT IA_NA from 0001000111111111111111 on br-lan: no addresses available </span><br><span class="line">Fri Apr 21 15:45:12 2017 daemon.warn odhcpd[1262]: DHCPV6 SOLICIT IA_NA from 0001000111111111111111 on br-lan: no addresses available</span><br></pre></td></tr></table></figure>
+<h4 id="3-3-路由器IPv6地址配置"><a href="#3-3-路由器IPv6地址配置" class="headerlink" title="3.3 路由器IPv6地址配置"></a>3.3 路由器IPv6地址配置</h4><h5 id="路由器IPv6地址"><a href="#路由器IPv6地址" class="headerlink" title="路由器IPv6地址"></a>路由器IPv6地址</h5><p>IPv6穿透模式导致了OpenWRT路由器无法获取在<strong>WAN6</strong>口IPv6地址，这样导致了路由器无法使用IPv6网络进行离线下载</p>
+<h5 id="解决方案1"><a href="#解决方案1" class="headerlink" title="解决方案1"></a>解决方案1</h5><p>因为<strong>WAN</strong>口、<strong>LAN</strong>口以及<strong>WiFi</strong>都现在都桥接到网桥<code>br-lan</code>，所以路由器的<strong>WAN</strong>口、<strong>LAN</strong>口以及<strong>WiFi</strong>无法获取IPv6地址，如果想让路由器获取IPv6地址，可以将<strong>WAN6</strong>口分配给一个新的物理接口。</p>
+<ul>
+<li>创建<strong>VLAN3</strong>，将一个物理接口分配给<strong>VLAN3</strong></li>
+<li>将<strong>WAN6</strong>分配到<strong>VLAN3</strong></li>
+<li>将<strong>VLAN3</strong>对应的物理接口连接到能获取IPv6地址的网口</li>
+</ul>
+<p>按照上面的思路，前提条件为<strong>WAN</strong>口所在为<strong>VLAN2</strong>，实践方式有如下的三种：</p>
+<ul>
+<li><p>添加一个交换机，拓扑如下，额外成本为需要多使用一台交换机。</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_ipv6/3-3.png" alt="3-3"></center><center style="color:purple"><strong>图3-3 拓扑1</strong></center>
+</li>
+<li><p>根据上面的思路，需要添加一台交换机，那么可以在路由器上再额外添加一个<strong>VLAN4</strong>，相当于一台交换机。但是缺点就是每次数据包都要两次经过路由器，增加了路由器的处理负担。如果路由器只有五个物理接口的话，则<strong>LAN</strong>所在的<strong>VLAN1</strong>无物理接口。</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_ipv6/3-4.png" alt="3-4"></center><center style="color:purple"><strong>图3-4 拓扑2</strong></center>
+</li>
+<li><p>将<strong>VLAN1（LAN）</strong>的某个物理接口接到<strong>VLAN3</strong>的物理接口，拓扑如下。但是Linux内核会报错，错误内容为<code>br-lan: received packet on eth0.1 with own address as source address</code>。<strong>所以这种方法不推荐</strong>！</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_ipv6/3-5.png" alt="3-5"></center><center style="color:purple"><strong>图3-4 拓扑3</strong></center>
+
+</li>
+</ul>
+<h5 id="解决方案3"><a href="#解决方案3" class="headerlink" title="解决方案3"></a>解决方案3</h5><p><span style="color:red"><strong>该方案不稳定！</strong></span></p>
+<p><del>手动给网桥配置<code>br-lan</code>配置IPv6地址以及默认网关</del></p>
+<ul>
+<li><p><del>查询设备所在IPv6网络的默认网关和IPv6地址前缀，通过接入路由器的终端，使用ifconfig/ipconfig进行查询，现假设查询到的<strong>IPv6全局地址</strong>前缀为<code>2001:xxxx:xxxx:xxxx::/64</code>，默认网关为<code>fe80::2ac6:8eff:fe0f:823e</code></del></p>
+</li>
+<li><p><del>为<code>br-lan</code>分配IPv6地址，IPv6默认为EUI-64方式，前64位为网络前缀，后64位为根据MAC地址生成，默认情况下，<strong>IPv6全局地址</strong>与<strong>IPv6本地链路地址</strong>后64位是相同的</del></p>
+<ul>
+<li><p><del>为了避免重复，查询<code>br-lan</code>的<strong>IPv6本地链路地址</strong>，假设为<code>fe80::e6f4:c6ff:fee9:d5a/64</code>，则可将<code>br-lan</code>的<strong>IPv6全局地址</strong>配置为<code>2001:xxxx:xxxx:xxxx:e6f4:c6ff:fee9:d5a/64</code></del></p>
+</li>
+<li><p><del>可以手动填写后64位地址，例如<code>2001:xxxx:xxxx:xxxx:1001:1001:1001:1001/64</code>，但是这样可能导致<strong>IPv6全局地址</strong>重复，不推荐</del></p>
+</li>
+<li><p><del>配置<strong>IPv6全局地址</strong>到<code>br-lan</code></del></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig br-lan 2001:xxxx:xxxx:xxxx:e6f4:c6ff:fee9:d5a/64</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><del>默认路由添加，没有默认路由，路由器无法访问IPv6外网</del></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route -A inet6 add ::/0 gw  fe80::2ac6:8eff:fe0f:823e dev br-lan</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><del><span style="color:red"><strong>上述配置再路由器重启或者网络重启之后失效！</strong></span></del></p>
+<h4 id="3-4-总结"><a href="#3-4-总结" class="headerlink" title="3.4 总结"></a>3.4 总结</h4><ul>
+<li>如果不进行额外配置，该模式下，OpenWRT路由器无法获取IPv6地址</li>
+<li>不要先运行<code>brctl addif br-lan eht0.2</code>命令，如果忘记运行<code>ebtables -t broute -A BROUTING -p ! ipv6 -j DROP -i eth0.2</code>命令，路由器就完全成为交换机模式，会导致<code>br-lan</code>的DHCP广播、ARP广播等数据涌入局域网</li>
+</ul>
+<h3 id="4-IPv6-NAT"><a href="#4-IPv6-NAT" class="headerlink" title="4. IPv6 NAT"></a>4. IPv6 NAT</h3><h4 id="4-1简介"><a href="#4-1简介" class="headerlink" title="4.1简介"></a>4.1简介</h4><p>虽然IPv6在设计之初，没有考虑NAT，在主流的网络设备上也没有IPv6的NAT配置，但 Linux 内核从 3.7 版本开始实现了 IPv6 的 NAT，如图4-1所示，其中黄色为本地私有IPv6链路地址转发，蓝色为全球可路由IPv6地址转发</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_ipv6\3.png" width="720px"></center><center style="color:purple"><strong>图4-1 IPv6NAT模式流量示意图</strong></center>
+
+<h4 id="4-2-设置"><a href="#4-2-设置" class="headerlink" title="4.2 设置"></a>4.2 设置</h4><h5 id="软件包安装-1"><a href="#软件包安装-1" class="headerlink" title="软件包安装"></a>软件包安装</h5><p>安装相应的软件包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install ip6tables kmod-ipv6 kmod-ipt-nat6 kmod-ip6tables kmod-ip6tables-extra luci-proto-ipv6 iputils-traceroute6</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>kmod-ipv6</code>并非必须</li>
+<li><code>kmod-ipt-nat6</code>提供IPv6的NAT支持</li>
+<li><code>ip6tables</code>,·<code>kmod-ip6tables</code>,<code>kmod-ip6tables-extra</code>等提供IPv6防火墙</li>
+<li><code>luci-proto-ipv6</code>为LuCI提供IPv6设置选项</li>
+<li><code>iputils-traceroute6</code>为IPv6提供traceroute功能(<code>mtr</code>是个不错的支持双栈的<code>traceroute</code>替代品，占用的存储空间相对大些)</li>
+</ul>
+<h5 id="IPv6私网地址"><a href="#IPv6私网地址" class="headerlink" title="IPv6私网地址"></a>IPv6私网地址</h5><p>OpenWRT在默认情况下，会分配一个IPv6私网地址段，在<strong>Network-&gt;Interfaces</strong>页面底下有<strong>Global network options-&gt;IPv6 ULA-Prefix</strong>这里应该有一个随机的<code>fd</code>开头的<code>/64</code>IPv6地址段，LAN客户端可以从这个地址段自动获取私有的IPv6地址，<a href="https://zh.wikipedia.org/wiki/DHCPv6" target="_blank" rel="noopener">DHCPv6</a>和<a href="https://zh.wikipedia.org/wiki/IPv6#.E6.97.A0.E7.8A.B6.E6.80.81.E5.9C.B0.E5.9D.80.E8.87.AA.E5.8A.A8.E9.85.8D.E7.BD.AE.EF.BC.88SLAAC.EF.BC.89" target="_blank" rel="noopener">无状态地址自动配置（SLAAC）</a>默认已经开启</p>
+<h5 id="IPv6私网地址网关配置"><a href="#IPv6私网地址网关配置" class="headerlink" title="IPv6私网地址网关配置"></a>IPv6私网地址网关配置</h5><p>缺省配置下，LAN客户端获取的私有IPv6地址没有IPv6网关的</p>
+<p>在<strong>Network-&gt;Interfaces-&gt;LAN</strong>下的<strong>DHCP Server</strong>部分的<strong>IPv6 Settings</strong>选项卡部分，勾选<strong>Always announce default router</strong>，否则OpenWRT不会向LAN客户端推送OpenWRT私有的IPv6网关地址</p>
+<p>为了确保设置生效，最好重启路由器</p>
+<h5 id="NAT设置"><a href="#NAT设置" class="headerlink" title="NAT设置"></a>NAT设置</h5><p>客户端有了私有的IPv6地址之后，私有地址可以单向路由到互联网中的，但是无法被路由回LAN客户端。因此需要在OpenWRT上开启IPv6 NAT。在默认情况下，OpenWRT防火墙不会配置ip6tables的NAT表，因此在OpenWRT命令下手动添加如下规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip6tables -t nat -A POSTROUTING -o eth0.2 -j MASQUERADE</span><br><span class="line">ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">ip6tables -A FORWARD -i br-lan -j ACCEPT</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>eth0.2</code>为OpenWRT的获取全球可路由IPv6地址的WAN口名称，这个名字不是防火墙区域名字，也不是LuCI里面<code>Network-&gt;Interfaces</code>里面看到的名字，而是<code>ifconfig</code>看到的网卡名字</li>
+<li><code>br-lan</code>为LAN口对应名称，也是通过<code>ifconfig</code>看到的网卡名字</li>
+</ul>
+<h5 id="路由条目添加"><a href="#路由条目添加" class="headerlink" title="路由条目添加"></a>路由条目添加</h5><p>到当前设置，接入终端可以访问OpenWRT的IPv6公网所在网段，不能访问该网段以外的IPv6地址，原因不明，查看IPv6路由表，发现存在默认路由。添加全球可路由IPv6聚合路由可解决该问题。</p>
+<p>查询下一跳IPv6本地链路地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment"># route -A inet6 | grep ::/0 | awk '&#123;print $2&#125;'</span></span><br><span class="line">fe80::3a22:d6ff:febf:1b00</span><br></pre></td></tr></table></figure>
+<p>查询下一跳IPv6全局地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment"># traceroute6 -n tv.byr.cn | grep '^ 1' |  awk '&#123;print $2&#125;'</span></span><br><span class="line">2001:xxx:xxx:xxx:3a22:d6ff:febf:1b00</span><br></pre></td></tr></table></figure>
+<p>现在可知<code>fe80::3a22:d6ff:febf:1b00</code>为下一跳的IPv6本地链路地址，<code>2001:xxx:xxx:xxx:3a22:d6ff:febf:1b00</code>为下一跳的IPv6全局地址。</p>
+<p>然后添加全球可路由IPv6地址的聚合路由条目，<strong>WAN6</strong>出口虚拟网卡为<code>eth0.2</code>，出口虚拟网卡名称通过命令<code>uci -q get network.wan6.ifname</code>查看，下面两条命令中的任意一条，都可以添加全球可路由IPv6聚合路由条目。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">route -A inet6 add 2000::/3 gw fe80::3a22:d6ff:febf:1b00 dev eth0.2</span><br><span class="line">route -A inet6 add 2000::/3 gw 2001:xxx:xxx:xxx:3a22:d6ff:febf:1b00 dev eth0.2</span><br></pre></td></tr></table></figure>
+<h5 id="配置保存-1"><a href="#配置保存-1" class="headerlink" title="配置保存"></a>配置保存</h5><p>每次重启，添加的ip6tables会消失，因此添加到开机启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF &gt;&gt;/etc/rc.local</span><br><span class="line">    ip6tables -t nat -A POSTROUTING -o eth0.2 -j MASQUERADE</span><br><span class="line">    ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">    ip6tables -A FORWARD -i br-lan -j ACCEPT</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>如果IPv6环境发生改变，路由器的IPv6网关也会随之改变，因此创建 <strong>/etc/hotplug.d/iface/90-ipv6</strong>脚本，修改文件属性为755，内容如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">[ <span class="string">"<span class="variable">$ACTION</span>"</span> = ifup ] || <span class="built_in">exit</span> 0</span><br><span class="line"></span><br><span class="line">[ <span class="string">"<span class="variable">$INTERFACE</span>"</span> = wan6 ] &amp;&amp; &#123;              </span><br><span class="line">  route -A inet6 add ::/0 gw $(traceroute6 -n tv.byr.cn | grep <span class="string">'^ 1'</span> |  awk <span class="string">'&#123;print $2&#125;'</span>) dev $(uci -q get network.wan6.ifname)</span><br><span class="line">   <span class="comment">#route -A inet6 add 2000::/3 gw $(route -A inet6 | grep ::/0 | awk '&#123;print $2&#125;') dev $(uci -q get network.wan6.ifname)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-3-总结"><a href="#4-3-总结" class="headerlink" title="4.3 总结"></a>4.3 总结</h4><ul>
+<li>该方式适用于只有OpenWRT能获取IPv6全局地址的情况下，例如路由器通过隧道或者VPN等方式获取的IPv6地址</li>
+<li>该方式在原生IPv6环境下不推荐使用，经过测试，BT下载速率不会高于5MB/s</li>
+</ul>
+<hr>
+<h3 id="5-实现方式对比"><a href="#5-实现方式对比" class="headerlink" title="5. 实现方式对比"></a>5. 实现方式对比</h3><table>
+<thead>
+<tr>
+<th>实现方式</th>
+<th>原生地址</th>
+<th>速率</th>
+<th>路由器获取IPv6地址</th>
+<th>适用环境</th>
+<th>问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv6 中继</td>
+<td>是</td>
+<td>很好</td>
+<td>可以</td>
+<td>原生IPv6</td>
+<td>偶尔中断</td>
+</tr>
+<tr>
+<td>IPv6 穿透</td>
+<td>是</td>
+<td>很好</td>
+<td>不可以</td>
+<td>原生IPv6</td>
+<td>路由器IPv6手动配置</td>
+</tr>
+<tr>
+<td>IPv6 NAT</td>
+<td>否</td>
+<td>一般</td>
+<td>可以</td>
+<td>其他</td>
+<td>速率慢</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017.2.22 20:33</td>
+<td>文件创建</td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2017.7.5 21:03</td>
+<td>IPv6 穿透方式路由器获取IPv6地址</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.polarxiong.com/archives/%E6%95%99%E8%82%B2%E7%BD%91DD-WRT-OpenWrt%E7%94%A8%E4%B8%8AIPv6-%E4%BB%A5%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E4%B8%BA%E4%BE%8B.html" target="_blank" rel="noopener">https://www.polarxiong.com/archives/%E6%95%99%E8%82%B2%E7%BD%91DD-WRT-OpenWrt%E7%94%A8%E4%B8%8AIPv6-%E4%BB%A5%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E4%B8%BA%E4%BE%8B.html</a></li>
+<li><a href="https://github.com/tuna/ipv6.tsinghua.edu.cn/blob/master/openwrt.md" target="_blank" rel="noopener">https://github.com/tuna/ipv6.tsinghua.edu.cn/blob/master/openwrt.md</a></li>
+<li><a href="https://blog.blahgeek.com/2014/02/22/openwrt-ipv6-nat/" target="_blank" rel="noopener">https://blog.blahgeek.com/2014/02/22/openwrt-ipv6-nat/</a></li>
+<li><a href="https://www.dd-wrt.com/wiki/index.php/Brctl_command" target="_blank" rel="noopener">https://www.dd-wrt.com/wiki/index.php/Brctl_command</a></li>
+<li><a href="http://turtle.blog.51cto.com/1063170/237425" target="_blank" rel="noopener">http://turtle.blog.51cto.com/1063170/237425</a></li>
+<li><a href="https://my.oschina.net/u/444663/blog/509427" target="_blank" rel="noopener">https://my.oschina.net/u/444663/blog/509427</a></li>
+<li><a href="http://www.cnblogs.com/peteryj/archive/2011/07/24/2115602.html" target="_blank" rel="noopener">http://www.cnblogs.com/peteryj/archive/2011/07/24/2115602.html</a></li>
+<li><a href="http://ebtables.netfilter.org/misc/ebtables-man.html" target="_blank" rel="noopener">http://ebtables.netfilter.org/misc/ebtables-man.html</a></li>
+<li><a href="https://wiki.openwrt.org/doc/uci/dhcp" target="_blank" rel="noopener">https://wiki.openwrt.org/doc/uci/dhcp</a></li>
+<li><a href="https://wiki.openwrt.org/doc/techref/odhcpd" target="_blank" rel="noopener">https://wiki.openwrt.org/doc/techref/odhcpd</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/openwrt/" rel="tag"># openwrt</a>
+          
+            <a href="/tags/router/" rel="tag"># router</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/16/Github Pages 部署Hexo静态博客 + 多终端账户同步管理/" rel="next" title="GitHub Pages 部署Hexo静态博客 + 多终端/账户同步管理">
+                <i class="fa fa-chevron-left"></i> GitHub Pages 部署Hexo静态博客 + 多终端/账户同步管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/01/XX卡破解 - v3/" rel="prev" title="XX卡破解 - UID固化卡片数值修改">
+                XX卡破解 - UID固化卡片数值修改 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-OpenWRT-IPv6"><span class="nav-number">1.</span> <span class="nav-text">1. OpenWRT IPv6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-IPv6-中继"><span class="nav-number">2.</span> <span class="nav-text">2. IPv6 中继</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-简介"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-配置"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#实现方式"><span class="nav-number">2.2.1.</span> <span class="nav-text">实现方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置文件修改"><span class="nav-number">2.2.2.</span> <span class="nav-text">配置文件修改</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置保存"><span class="nav-number">2.2.3.</span> <span class="nav-text">配置保存</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-总结"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-IPv6-穿透"><span class="nav-number">3.</span> <span class="nav-text">3. IPv6 穿透</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-简介"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-配置"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#软件包安装"><span class="nav-number">3.2.1.</span> <span class="nav-text">软件包安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#网卡查看"><span class="nav-number">3.2.2.</span> <span class="nav-text">网卡查看</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ebtables配置"><span class="nav-number">3.2.3.</span> <span class="nav-text">ebtables配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#odhcp服务关闭"><span class="nav-number">3.2.4.</span> <span class="nav-text">odhcp服务关闭</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-路由器IPv6地址配置"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 路由器IPv6地址配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#路由器IPv6地址"><span class="nav-number">3.3.1.</span> <span class="nav-text">路由器IPv6地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方案1"><span class="nav-number">3.3.2.</span> <span class="nav-text">解决方案1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方案3"><span class="nav-number">3.3.3.</span> <span class="nav-text">解决方案3</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-总结"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-IPv6-NAT"><span class="nav-number">4.</span> <span class="nav-text">4. IPv6 NAT</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1简介"><span class="nav-number">4.1.</span> <span class="nav-text">4.1简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-设置"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 设置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#软件包安装-1"><span class="nav-number">4.2.1.</span> <span class="nav-text">软件包安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IPv6私网地址"><span class="nav-number">4.2.2.</span> <span class="nav-text">IPv6私网地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IPv6私网地址网关配置"><span class="nav-number">4.2.3.</span> <span class="nav-text">IPv6私网地址网关配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#NAT设置"><span class="nav-number">4.2.4.</span> <span class="nav-text">NAT设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#路由条目添加"><span class="nav-number">4.2.5.</span> <span class="nav-text">路由条目添加</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置保存-1"><span class="nav-number">4.2.6.</span> <span class="nav-text">配置保存</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-总结"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-实现方式对比"><span class="nav-number">5.</span> <span class="nav-text">5. 实现方式对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">6.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

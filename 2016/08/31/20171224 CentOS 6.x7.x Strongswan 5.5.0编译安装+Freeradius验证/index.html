@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在CentOS 6或者CentOS 7上编译安装Strongswan 5.5.0，并配置Freeradius进行验证">
+<meta name="keywords" content="IKEv2,vpn,Strongswan,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 6.x&#x2F;7.x Strongswan 5.5.0编译安装 + Freeradius验证">
+<meta property="og:url" content="http://blog.kompaz.win/2016/08/31/20171224 CentOS 6.x7.x Strongswan 5.5.0编译安装+Freeradius验证/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="在CentOS 6或者CentOS 7上编译安装Strongswan 5.5.0，并配置Freeradius进行验证">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:32.909Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS 6.x&#x2F;7.x Strongswan 5.5.0编译安装 + Freeradius验证">
+<meta name="twitter:description" content="在CentOS 6或者CentOS 7上编译安装Strongswan 5.5.0，并配置Freeradius进行验证">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/08/31/20171224 CentOS 6.x7.x Strongswan 5.5.0编译安装+Freeradius验证/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>CentOS 6.x/7.x Strongswan 5.5.0编译安装 + Freeradius验证 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/08/31/20171224 CentOS 6.x7.x Strongswan 5.5.0编译安装+Freeradius验证/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CentOS 6.x/7.x Strongswan 5.5.0编译安装 + Freeradius验证
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-08-31 09:49:19" itemprop="dateCreated datePublished" datetime="2016-08-31T09:49:19+08:00">2016-08-31</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:32" itemprop="dateModified" datetime="2018-05-08T09:52:32+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">在CentOS 6或者CentOS 7上编译安装Strongswan 5.5.0，并配置Freeradius进行验证</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-编译安装Strongswan"><a href="#1-编译安装Strongswan" class="headerlink" title="1. 编译安装Strongswan"></a>1. 编译安装Strongswan</h3><h4 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h4><p>需要安装如下依赖，一些可能已经安装过的请忽略。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install pam-devel openssl-devel make gcc curl wget gcc-c++</span><br></pre></td></tr></table></figure></p>
+<h4 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h4><p>从<a href="https://www.strongswan.org/" target="_blank" rel="noopener">Strongswan</a>官网下载最新版本源码，这里以Strongswan 5.5.0源码为例。</p>
+<h4 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h4><p>切换到Strongswan源码解压的目录，执行配置与编译安装<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">./configure  --<span class="built_in">enable</span>-eap-identity --<span class="built_in">enable</span>-eap-md5 \</span><br><span class="line">--<span class="built_in">enable</span>-eap-mschapv2 --<span class="built_in">enable</span>-eap-tls --<span class="built_in">enable</span>-eap-ttls --<span class="built_in">enable</span>-eap-peap  \</span><br><span class="line">--<span class="built_in">enable</span>-eap-tnc --<span class="built_in">enable</span>-eap-dynamic --<span class="built_in">enable</span>-eap-radius  --<span class="built_in">enable</span>-xauth-eap  \</span><br><span class="line">--<span class="built_in">enable</span>-xauth-pam  --<span class="built_in">enable</span>-dhcp  --<span class="built_in">enable</span>-openssl  --<span class="built_in">enable</span>-addrblock --<span class="built_in">enable</span>-unity  \</span><br><span class="line">--<span class="built_in">enable</span>-certexpire --<span class="built_in">enable</span>-radattr --<span class="built_in">enable</span>-swanctl --<span class="built_in">enable</span>-openssl --<span class="built_in">disable</span>-gmp \</span><br><span class="line">--<span class="built_in">enable</span>-kernel-libipsec  <span class="comment">#如果主机为OpenVZ则需要添加这个</span></span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure></p>
+<p>根据主机性能，完成上述编译安装需要的时间不同。安装完成后，可执行文件的路径为<code>/usr/local/sbin</code>, 配置文件路径为<code>/usr/local/etc</code>，配置文件主要如下</p>
+<ul>
+<li>ipsec.conf </li>
+<li>ipsec.secrets</li>
+<li>ipsec.d</li>
+<li>strongswan.conf</li>
+<li>strongswan.d</li>
+<li>swanctl</li>
+</ul>
+<hr>
+<h3 id="2-证书配置"><a href="#2-证书配置" class="headerlink" title="2. 证书配置"></a>2. 证书配置</h3><h4 id="Let’s-Encrypt免费服务器证书"><a href="#Let’s-Encrypt免费服务器证书" class="headerlink" title="Let’s Encrypt免费服务器证书"></a>Let’s Encrypt免费服务器证书</h4><p>Let’s Encrypt是免费、自动化、开放的证书签发服务。它由 ISRG（Internet Security Research Group，互联网安全研究小组）提供服务，而 ISRG 是来自于美国加利福尼亚州的一个公益组织。Let’s Encrypt 得到了 Mozilla、Cisco、Akamai、Electronic Frontier Foundation 和 Chrome 等众多公司和机构的支持。申请 Let’s Encrypt 证书免费，每次只有 90 天的有效期，但可以通过脚本定期更新。</p>
+<p>如果服务器已经绑定域名，可以使用Let’s Encrypt免费证书，如果没有绑定域名，无法使用Let’s Encrypt证书，请使用自签名证书。</p>
+<h5 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h5><p>下载Let’s Encrypt并执行生成证书。在执行过程中，会下载一些依赖，同时在提示输入域名的时候，要和VPS的域名一致。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/letsencrypt/letsencrypt</span><br><span class="line"><span class="built_in">cd</span> letsencrypt</span><br><span class="line">./letsencrypt-auto certonly --standalone</span><br></pre></td></tr></table></figure></p>
+<h5 id="安装证书"><a href="#安装证书" class="headerlink" title="安装证书"></a>安装证书</h5><p>生成的证书和证书私钥位于 <code>/etc/letsencrypt/live/your.domain/</code> 目录下，如下所示，所有文件均是软链接，其原始文件后的数字为证书生成的次数，首次生成为1，每续期一次，数字加一，下面例子为续期了两次的证书。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lrwxrwxrwx 1 root root 36 Dec  3 09:30 cert.pem -&gt; ../../archive/[域名]/cert3.pem</span><br><span class="line">lrwxrwxrwx 1 root root 37 Dec  3 09:30 chain.pem -&gt; ../../archive/[域名]/chain3.pem</span><br><span class="line">lrwxrwxrwx 1 root root 41 Dec  3 09:30 fullchain.pem -&gt; ../../archive/[域名]/fullchain3.pem</span><br><span class="line">lrwxrwxrwx 1 root root 39 Dec  3 09:30 privkey.pem -&gt; ../../archive/[域名]/privkey3.pem</span><br></pre></td></tr></table></figure>
+<p>建立软链到 strongSwan配置目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /etc/letsencrypt/live/your.domain/fullchain.pem /etc/ipsec.d/certs/server.cert.pem</span><br><span class="line">ln -s /etc/letsencrypt/live/your.domain/privkey.pem /etc/ipsec.d/private/server.key.pem</span><br></pre></td></tr></table></figure>
+<h5 id="证书自动续期"><a href="#证书自动续期" class="headerlink" title="证书自动续期"></a>证书自动续期</h5><p>letsencrypt证书需要每三个月进行续期一次证书。使用Linux定时任务进行证书续期。以下例子为：每隔两个月的4号进行一次证书续期</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"> * * 4 */2 * /root/letsencrypt/letsencrypt-auto  --renew-by-default  certonly --standalone -d [域名] --email [邮箱]  --agree-tos</span><br></pre></td></tr></table></figure>
+<h4 id="自签名CA颁发服务器证书"><a href="#自签名CA颁发服务器证书" class="headerlink" title="自签名CA颁发服务器证书"></a>自签名CA颁发服务器证书</h4><h5 id="CA证书"><a href="#CA证书" class="headerlink" title="CA证书"></a>CA证书</h5><p>生成一个CA私钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipsec pki --gen --outform pem &gt; ca.key.pem</span><br></pre></td></tr></table></figure>
+<p>基于私钥生成一个CA证书。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipsec pki --self --<span class="keyword">in</span> ca.key.pem --dn <span class="string">"C=CN, O=Strongswan, CN=Strongswan CA"</span> --ca --lifetime 3650 --outform pem &gt; ca.cert.pem</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>–self 表示自签证书</li>
+<li>–in 是输入的私钥</li>
+<li>–dn 是判别名</li>
+<li>C 表示国家名，同样还有 ST 州/省名，L 地区名，STREET（全大写） 街道名</li>
+<li>O 组织名称</li>
+<li>CN 友好显示的通用名</li>
+<li>–ca 表示生成 CA 根证书</li>
+<li>–lifetime 为有效期, 单位是天</li>
+</ul>
+<h5 id="服务器证书"><a href="#服务器证书" class="headerlink" title="服务器证书"></a>服务器证书</h5><p>生成服务器证书的私钥<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipsec pki --gen --outform pem &gt; server.key.pem</span><br></pre></td></tr></table></figure></p>
+<p>用自签的 CA 证书签发一个服务器证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ipsec pki --pub --<span class="keyword">in</span> server.key.pem --outform pem &gt; server.pub.pem</span><br><span class="line">ipsec pki --issue --lifetime 1200 --cacert ca.cert.pem --cakey ca.key.pem --<span class="keyword">in</span> server.pub.pem \</span><br><span class="line">--dn <span class="string">"C=CN, O=Strongswan, CN=vpn.strongswan.org"</span> --san=<span class="string">"vpn.strongswan.org"</span> --flag serverAuth \</span><br><span class="line">--flag ikeIntermediate --outform pem &gt; server.cert.pem</span><br></pre></td></tr></table></figure></p>
+<p>–issue, –cacert 和–cakey 就是表明要用刚才自签的 CA 证书来签这个服务器证书，–dn, –san，–flag 是一些客户端方面的特殊要求：</p>
+<ul>
+<li>iOS 客户端要求 CN 也就是通用名必须是服务器的 URL 或 IP 地址;</li>
+<li>Windows 7 不但要求了上面，还要求必须显式说明这个服务器证书的用途（用于与服务器进行认证），–flag serverAuth;</li>
+<li>非 iOS 的 Mac OS X 要求了“IP 安全网络密钥互换居间（IP Security IKE Intermediate）”这种增强型密钥用法（EKU），–flag ikdeIntermediate;</li>
+<li>Android 和 iOS 都要求服务器别名（serverAltName）就是服务器的 URL 或 IP 地址，–san。</li>
+</ul>
+<h5 id="客户端证书（可选）"><a href="#客户端证书（可选）" class="headerlink" title="客户端证书（可选）"></a>客户端证书（可选）</h5><p>生成客户端私钥<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipsec pki --gen --outform pem &gt; client.key.pem</span><br></pre></td></tr></table></figure></p>
+<p>用自签的CA证书来签发客户端证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ipsec pki --pub --<span class="keyword">in</span> client.key.pem --outform pem &gt; client.pub.pem</span><br><span class="line">ipsec pki --issue --lifetime 1200 --cacert ca.cert.pem --cakey ca.key.pem --<span class="keyword">in</span> client.pub.pem \</span><br><span class="line">--dn <span class="string">"C=CN, O=Strongswan, CN=vpn.strongswan.org"</span> --outform pem &gt; client.cert.pem</span><br></pre></td></tr></table></figure></p>
+<p>打包证书为 p12，生成 p12 证书可以设置密码，请注意：OS X 无法导入密码为空的 p12 证书<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs12 -<span class="built_in">export</span> -inkey client.key.pem -<span class="keyword">in</span> client.cert.pem -name <span class="string">"Strongswan Client Cert"</span> \</span><br><span class="line">-certfile ca.cert.pem -caname <span class="string">"Strongswan CA"</span> -out client.cert.p12</span><br></pre></td></tr></table></figure></p>
+<h5 id="安装证书-1"><a href="#安装证书-1" class="headerlink" title="安装证书"></a>安装证书</h5><p>复制证书到指定的路径<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cp ca.key.pem /usr/<span class="built_in">local</span>/etc/ipsec.d/private/</span><br><span class="line">cp client.key.pem /usr/<span class="built_in">local</span>/etc/ipsec.d/private/</span><br><span class="line">cp server.key.pem /usr/<span class="built_in">local</span>/etc/ipsec.d/private/</span><br><span class="line">cp server.cert.pem /usr/<span class="built_in">local</span>/etc/ipsec.d/certs/</span><br><span class="line">cp client.cert.pem /usr/<span class="built_in">local</span>/etc/ipsec.d/certs/</span><br><span class="line">cp ca.cert.pem /usr/<span class="built_in">local</span>/etc/ipsec.d/cacerts/</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="3-Strongswan配置"><a href="#3-Strongswan配置" class="headerlink" title="3. Strongswan配置"></a>3. Strongswan配置</h3><h4 id="ipsec-conf配置"><a href="#ipsec-conf配置" class="headerlink" title="ipsec.conf配置"></a>ipsec.conf配置</h4><p>支持IKEv2的配置如下所示， 常用设置如下。更多场景的配置，请自行参考<a href="https://www.strongswan.org/" target="_blank" rel="noopener">Strongswan</a>官网。</p>
+<p>这里的场景的单个客户端接入到服务器，获取虚拟IPv4地址全局转发，获取IPv6地址，并使用<a href="https://github.com/DanielAdolfsson/ndppd" target="_blank" rel="noopener">ndppd</a>辅助转发NDP消息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cachecrls = yes					<span class="comment">#是否缓存证书吊销列表</span></span><br><span class="line">strictcrlpolicy=yes				    <span class="comment">#是否严格执行证书规则</span></span><br><span class="line">uniqueids=no				    <span class="comment">#如果同一个用户在不同的设备上重复登录,yes 断开旧连接,创建新连接;no 保持旧</span></span><br><span class="line">  							   <span class="comment">#连接,并发送通知; never 同 no, 但不发送通知.</span></span><br><span class="line">ca %default					     <span class="comment">#配置根证书, 如果不使用证书吊销列表, 可以不用这段. 命名为 %default 所有配置</span></span><br><span class="line">  							   <span class="comment">#节都会继承它</span></span><br><span class="line">crl =						    <span class="comment">#证书吊销列表URL,可以是 LDAP, http, 或文件路径</span></span><br><span class="line">conn %default				     <span class="comment">#定义连接项, 命名为 %default 所有连接都会继承它</span></span><br><span class="line">compress = yes				     <span class="comment">#是否启用压缩, yes 表示如果支持压缩会启用.</span></span><br><span class="line">dpdaction = hold			       <span class="comment">#当意外断开后尝试的操作, hold, 保持并重连直到超时.</span></span><br><span class="line">dpddelay = 30s				      <span class="comment">#意外断开后尝试重连时长</span></span><br><span class="line">dpdtimeout = 60s			      <span class="comment">#意外断开后超时时长, 只对 IKEv1 起作用</span></span><br><span class="line">inactivity = 300s				   <span class="comment">#闲置时长,超过后断开连接.</span></span><br><span class="line">esp = aes256-sha256,aes256-sha1,3des-sha1!	</span><br><span class="line">  							   <span class="comment">#数据传输协议加密算法列表</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ike = aes256-sha1-modp1024,aes128-sha1-modp1024,3des-sha1-modp1024!</span><br><span class="line">  							   <span class="comment">#密钥交换协议加密算法列表</span></span><br><span class="line">							 <span class="comment">#iOS支持的IKE加密方式为aes256-sha256-modp1024</span></span><br><span class="line">  							   <span class="comment">#OS X为3des-sha1-modp1024</span></span><br><span class="line">  							   <span class="comment">#Win7为aes256-sha1-modp1024，</span></span><br><span class="line">keyexchange = ike			       <span class="comment">#默认的密钥交换算法, ike 为自动, 优先使用 IKEv2</span></span><br><span class="line">left = %any					      <span class="comment">#服务端公网IP, 可以是魔术字 %any，表示从本地IP地址表中取.</span></span><br><span class="line">right = %any				      <span class="comment">#客户端IP, 同上</span></span><br><span class="line">leftdns = 8.8.8.8,8.8.4.4			<span class="comment">#指定服务端与客户端的dns, 多个用","分隔</span></span><br><span class="line">rightdns = 8.8.8.8,8.8.4.4			<span class="comment">#指定服务端与客户端的dns, 多个用","分隔</span></span><br><span class="line">leftikeport = &lt;port&gt;			  <span class="comment">#服务端用于ike认证时使用的端口, 默认为500,如果使用了nat 转发, 则使用4500</span></span><br><span class="line">leftsourceip = %config			   <span class="comment">#服务器端虚拟IP地址</span></span><br><span class="line">rightsourceip = 10.0.0.0/24		       <span class="comment">#客户端虚拟IP段</span></span><br><span class="line">leftsubnet = 0.0.0.0/0		              <span class="comment">#服务器端子网, 魔术字 0.0.0.0/0. 如果为客户端分配虚拟 IP 地址的话，那表示之</span></span><br><span class="line">  							    <span class="comment">#后要做 iptables 转发，那么服务器端就必须是用魔术字</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">leftca = ca.cert.pem 			    <span class="comment">#服务器端根证书</span></span><br><span class="line">leftcert = server.cert.pem		       <span class="comment">#服务器证书, 可以是 PEM 或 DER 格式</span></span><br><span class="line">rightcert = &lt;path&gt;				<span class="comment">#不指定客户端证书路径</span></span><br><span class="line">leftsigkey = server.pub.pem		     <span class="comment">#指定服务器证书的公钥</span></span><br><span class="line">leftsendcert = always			   <span class="comment">#是否发送服务器证书到客户端</span></span><br><span class="line">rightsendcert = never			  <span class="comment">#客户端不发送证书</span></span><br><span class="line">leftauth = pubkey	                         <span class="comment">#服务端认证方法,使用证书</span></span><br><span class="line">rightauth = eap-mschapv2	         <span class="comment">#客户端认证使用 EAP 扩展认证 , 貌似 eap-mschapv2 比较通用</span></span><br><span class="line">leftid = vpn.strongswan.com	            <span class="comment">#服务端id, 可以任意指定, 默认为服务器证书的 subject, 还可以是魔术字 %any，</span></span><br><span class="line">  							  <span class="comment">#表示什么都行.</span></span><br><span class="line">rightid = %any				      <span class="comment">#客户端id, 任意</span></span><br><span class="line">eap_identity = %any		                <span class="comment">#指定客户端eap id</span></span><br><span class="line">rekey = no					    <span class="comment">#不自动重置密钥</span></span><br><span class="line">fragmentation = yes		        	<span class="comment">#开启IKE 消息分片</span></span><br><span class="line">auto = add					   <span class="comment">#当服务启动时, 应该如何处理这个连接项. add 添加到连接表中.</span></span><br></pre></td></tr></table></figure>
+<p>本文使用的配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">config setup</span><br><span class="line">    uniqueids = no</span><br><span class="line">    strictcrlpolicy = no</span><br><span class="line">    </span><br><span class="line">conn %default</span><br><span class="line">    compress = yes</span><br><span class="line">    keyingtries = 1</span><br><span class="line">    keyexchange = ikev2</span><br></pre></td></tr></table></figure></p>
+<p>IKE基础配置，其中IPv6的地址块，可以使用全球可路由地址块或者使用用<a href="https://github.com/DanielAdolfsson/ndppd" target="_blank" rel="noopener">ndppd</a>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">conn IKE-BASE</span><br><span class="line">    leftcert = server.cert.pem                   </span><br><span class="line">    left = %any</span><br><span class="line">    leftsubnet = 0.0.0.0/0,::/0                   <span class="comment">#客户端可以访问的IP地址段，这里同时添加IPv4和IPv6的所有路由转发</span></span><br><span class="line">    right = %any</span><br><span class="line">    rightsourceip = 192.168.90.0/24,2001:xxxx:xxxx::/112   <span class="comment">#客户端接入分配的私有IPv4地址范围和IPv6地址范围</span></span><br></pre></td></tr></table></figure>
+<p>IKEv2面向Windows配置，因为Windows实现IKEv2方式的问题，必须使用指定加密<strong>modp1024</strong>方法。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">conn IKEv2-Windows</span><br><span class="line">    also = IKE-BASE</span><br><span class="line">    ike = aes256-sha1-modp1024 </span><br><span class="line">    esp = aes256-sha1</span><br><span class="line">    leftauth = pubkey</span><br><span class="line">    leftsendcert = always</span><br><span class="line">    rightauth = eap-radius</span><br><span class="line">    rightsendcert = never</span><br><span class="line">    rekey = no</span><br><span class="line">    eap_identity = %identity</span><br><span class="line">    auto = add</span><br></pre></td></tr></table></figure></p>
+<p>IKEv2面向其他平台配置，其中<code>leftid</code>要与IP地址或者域名相同<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">conn IKEv2</span><br><span class="line">    also = IKE-BASE</span><br><span class="line">    ikelifetime = 60m</span><br><span class="line">    keylife = 20m</span><br><span class="line">    rekeymargin = 3m</span><br><span class="line">    leftid = x.x.x.x</span><br><span class="line">    leftauth = pubkey</span><br><span class="line">    leftsendcert = always</span><br><span class="line">    rightauth = eap-radius</span><br><span class="line">    rightsendcert = never</span><br><span class="line">    fragmentation = yes</span><br><span class="line">    rekey = yes</span><br><span class="line">    eap_identity = %identity</span><br><span class="line">    auto = add</span><br></pre></td></tr></table></figure></p>
+<h4 id="strongswan-conf配置"><a href="#strongswan-conf配置" class="headerlink" title="strongswan.conf配置"></a>strongswan.conf配置</h4><p>修改<code>/usr/local/etc/strongswan.conf</code>，内容如下，添加日志相关的选项，用于debug。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">charon &#123;</span><br><span class="line">    load_modular = yes </span><br><span class="line">    filelog &#123;</span><br><span class="line">        /var/<span class="built_in">log</span>/charon.log &#123;</span><br><span class="line">            time_format = %b %e %T</span><br><span class="line">            ike_name = yes </span><br><span class="line">            append = no</span><br><span class="line">            default = 2 </span><br><span class="line">            flush_line = yes </span><br><span class="line">        &#125;   </span><br><span class="line">        stderr &#123;</span><br><span class="line">            ike = 2 </span><br><span class="line">            knl = 3 </span><br><span class="line">        &#125;                                                                                                                                                            </span><br><span class="line">    &#125;   </span><br><span class="line">    syslog &#123;</span><br><span class="line">        identifier = charon-custom</span><br><span class="line">        daemon &#123;</span><br><span class="line">        &#125;   </span><br><span class="line">        auth &#123;</span><br><span class="line">            default = -1</span><br><span class="line">            ike = 0 </span><br><span class="line">        &#125;   </span><br><span class="line">    &#125;                                                                                                                                                </span><br><span class="line">    plugins &#123;</span><br><span class="line">        include strongswan.d/charon/*.conf</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line">include strongswan.d/*.conf</span><br></pre></td></tr></table></figure></p>
+<h4 id="ipsec-secrets设置"><a href="#ipsec-secrets设置" class="headerlink" title="ipsec.secrets设置"></a>ipsec.secrets设置</h4><p>配置验证方式的用户名与密码，PSK和XAUTH可以设置一样，这样可以避免已配置的麻烦，同时共享密钥中不能有符号等，否则登录不成功。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">: RSA server.key.pem 		<span class="comment">#使用证书验证时的服务器端私钥</span></span><br><span class="line">: PSK <span class="string">"pskkey"</span>                           <span class="comment">#使用预设加密密钥, 越长越好</span></span><br><span class="line">: XAUTH <span class="string">"pskkey"</span>		     <span class="comment">#使用XAUTH预设加密密钥, 越长越好</span></span><br><span class="line"><span class="built_in">test</span> : EAP <span class="string">"test"</span>		          <span class="comment">#验证的账户和密码，如果配置了RADIUS ，账户密码无法进行有效验证</span></span><br><span class="line">test2 : XAUTH <span class="string">"test2"</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="DNS设置"><a href="#DNS设置" class="headerlink" title="DNS设置"></a>DNS设置</h4><p>修改<code>/usr/local/etc/strongswan.d/charon.conf</code>，添加DNS服务器，修改其中的dns1=8.8.8.8。</p>
+<h4 id="Freeradius-服务器设置"><a href="#Freeradius-服务器设置" class="headerlink" title="Freeradius 服务器设置"></a>Freeradius 服务器设置</h4><p>修改<code>/usr/local/etc/strongswan.d/charon/eap-radius.conf</code>，设置accounting改为yes，并添加servers中添加Freeradius 服务器。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">accounting = yes</span><br><span class="line">servers &#123;</span><br><span class="line">  RadiusServer &#123;</span><br><span class="line">       secret = testing1234        <span class="comment">#与Freeradius 服务器共享的暗码</span></span><br><span class="line">       address = 1.2.3.4              <span class="comment">#Freeradius 服务器IP地址</span></span><br><span class="line">       auth_port = 1812             <span class="comment">#验证端口</span></span><br><span class="line">       acct_port = 1813              <span class="comment">#审计端口</span></span><br><span class="line">               &#125;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="iptables设置"><a href="#iptables设置" class="headerlink" title="iptables设置"></a>iptables设置</h4><p>转发<code>/usr/local/etc/ipsec.conf</code>中设置的客户端虚拟IP地址段，其中x.x.x.x为主机的公网IP地址<br>OpenVZ如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -s 192.168.90.0/24 -o venet0 -j SNAT --to-source x.x.x.x</span><br><span class="line">iptables -I FORWARD 4 -s 192.168.90.0/24 -j ACCEPT</span><br></pre></td></tr></table></figure></p>
+<p>KVM如下，eth0为公网IP所在的网卡。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A POSTROUTING -s 192.168.90.0/24 -o eth0 -j MASQUERADE</span><br></pre></td></tr></table></figure></p>
+<p>开放UDP的500和4500端口并保存iptables条目<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p udp -m udp --dport 4500 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p udp -m udp --dport 500 -j ACCEPT</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="4-服务启动"><a href="#4-服务启动" class="headerlink" title="4. 服务启动"></a>4. 服务启动</h3><p>启动Strongswan服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/ipsec start</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="5-IKEv2-VPN配置"><a href="#5-IKEv2-VPN配置" class="headerlink" title="5. IKEv2 VPN配置"></a>5. IKEv2 VPN配置</h3><p>详细参考<a href="http://blog.kompaz.win/2017/01/29/IKEv2%20Manual%20v2/">IKEv2用户配置手册</a></p>
+<h4 id="iOS"><a href="#iOS" class="headerlink" title="iOS"></a>iOS</h4><h5 id="系统版本要求"><a href="#系统版本要求" class="headerlink" title="系统版本要求"></a>系统版本要求</h5><p><span style="color:red">iOS 9</span>或者更高版本</p>
+<h5 id="证书导入"><a href="#证书导入" class="headerlink" title="证书导入"></a>证书导入</h5><ul>
+<li>通过<strong>邮件</strong>发送或者<strong>Safari浏览器</strong><a href="https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem" target="_blank" rel="noopener">下载</a>CA证书到iOS设备</li>
+<li>安装证书到设备</li>
+<li>输入iOS密码</li>
+</ul>
+<h5 id="VPN设置"><a href="#VPN设置" class="headerlink" title="VPN设置"></a>VPN设置</h5><ul>
+<li>配置位置: <strong>设置 -&gt; VPN -&gt; 添加配置</strong></li>
+<li>类型: IKEv2</li>
+<li>描述: 任意</li>
+<li>用户鉴定: 用户名</li>
+<li>服务器: VPN服务器URL或者IP地址</li>
+<li>用户名: Freeradius服务器配置</li>
+<li>密码: Freeradius服务器配置</li>
+<li>远程ID: VPN远程ID</li>
+<li>本地ID: 留空</li>
+</ul>
+<h4 id="OS-X"><a href="#OS-X" class="headerlink" title="OS X"></a>OS X</h4><h5 id="系统版本要求-1"><a href="#系统版本要求-1" class="headerlink" title="系统版本要求"></a>系统版本要求</h5><p><span style="color:red">OS X 10.11 (“El Capitan”)</span>或者更高版本</p>
+<h5 id="证书导入-1"><a href="#证书导入-1" class="headerlink" title="证书导入"></a>证书导入</h5><ul>
+<li>配置位置: <strong>钥匙串访问 -&gt; 钥匙串 -&gt; 系统</strong></li>
+<li>选择要添加的证书文件</li>
+<li>导入证书</li>
+</ul>
+<h5 id="VPN设置-1"><a href="#VPN设置-1" class="headerlink" title="VPN设置"></a>VPN设置</h5><ul>
+<li>配置位置: <strong>系统偏好设置 -&gt; 网络 -&gt;添加网络连接</strong></li>
+<li>接口: VPN</li>
+<li>VPN类型: IKEv2</li>
+<li>服务名称: 任意</li>
+<li>服务器: VPN服务器URL或者IP地址</li>
+<li>远程ID: VPN远程ID</li>
+<li>本地ID: 留空</li>
+<li>鉴定设置 -&gt; 用户名: Freeradius服务器配置</li>
+<li>鉴定设置 -&gt; 密码: Freeradius服务器配置</li>
+</ul>
+<h4 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h4><h5 id="系统版本要求-2"><a href="#系统版本要求-2" class="headerlink" title="系统版本要求"></a>系统版本要求</h5><p><span style="color:red">Android 4</span>或者更高版本，需要安装<a href="http://pan.baidu.com/s/1gfkEXKB" target="_blank" rel="noopener">Strongswan客户端</a></p>
+<h5 id="证书导入-2"><a href="#证书导入-2" class="headerlink" title="证书导入"></a>证书导入</h5><p>如果服务器使用的是<strong>自签名CA</strong>颁发的证书，需要导入的CA证书为之前创建的ca.cert.pem。若使用<strong>Let’s Encript</strong>证书，需要导入需要在客户端中导入<a href="https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem" target="_blank" rel="noopener">Let’s Encrypt Authority X3</a>证书。将证书文件导入安卓系统某个目录下</p>
+<ul>
+<li>配置位置：<strong>CA certificates -&gt; Import certificates</strong></li>
+<li>从文件系统选择证书文件</li>
+<li>确认导入证书</li>
+</ul>
+<h5 id="VPN设置-2"><a href="#VPN设置-2" class="headerlink" title="VPN设置"></a>VPN设置</h5><ul>
+<li>配置位置：<strong>ADD VPN PROFILE</strong></li>
+<li>服务器: VPN服务器URL或者IP地址</li>
+<li>VPN类型: IKEv2 EAP</li>
+<li>用户名: Freeradius服务器配置</li>
+<li>密码: Freeradius服务器配置</li>
+</ul>
+<h4 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h4><h5 id="系统版本要求-3"><a href="#系统版本要求-3" class="headerlink" title="系统版本要求"></a>系统版本要求</h5><p><span style="color:red">Win 7</span>或者更高版本</p>
+<h5 id="证书导入-3"><a href="#证书导入-3" class="headerlink" title="证书导入"></a>证书导入</h5><p>windows使用IKEv2 VPN需要导入服务器证书到<strong>信任根证书颁发机构。如果服务器使用的是</strong>自签名CA<strong>颁发的证书，需要导入的CA证书为之前创建的ca.cert.pem。若使用</strong>Let’s Encript**证书，需要导入需要在客户端中导入<a href="https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem" target="_blank" rel="noopener">Let’s Encrypt Authority X3</a>证书。</p>
+<ul>
+<li>开始菜单搜索<strong>cmd</strong>，打开后输入 <strong>mmc（Microsoft 管理控制台）</strong></li>
+<li><strong>文件</strong> -&gt; <strong>添加/删除管理单元</strong>，添加<strong>证书</strong>单元</li>
+<li>证书单元的弹出窗口中选<strong>计算机账户</strong>，之后选<strong>本地计算机</strong>，确定</li>
+<li>在左边的<strong>控制台根节点</strong>下选择<strong>证书</strong> -&gt; <strong>受信任的根证书颁发机构</strong> -&gt; <strong>证书</strong>，右键 -&gt; <strong>所有任务</strong> -&gt; <strong>导入</strong>打开证书导入窗口。</li>
+<li>选择证书文件导入即可</li>
+</ul>
+<h5 id="VPN设置-3"><a href="#VPN设置-3" class="headerlink" title="VPN设置"></a>VPN设置</h5><h6 id="Win10-Win8"><a href="#Win10-Win8" class="headerlink" title="Win10/Win8"></a>Win10/Win8</h6><ul>
+<li>配置位置: <strong>设置 -&gt; 网络和Internet -&gt; VPN -&gt; 添加VPN</strong></li>
+<li>VPN提供商: Windows（内置）</li>
+<li>连接名称: 任意</li>
+<li>服务器名称或地址: VPN服务器URL或者IP地址</li>
+<li>VPN类型: IKEv2</li>
+<li>登录信息类型: 用户名和密码</li>
+<li>用户名: Freeradius服务器配置</li>
+<li>密码: Freeradius服务器配置</li>
+</ul>
+<h6 id="Win7"><a href="#Win7" class="headerlink" title="Win7"></a>Win7</h6><ul>
+<li>配置位置: <strong>控制面板 -&gt; 网络和 Internet -&gt; 网络和共享中心 -&gt; 连接新的网络或连接 -&gt; 连接到工作区 -&gt; 创建新连接 -&gt; 使用我的Internet连接(VPN)</strong></li>
+<li>Internet 地址: VPN服务器URL或者IP地址</li>
+<li>目标名称: 任意</li>
+<li>用户名: Freeradius服务器配置</li>
+<li>密码: Freeradius服务器配置</li>
+</ul>
+<p>设置完毕后，先不连接</p>
+<ul>
+<li>配置位置: <strong>控制面板 -&gt; 网络和 Internet -&gt; 网络和共享中心 -&gt; 更改适配器设置</strong></li>
+<li>在新建的 VPN 连接上右键<strong>属性</strong></li>
+<li>切换到<strong>安全</strong>选项卡<ul>
+<li>VPN 类型: IKEv2</li>
+<li>数据加密选: 需要加密</li>
+<li>身份验证: EAP-MSCHAP v2</li>
+</ul>
+</li>
+</ul>
+<p>然后选择连接VPN，win7/8/10连接界面可能不同，但是大同小异。</p>
+<h4 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h4><p>Linux 的版本众多，认证方法与协议支持也非常丰富，详细方法请根据 Linux 版本查询连接方法。一般而言，Linux 通过 NetworkManager-strongswan。</p>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2016/8/31</td>
+<td>文档创建</td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2017/12/24</td>
+<td>删除IKEv1相关以及添加IKEv2 IPv6相关</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/IKEv2/" rel="tag"># IKEv2</a>
+          
+            <a href="/tags/vpn/" rel="tag"># vpn</a>
+          
+            <a href="/tags/Strongswan/" rel="tag"># Strongswan</a>
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/24/CentOS 6.x vsftp服务器搭建/" rel="next" title="CentOS 6.x vsftp服务器搭建">
+                <i class="fa fa-chevron-left"></i> CentOS 6.x vsftp服务器搭建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/02/CentOS 7 Minimal设置/" rel="prev" title="CentOS 7 minimal设置">
+                CentOS 7 minimal设置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-编译安装Strongswan"><span class="nav-number">1.</span> <span class="nav-text">1. 编译安装Strongswan</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境准备"><span class="nav-number">1.1.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源码下载"><span class="nav-number">1.2.</span> <span class="nav-text">源码下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编译安装"><span class="nav-number">1.3.</span> <span class="nav-text">编译安装</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-证书配置"><span class="nav-number">2.</span> <span class="nav-text">2. 证书配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Let’s-Encrypt免费服务器证书"><span class="nav-number">2.1.</span> <span class="nav-text">Let’s Encrypt免费服务器证书</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#生成证书"><span class="nav-number">2.1.1.</span> <span class="nav-text">生成证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安装证书"><span class="nav-number">2.1.2.</span> <span class="nav-text">安装证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#证书自动续期"><span class="nav-number">2.1.3.</span> <span class="nav-text">证书自动续期</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自签名CA颁发服务器证书"><span class="nav-number">2.2.</span> <span class="nav-text">自签名CA颁发服务器证书</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CA证书"><span class="nav-number">2.2.1.</span> <span class="nav-text">CA证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#服务器证书"><span class="nav-number">2.2.2.</span> <span class="nav-text">服务器证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#客户端证书（可选）"><span class="nav-number">2.2.3.</span> <span class="nav-text">客户端证书（可选）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安装证书-1"><span class="nav-number">2.2.4.</span> <span class="nav-text">安装证书</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Strongswan配置"><span class="nav-number">3.</span> <span class="nav-text">3. Strongswan配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ipsec-conf配置"><span class="nav-number">3.1.</span> <span class="nav-text">ipsec.conf配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#strongswan-conf配置"><span class="nav-number">3.2.</span> <span class="nav-text">strongswan.conf配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipsec-secrets设置"><span class="nav-number">3.3.</span> <span class="nav-text">ipsec.secrets设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS设置"><span class="nav-number">3.4.</span> <span class="nav-text">DNS设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Freeradius-服务器设置"><span class="nav-number">3.5.</span> <span class="nav-text">Freeradius 服务器设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables设置"><span class="nav-number">3.6.</span> <span class="nav-text">iptables设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-服务启动"><span class="nav-number">4.</span> <span class="nav-text">4. 服务启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-IKEv2-VPN配置"><span class="nav-number">5.</span> <span class="nav-text">5. IKEv2 VPN配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#iOS"><span class="nav-number">5.1.</span> <span class="nav-text">iOS</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#系统版本要求"><span class="nav-number">5.1.1.</span> <span class="nav-text">系统版本要求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#证书导入"><span class="nav-number">5.1.2.</span> <span class="nav-text">证书导入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VPN设置"><span class="nav-number">5.1.3.</span> <span class="nav-text">VPN设置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OS-X"><span class="nav-number">5.2.</span> <span class="nav-text">OS X</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#系统版本要求-1"><span class="nav-number">5.2.1.</span> <span class="nav-text">系统版本要求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#证书导入-1"><span class="nav-number">5.2.2.</span> <span class="nav-text">证书导入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VPN设置-1"><span class="nav-number">5.2.3.</span> <span class="nav-text">VPN设置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android"><span class="nav-number">5.3.</span> <span class="nav-text">Android</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#系统版本要求-2"><span class="nav-number">5.3.1.</span> <span class="nav-text">系统版本要求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#证书导入-2"><span class="nav-number">5.3.2.</span> <span class="nav-text">证书导入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VPN设置-2"><span class="nav-number">5.3.3.</span> <span class="nav-text">VPN设置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows"><span class="nav-number">5.4.</span> <span class="nav-text">Windows</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#系统版本要求-3"><span class="nav-number">5.4.1.</span> <span class="nav-text">系统版本要求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#证书导入-3"><span class="nav-number">5.4.2.</span> <span class="nav-text">证书导入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VPN设置-3"><span class="nav-number">5.4.3.</span> <span class="nav-text">VPN设置</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Win10-Win8"><span class="nav-number">5.4.3.1.</span> <span class="nav-text">Win10/Win8</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Win7"><span class="nav-number">5.4.3.2.</span> <span class="nav-text">Win7</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux"><span class="nav-number">5.5.</span> <span class="nav-text">Linux</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">6.</span> <span class="nav-text">修订版本信息</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

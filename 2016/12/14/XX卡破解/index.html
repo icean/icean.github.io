@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="使用ACR-122对XX卡进行破解。2008 年的时候，荷兰恩智浦（NXP）公司开发的 RFID 产品 Mifare Classic 就被破解了，详细请自行Google 或百度。RFID即为射频识别，NFC近场通信，实际上NFC可以理解为以RFID技术为基础的一种产品。">
+<meta name="keywords" content="crack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XX卡破解 - 数值变化规律猜测">
+<meta property="og:url" content="http://blog.kompaz.win/2016/12/14/XX卡破解/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="使用ACR-122对XX卡进行破解。2008 年的时候，荷兰恩智浦（NXP）公司开发的 RFID 产品 Mifare Classic 就被破解了，详细请自行Google 或百度。RFID即为射频识别，NFC近场通信，实际上NFC可以理解为以RFID技术为基础的一种产品。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/m1/1-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/m1/1-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/m1/2-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/m1/3-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/m1/3-2.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.972Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XX卡破解 - 数值变化规律猜测">
+<meta name="twitter:description" content="使用ACR-122对XX卡进行破解。2008 年的时候，荷兰恩智浦（NXP）公司开发的 RFID 产品 Mifare Classic 就被破解了，详细请自行Google 或百度。RFID即为射频识别，NFC近场通信，实际上NFC可以理解为以RFID技术为基础的一种产品。">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/m1/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/12/14/XX卡破解/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>XX卡破解 - 数值变化规律猜测 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/12/14/XX卡破解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">XX卡破解 - 数值变化规律猜测
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-12-14 15:11:59" itemprop="dateCreated datePublished" datetime="2016-12-14T15:11:59+08:00">2016-12-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/其他/" itemprop="url" rel="index"><span itemprop="name">其他</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">使用ACR-122对XX卡进行破解。2008 年的时候，荷兰恩智浦（NXP）公司开发的 RFID 产品 Mifare Classic 就被破解了，详细请自行Google 或百度。RFID即为射频识别，NFC近场通信，实际上NFC可以理解为以RFID技术为基础的一种产品。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="警告"><a href="#警告" class="headerlink" title="警告"></a>警告</h3><p><span style="color:red">本文仅为测试，请勿将此技术用于非法用途，后果自负！！！</span></p>
+<h3 id="1-基础知识"><a href="#1-基础知识" class="headerlink" title="1. 基础知识"></a>1. 基础知识</h3><h4 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h4><p>2008 年的时候，荷兰恩智浦（NXP）公司开发的 RFID 产品 Mifare Classic 就被破解了，详细请自行Google 或百度。RFID即为射频识别，NFC近场通信，实际上NFC可以理解为以RFID技术为基础的一种产品。</p>
+<h4 id="RFID技术"><a href="#RFID技术" class="headerlink" title="RFID技术"></a>RFID技术</h4><p>RFID技术中所衍生的产品大概有三大类：</p>
+<ul>
+<li>无源RFID产品</li>
+<li>有源RFID产品</li>
+<li>半有源RFID产品</li>
+</ul>
+<p>根据RFID Tag的工作方式，有可分为：</p>
+<ul>
+<li>被动</li>
+<li>主动</li>
+<li>半主动</li>
+</ul>
+<p>最常见的就是被动式的了，我们目前接触的多的就是无源、被动式产品，其中最为广泛常见的就是MIFARE Classic 1K卡，简称M1卡、S50卡</p>
+<h4 id="M1卡结构"><a href="#M1卡结构" class="headerlink" title="M1卡结构"></a>M1卡结构</h4><p>Mifare Classic 提供 1 KB - 4KB 的容量，现在国内采用的多数是 Mifare Classic 1k(S50)，简称 M1 卡。本文后面的测试也大多是基于 M1 卡开展。  </p>
+<p>M1 卡有从 0 到 15 共 16 个扇区，每个扇区配备了从 0 到 3 共 4 个段，每个段可以保存 16 字节的内容。每个扇区的第 4 个段（也就是 3 段）是用来保存 KeyA（密钥A），KeyB（密钥B） 和控制位的，因为 M1 卡允许每个扇区有一对独立的密码保护，这样能够更加灵活的控制数据的操作，控制位就是这个扇区各种详细权限计算出来的结果。</p>
+<p>每张 M1 卡都有一个全球唯一的 UID 号，这个 UID 号保存在卡的第一个扇区（0 扇区）的第一段（0 段），也称为厂商段，其中前 4 个字节是卡的 UID，第 5 个字节是卡 UID 的校验位，剩下的是厂商数据。并且这个段在出厂之前就会被设置了写入保护，只能读取不能修改，当然也有例外，有种叫 UID 卡的特殊卡，UID 是没有设置保护的，其实就是厂家不按规范生产的卡，M1 卡出厂是要求要锁死 UID 的。图1-1很清晰的列出了 M1 卡的结构。</p>
+<center><img src="http://blog.kompaz.win/images/m1/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 M1卡结构示意图</strong></center>
+
+<p>图1-2为本文读取出来的卡片数据，使用winhex读取</p>
+<ul>
+<li>红色圈出的部分为卡片的第一个扇区</li>
+<li>蓝色圈出的部分为卡的UID</li>
+<li>黄色圈出的部分为校验位</li>
+<li>橙色圈出的部分为密钥A、密钥B</li>
+<li>紫色圈出的部分为存取控制</li>
+<li><center><img src="http://blog.kompaz.win/images/m1/1-2.jpg" alt="1-2"></center><center style="color:purple"><strong>图1-2 M1卡结构示意图</strong></center>
+
+</li>
+</ul>
+<hr>
+<h3 id="2-准备工作"><a href="#2-准备工作" class="headerlink" title="2. 准备工作"></a>2. 准备工作</h3><h4 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h4><p>XX卡为不记名，不挂失的卡，由此可以推测XX卡的数据是离线存储的，其数据存储在卡片的扇区中。</p>
+<h4 id="设备购买"><a href="#设备购买" class="headerlink" title="设备购买"></a>设备购买</h4><ul>
+<li><strong>ACR-122U-A9</strong>，经过资料调研，价格不是很贵，入门级别，可以读写卡。其他高端工具例如PM3价格偏高。</li>
+<li>驱动以及读写工具等</li>
+<li>UID可写白卡</li>
+<li>待破解XX卡</li>
+</ul>
+<h4 id="设备安装"><a href="#设备安装" class="headerlink" title="设备安装"></a>设备安装</h4><p>根据教程以软件包，如图2-1所示，首先安装驱动，然后连接读卡器，重启电脑</p>
+ <center><img src="http://blog.kompaz.win/images/m1/2-1.jpg" alt="2-1"></center><center style="color:purple"><strong>图2-1 软件包</strong></center>
+
+<hr>
+<h3 id="3-破解过程"><a href="#3-破解过程" class="headerlink" title="3. 破解过程"></a>3. 破解过程</h3><h4 id="数据读取"><a href="#数据读取" class="headerlink" title="数据读取"></a>数据读取</h4><p>XX卡可以用10次 ，已经用过1次，卡中可用次数为9次。</p>
+<ul>
+<li>确认连接好读卡器，且读卡器指示灯为<span style="color:red">红色</span> </li>
+<li>打开破解软件，如图3-1所示，并放上XX卡，指示灯变为<span style="color:green">绿色</span> </li>
+<li>点击<strong>开始破击</strong>，破解完成后有提示，并在破解软件目录下生成一个大小为1KB的dump文件</li>
+<li><p>dump文件可以使用<em>winhex</em>直接打开查看，如图1-2中所示。在调研过程中，有博主说需要用<strong>fixdump</strong>将1KB的文件修复为4KB才能编辑，本文测试可以省略该步骤。</p>
+<center><img src="http://blog.kompaz.win/images/m1/3-1.jpg" alt="3-1"></center><center style="color:purple"><strong>图3-1 M1卡破解软件</strong></center>
+
+</li>
+</ul>
+<h4 id="数据写入"><a href="#数据写入" class="headerlink" title="数据写入"></a>数据写入</h4><ul>
+<li>打开UID写卡工具，如图3-2所示</li>
+<li>点击<strong>导入</strong>，选择刚导出的dump文件</li>
+<li>将UID可写白卡放在读卡器上，此时指示灯由<span style="color:red">红色</span>变为<span style="color:green">绿色</span> </li>
+<li>点击<strong>初始化</strong> - <strong>连接</strong> - <strong>写卡</strong></li>
+<li><p>写卡完毕后，这时候白卡的数据和原来的卡数据一模一样了</p>
+<center><img src="http://blog.kompaz.win/images/m1/3-2.jpg" alt="3-2"></center><center style="color:purple"><strong>图3-2 UID写卡工具</strong></center>
+
+</li>
+</ul>
+<p>此时已经复制XX卡成功了，但是只能是9次，每次用完还要重新写卡，如果要修改次数，还需要继续找出其中数据的变化规律。</p>
+<h4 id="数据破解思路"><a href="#数据破解思路" class="headerlink" title="数据破解思路"></a>数据破解思路</h4><p>因为XX卡的数据是离线存储，所以每刷一次卡，其卡内某个扇区内的数据会发生变化。读取这些数据，并找到变化的规律，则可以修改XX卡可用次数。</p>
+<h4 id="数据变化规律"><a href="#数据变化规律" class="headerlink" title="数据变化规律"></a>数据变化规律</h4><p>将复制的白卡刷到剩余6次，每次都导出dump文件，其变化的字节偏移量为0x91，0x92，0x93，如表3-1所示</p>
+<table>
+<thead>
+<tr>
+<th>剩余次数</th>
+<th>偏移量0x91</th>
+<th>偏移量0x92</th>
+<th>偏移量0x93</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9</td>
+<td>0x03</td>
+<td>0x84</td>
+<td>0xDC</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x03</td>
+<td>0x20</td>
+<td>0x78</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x02</td>
+<td>0xBC</td>
+<td>0x13</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x02</td>
+<td>0x58</td>
+<td>0xAF</td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表3-1 偏移量变化</strong></center>
+
+<p>经过资料调研，发现相关的文章，发现规律</p>
+<ul>
+<li>0x384 = 900</li>
+<li>0x320 = 800</li>
+<li>0x2BC = 700</li>
+<li>0x258 = 600</li>
+</ul>
+<p>由此可以推测，偏移量0x92，0x92记录了XX卡的次数，还不知道偏移量0x93代表的意义</p>
+<h4 id="填零尝试"><a href="#填零尝试" class="headerlink" title="填零尝试"></a>填零尝试</h4><p>假设后面的偏移量无意义，使用<em>winhex</em>将偏移量0x91，0x92修改为 0x03，0xE8，0x93修改为0x00，然后写入白卡。进行刷卡测试，报错</p>
+<h4 id="0x93规律寻找"><a href="#0x93规律寻找" class="headerlink" title="0x93规律寻找"></a>0x93规律寻找</h4><h5 id="数据对比（四组）"><a href="#数据对比（四组）" class="headerlink" title="数据对比（四组）"></a>数据对比（四组）</h5><p>将0x93转化为二进制以及十进制，查看4次结果的变化，如表3-2所示，没有发现什么具体的规律，无论是二进制变化还是十进制变化</p>
+<table>
+<thead>
+<tr>
+<th>剩余次数</th>
+<th>16进制</th>
+<th>2进制</th>
+<th>10进制</th>
+<th>十进制差值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9</td>
+<td>0xDC</td>
+<td>1101 1100</td>
+<td>220</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x78</td>
+<td>0111 1000</td>
+<td>120</td>
+<td>100</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x13</td>
+<td>0001 1001</td>
+<td>19</td>
+<td>101</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0xAF</td>
+<td>1010 1111</td>
+<td>175</td>
+<td>-156</td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表3-2 偏移量变化</strong></center>
+
+<h5 id="数据对比（七组）"><a href="#数据对比（七组）" class="headerlink" title="数据对比（七组）"></a>数据对比（七组）</h5><p>鉴于4次的数据量比较小，接下来又增加几组数据，如表3-3所示</p>
+<table>
+<thead>
+<tr>
+<th>剩余次数</th>
+<th>十六进制</th>
+<th>二进制</th>
+<th>十进制</th>
+<th>十进制差值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9</td>
+<td>0xDC</td>
+<td>1101 1100</td>
+<td>220</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x78</td>
+<td>0111 1000</td>
+<td>120</td>
+<td>100</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x13</td>
+<td>0001 1001</td>
+<td>19</td>
+<td>101</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0xAF</td>
+<td>1010 1111</td>
+<td>175</td>
+<td>-156</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0x4A</td>
+<td>0100 1010</td>
+<td>74</td>
+<td>101</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0xE6</td>
+<td>1110 0110</td>
+<td>230</td>
+<td>-156</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x82</td>
+<td>1000 0010</td>
+<td>130</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表3-3 偏移量变化</strong></center>
+
+<h5 id="规律猜测"><a href="#规律猜测" class="headerlink" title="规律猜测"></a>规律猜测</h5><p>经过七组数据的对比，现在规律初现端倪， 由此可见偏移量0x93有一个规律的变化，以剩余次数递减为前提，从十进制角度一个猜想的规律为</p>
+<ul>
+<li>若0x93大于200，则减去100</li>
+<li>若0x93大于101，小于200，则减去101</li>
+<li>若0x93小于100，则加上156</li>
+</ul>
+<p>进行反推回去，以剩余次数加为前提</p>
+<ul>
+<li>若0x93大于200，则减去156</li>
+<li>若0x93大于等于100，小于等于200<ul>
+<li>若加上100不大于255，则加上100</li>
+<li>若加上100大于255，则减去156</li>
+</ul>
+</li>
+<li>若0x93小于100，则加上101</li>
+</ul>
+<p><strong>问题：</strong>但是此时还不确定边界值，100、101和200出现如何计算</p>
+<h5 id="规律疑问"><a href="#规律疑问" class="headerlink" title="规律疑问"></a>规律疑问</h5><p>如果这个推算规律可能和卡UID相关，这个规律在其他卡片就不成立。为了验证这个问题，又读取了另一张XX卡，发现除了UID不同以及其他一些扇区数据不同，其偏移量0x91，0x92，0x93的变化是相同的，因此可以推测：<span style="color:red"><strong>0x93字节数据变化与卡片UID等信息无关，只和卡的剩余次数数值有关</strong></span>。</p>
+<h5 id="规律推算"><a href="#规律推算" class="headerlink" title="规律推算"></a>规律推算</h5><p>由上述规律可以推算出如表3-4所示，红色部分为推算部分</p>
+<table>
+<thead>
+<tr>
+<th>剩余次数</th>
+<th>十六进制</th>
+<th>二进制</th>
+<th>十进制</th>
+<th>十进制差值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span style="color:red"><strong>10</strong></span></td>
+<td><span style="color:red"><strong>0x40</strong></span></td>
+<td><span style="color:red"><strong>0100 0000</strong></span></td>
+<td><span style="color:red"><strong>64</strong></span></td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>0xDC</td>
+<td>1101 1100</td>
+<td>220</td>
+<td>-156</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x78</td>
+<td>0111 1000</td>
+<td>120</td>
+<td>100</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x13</td>
+<td>0001 1001</td>
+<td>19</td>
+<td>101</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0xAF</td>
+<td>1010 1111</td>
+<td>175</td>
+<td>-156</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0x4A</td>
+<td>0100 1010</td>
+<td>74</td>
+<td>101</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0xE6</td>
+<td>1110 0110</td>
+<td>230</td>
+<td>-156</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x82</td>
+<td>1000 0010</td>
+<td>130</td>
+<td>100</td>
+</tr>
+<tr>
+<td><span style="color:red"><strong>2</strong></span></td>
+<td><span style="color:red"><strong>0x1D</strong></span></td>
+<td><span style="color:red"><strong>0001 1101</strong></span></td>
+<td><span style="color:red"><strong>29</strong></span></td>
+<td><strong>101</strong></td>
+</tr>
+<tr>
+<td><span style="color:red"><strong>1</strong></span></td>
+<td><span style="color:red"><strong>0xB9</strong></span></td>
+<td><span style="color:red"><strong>1011 1001</strong></span></td>
+<td><span style="color:red"><strong>185</strong></span></td>
+<td><strong>-156</strong></td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表3-4 偏移量变化推算</strong></center>
+
+<h5 id="规律验证"><a href="#规律验证" class="headerlink" title="规律验证"></a>规律验证</h5><p>将一个dump文件的的0x91~0x93修改为 <strong>03 E8 40</strong>，0x3E8十进制为1000，0x40为推算的结果，并写入卡片，刷卡验证了下，没有报错！回来读取数据，发现0x91~0x93的数据为 <strong>03 84 DC</strong>， 因此之前猜测的规律成立！</p>
+<p>只把剩余次数修改到10次还是有点少，最好修改到100次以上，由此利用Excel写了一个公式</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">IF</span>(<span class="symbol">B2</span>&gt;<span class="number">200</span>, <span class="symbol">B2</span>-<span class="number">156</span>,</span><br><span class="line">	<span class="built_in">IF</span>(<span class="symbol">B2</span>&lt;<span class="number">100</span>,<span class="symbol">B2</span>+<span class="number">101</span>,</span><br><span class="line">		<span class="built_in">IF</span>(<span class="symbol">B2</span>+<span class="number">100</span>&gt;<span class="number">255</span>,<span class="symbol">B2</span>-<span class="number">156</span></span><br><span class="line">			,<span class="symbol">B2</span>+<span class="number">100</span>)))</span><br></pre></td></tr></table></figure>
+<p>经过上述公式计算，得出如表3-5结果，将一个dump文件的0x91~0x93修改为 <strong>3A 98 27</strong>，0x3A98为十进制的15000，0x27为39的16进制，并写入卡片，测试成功。</p>
+<table>
+<thead>
+<tr>
+<th>\</th>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>次数</td>
+<td>0x93</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>185</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>29</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>….</td>
+</tr>
+<tr>
+<td>151</td>
+<td>150</td>
+<td>39</td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表3-5 偏移量变化计算-1</strong></center>
+
+<h5 id="边界值问题"><a href="#边界值问题" class="headerlink" title="边界值问题"></a>边界值问题</h5><p>经过计算，如表3-6所示，在第19个数字上出现了200，第20个为44，为减去156，因此将次数增加的0x93变化规律可以修正为</p>
+<ul>
+<li>若0x93小于100，则加上101</li>
+<li>若0x93大于100<ul>
+<li>若加上100不大于255，则加上100</li>
+<li>若加上100大于255，则减去156</li>
+</ul>
+</li>
+</ul>
+<p>进一步可以修正为</p>
+<ul>
+<li>若0x93小于100，则加上101</li>
+<li>若0x93大于100，小于156，则加上100</li>
+<li>若0x93大于156，则减去156</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>\</th>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>次数</td>
+<td>0x93</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>185</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>29</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>….</td>
+</tr>
+<tr>
+<td>17</td>
+<td>16</td>
+<td>155</td>
+</tr>
+<tr>
+<td>18</td>
+<td>17</td>
+<td>99</td>
+</tr>
+<tr>
+<td>19</td>
+<td>18</td>
+<td>200</td>
+</tr>
+<tr>
+<td>20</td>
+<td>19</td>
+<td>44</td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表3-6 偏移量变化计算-2</strong></center>
+
+<p>因此Excel公式可以精简为</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">IF</span>(<span class="symbol">B2</span>&lt;=<span class="number">100</span>,<span class="symbol">B2</span>+<span class="number">101</span>,</span><br><span class="line">	<span class="built_in">IF</span>(<span class="symbol">B2</span>+<span class="number">100</span>&gt;<span class="number">255</span>,<span class="symbol">B2</span>-<span class="number">156</span>,</span><br><span class="line">		<span class="symbol">B2</span>+<span class="number">100</span>))</span><br></pre></td></tr></table></figure>
+<p>因此0x93在剩余次数递减的情况下，可以确定边界值200的运算，变化规律修正为</p>
+<ul>
+<li>若0x93大于200，则减去100</li>
+<li>若0x93大于101，小于等于200，则减去101</li>
+<li>若0x93小于100，则加上156</li>
+</ul>
+<p>新出现的问题为次数递减情况下，边界值100、101、156是否会出现？以现有的数据，将计算量增加到500次，通过搜索数据，没有出现100、101、156这些边界值，因此在递减的情况下，暂时可以忽略考虑边界值问题。</p>
+<h5 id="规律猜测-1"><a href="#规律猜测-1" class="headerlink" title="规律猜测"></a>规律猜测</h5><p>在剩余次数递减的时候，0x93变化梯度分别为156，-100，-101，每次刷卡的时候，0x93应该是做补码运算，如表3-7所示，156、-100的补码是相同的</p>
+<table>
+<thead>
+<tr>
+<th>差值</th>
+<th>补码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>156</td>
+<td>0b1001 1100</td>
+</tr>
+<tr>
+<td>-100</td>
+<td>0b1001 1100</td>
+</tr>
+<tr>
+<td>-101</td>
+<td>0b1001 1011</td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表3-7 差值补码</strong></center>
+
+<p>0x93十进制的变化规律来看，得出如下结论</p>
+<ul>
+<li>当剩余次数减少一次时，若上一次0x93数值在[101,200]，则加上补码0b10011011 (-101)，</li>
+<li>当剩余次数减少一次时，若其他数值，该数值加上补码0b10011100 (156/-100).</li>
+</ul>
+<p>但是还不知道在二进制规律上，为什么0x93在[0b01100101 0b11001000]之间加上0b10011011 (-101)</p>
+<hr>
+<h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h3><h4 id="当前成果"><a href="#当前成果" class="headerlink" title="当前成果"></a>当前成果</h4><ul>
+<li>可以修改卡内剩余次数，以十进制的进行推算，可以计算出伴随剩余次数的0x93的数值</li>
+<li>可以复制多张卡</li>
+</ul>
+<h4 id="问题总结"><a href="#问题总结" class="headerlink" title="问题总结"></a>问题总结</h4><ul>
+<li>0x93在二进制变化规律没有找到，为什么在[101,200]之间加上补码0b10011011，更深层次的规律是什么？这个规律在二进制上是什么？</li>
+<li>UID修改问题，还没有修改卡的UID，厂商段第五个字节如何计算？</li>
+<li>把UID修改为全零，校验字节也为全零，可以刷卡通过，但是不出水</li>
+<li>可以尝试带有NFC的手机利用<a href="http://pan.baidu.com/share/link?shareid=1802710180&amp;uk=436466797" target="_blank" rel="noopener">MCT(Mifare Classic Tool)</a> 直接修改卡片数据数据，当前没有支持NFC功能的手机</li>
+</ul>
+<hr>
+<h3 id="5-参考"><a href="#5-参考" class="headerlink" title="5.参考"></a>5.参考</h3><ul>
+<li><a href="https://bobylive.com/static/1493" target="_blank" rel="noopener">https://bobylive.com/static/1493</a></li>
+<li><a href="http://www.freebuf.com/news/topnews/54481.html" target="_blank" rel="noopener">http://www.freebuf.com/news/topnews/54481.html</a></li>
+<li><a href="https://bobylive.com/static/1491" target="_blank" rel="noopener">https://bobylive.com/static/1491</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/crack/" rel="tag"># crack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/14/NetGear 刷 OpenWrt/" rel="next" title="NetGear 刷OpenWRT">
+                <i class="fa fa-chevron-left"></i> NetGear 刷OpenWRT
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/16/AWK学习/" rel="prev" title="AWK 学习">
+                AWK 学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#警告"><span class="nav-number">1.</span> <span class="nav-text">警告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-基础知识"><span class="nav-number">2.</span> <span class="nav-text">1. 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#历史"><span class="nav-number">2.1.</span> <span class="nav-text">历史</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RFID技术"><span class="nav-number">2.2.</span> <span class="nav-text">RFID技术</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#M1卡结构"><span class="nav-number">2.3.</span> <span class="nav-text">M1卡结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-准备工作"><span class="nav-number">3.</span> <span class="nav-text">2. 准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前提"><span class="nav-number">3.1.</span> <span class="nav-text">前提</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设备购买"><span class="nav-number">3.2.</span> <span class="nav-text">设备购买</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设备安装"><span class="nav-number">3.3.</span> <span class="nav-text">设备安装</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-破解过程"><span class="nav-number">4.</span> <span class="nav-text">3. 破解过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据读取"><span class="nav-number">4.1.</span> <span class="nav-text">数据读取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据写入"><span class="nav-number">4.2.</span> <span class="nav-text">数据写入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据破解思路"><span class="nav-number">4.3.</span> <span class="nav-text">数据破解思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据变化规律"><span class="nav-number">4.4.</span> <span class="nav-text">数据变化规律</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#填零尝试"><span class="nav-number">4.5.</span> <span class="nav-text">填零尝试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x93规律寻找"><span class="nav-number">4.6.</span> <span class="nav-text">0x93规律寻找</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#数据对比（四组）"><span class="nav-number">4.6.1.</span> <span class="nav-text">数据对比（四组）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#数据对比（七组）"><span class="nav-number">4.6.2.</span> <span class="nav-text">数据对比（七组）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规律猜测"><span class="nav-number">4.6.3.</span> <span class="nav-text">规律猜测</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规律疑问"><span class="nav-number">4.6.4.</span> <span class="nav-text">规律疑问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规律推算"><span class="nav-number">4.6.5.</span> <span class="nav-text">规律推算</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规律验证"><span class="nav-number">4.6.6.</span> <span class="nav-text">规律验证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#边界值问题"><span class="nav-number">4.6.7.</span> <span class="nav-text">边界值问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规律猜测-1"><span class="nav-number">4.6.8.</span> <span class="nav-text">规律猜测</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-总结"><span class="nav-number">5.</span> <span class="nav-text">4. 总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当前成果"><span class="nav-number">5.1.</span> <span class="nav-text">当前成果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#问题总结"><span class="nav-number">5.2.</span> <span class="nav-text">问题总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-参考"><span class="nav-number">6.</span> <span class="nav-text">5.参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

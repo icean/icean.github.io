@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近需要研究k8s（后面Kubernetes 均简写为k8s）QoS相关问题，为了更深入理解以及便于以后对k8s的二次开发打下基础，决定在CentOS7上编译安装最近的稳定版v1.6.4，在此总结下编译安装k8s中遇到的问题。">
+<meta name="keywords" content="k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes v1.6.4 CentOS 7 编译安装">
+<meta property="og:url" content="http://blog.kompaz.win/2017/06/06/Kubernetes v1.6.4 CentOS 7 编译安装/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="最近需要研究k8s（后面Kubernetes 均简写为k8s）QoS相关问题，为了更深入理解以及便于以后对k8s的二次开发打下基础，决定在CentOS7上编译安装最近的稳定版v1.6.4，在此总结下编译安装k8s中遇到的问题。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.404Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kubernetes v1.6.4 CentOS 7 编译安装">
+<meta name="twitter:description" content="最近需要研究k8s（后面Kubernetes 均简写为k8s）QoS相关问题，为了更深入理解以及便于以后对k8s的二次开发打下基础，决定在CentOS7上编译安装最近的稳定版v1.6.4，在此总结下编译安装k8s中遇到的问题。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/06/06/Kubernetes v1.6.4 CentOS 7 编译安装/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Kubernetes v1.6.4 CentOS 7 编译安装 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/06/06/Kubernetes v1.6.4 CentOS 7 编译安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kubernetes v1.6.4 CentOS 7 编译安装
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-06-06 12:49:00" itemprop="dateCreated datePublished" datetime="2017-06-06T12:49:00+08:00">2017-06-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">最近需要研究k8s（后面Kubernetes 均简写为k8s）QoS相关问题，为了更深入理解以及便于以后对k8s的二次开发打下基础，决定在CentOS7上编译安装最近的稳定版v1.6.4，在此总结下编译安装k8s中遇到的问题。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h3><p>最近需要研究k8s（后面Kubernetes 均简写为k8s）QoS相关问题，为了更深入理解以及便于以后对k8s的二次开发打下基础，决定在CentOS7上编译安装最近的稳定版v1.6.4，在此总结下编译安装k8s中遇到的问题。</p>
+<hr>
+<h3 id="2-准备工作"><a href="#2-准备工作" class="headerlink" title="2. 准备工作"></a>2. 准备工作</h3><h4 id="虚拟机创建"><a href="#虚拟机创建" class="headerlink" title="虚拟机创建"></a>虚拟机创建</h4><p>至少准备两台虚拟机或者物理机，本文使用了三台KVM虚拟机，OpenStack平台创建并启动</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>IP地址</th>
+<th>主机名</th>
+<th>操作系统</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Master</td>
+<td>10.10.10.32/24</td>
+<td>master</td>
+<td>CentOS 7</td>
+</tr>
+<tr>
+<td>Node</td>
+<td>10.10.10.33/24</td>
+<td>node1</td>
+<td>CentOS 7</td>
+</tr>
+<tr>
+<td>Node</td>
+<td>10.10.10.34/24</td>
+<td>node2</td>
+<td>CentOS 7</td>
+</tr>
+</tbody>
+</table>
+<h4 id="hosts文件修改"><a href="#hosts文件修改" class="headerlink" title="hosts文件修改"></a>hosts文件修改</h4><p>k8s编译过程中以及后续docker的使用，都需要pull谷歌容器库中的相关镜像，通过修改hosts的办法来访问谷歌</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install -y git</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/racaljk/hosts.git</span><br><span class="line">mv /etc/hosts /etc/hosts.bak</span><br><span class="line">cp hosts/hosts /etc</span><br></pre></td></tr></table></figure>
+<h4 id="selinux关闭"><a href="#selinux关闭" class="headerlink" title="selinux关闭"></a>selinux关闭</h4><p>关闭所有虚拟机的selinux，并重启</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i s/SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
+<h4 id="iptables安装设置"><a href="#iptables安装设置" class="headerlink" title="iptables安装设置"></a>iptables安装设置</h4><p>关闭所有虚拟机firewalld，安装iptables</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br><span class="line"></span><br><span class="line">yum install iptables-services</span><br><span class="line">systemctl start iptables</span><br><span class="line">systemctl <span class="built_in">enable</span> iptables</span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<h4 id="NTP安装"><a href="#NTP安装" class="headerlink" title="NTP安装"></a>NTP安装</h4><p>安装NTP，所有节点时间保持一致</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install -y ntp</span><br><span class="line">systemctl start ntpd</span><br><span class="line">systemctl <span class="built_in">enable</span> ntpd</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span> 以上重复性的配置，可以启动一个虚拟机进行配置，然后执行快照，以快照启动新的虚拟机</p>
+</blockquote>
+<hr>
+<h3 id="3-Kubernetes编译"><a href="#3-Kubernetes编译" class="headerlink" title="3. Kubernetes编译"></a>3. Kubernetes编译</h3><h4 id="K8S源码编译"><a href="#K8S源码编译" class="headerlink" title="K8S源码编译"></a>K8S源码编译</h4><p>kubernetes的源码编译可以分为两种方式。一种是在宿主机/物理机上进行编译，这需要完整的搭建编译环境，这个会依赖于各种问题。另外一种则是使用docker进行编译。这也是目前最为流行的编译方式。本文使用编译的方式为后者</p>
+<h4 id="Docker安装"><a href="#Docker安装" class="headerlink" title="Docker安装"></a>Docker安装</h4><p>k8s版本更迭比较快，因此使用的组件也都是比较新的，<span style="color:red">CentOS7默认yum源Docker与k8s v1.6.4似乎无法完美兼容，因此需要安装最新稳定版本的Docker CE（社区版）</span></p>
+<p>在所有Node节点上，安装最新稳定版本的Docker CE（社区版）<sup><a href="https://docs.docker.com/engine/installation/linux/centos/#os-requirements" target="_blank" rel="noopener">[1]</a></sup>。关于Docker CE（社区版）与Docker EE（企业版）的区别，请自行搜索。</p>
+<ul>
+<li><p>卸载老版本的Docker（如何老版本Docker存在的话）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum remove docker docker-common container-selinux docker-selinux docker-engine -y</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置repository，并禁用edge版本，<a href="https://docs.docker.com/engine/installation/" target="_blank" rel="noopener"> 关于<strong>stable</strong>和<strong>edge</strong></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum-config-manager \</span><br><span class="line">   --add-repo \</span><br><span class="line">   https://download.docker.com/linux/centos/docker-ce.repo</span><br><span class="line">yum-config-manager --<span class="built_in">disable</span> docker-ce-edge</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更新yum cache并查看Docker-CE版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum makecache fast</span><br><span class="line">yum list docker-ce.x86_64  --showduplicates | sort -r</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装最新稳定版并启动服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install docker-ce -y</span><br><span class="line">systemctl start docker</span><br><span class="line">systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试Docker</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run hello-world</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装docker成功之后，会对iptables的进行一些修改，默认情况下，<span style="color:red"><strong>filter表FORWARD链的默认策略修改为DROP</strong></span>。修改默认策略为<strong>ACCEPT</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -P FORWARD ACCEPT</span><br><span class="line">iptables-save &gt;/etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="Golang安装"><a href="#Golang安装" class="headerlink" title="Golang安装"></a>Golang安装</h4><p>选择在某一个Node节点，编译k8s v1.6.4，因此需要在<strong>编译k8s源码的Node节点</strong>安装Golang</p>
+<p>由于k8s更迭速度较快，因此<span style="color:red">CentOS7默认yum源Golang与k8s v1.6.4似乎无法兼容，因此安装最近版本的Golang<sup><a href="https://www.digitalocean.com/community/tutorials/how-to-install-go-1-7-on-centos-7" target="_blank" rel="noopener">[2]</a></sup>。</span></p>
+<ul>
+<li><p>安装gcc、make</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install gcc make -y</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从站点<a href="https://golang.org/dl/，下载最新编译好Golang二进制文件，" target="_blank" rel="noopener">https://golang.org/dl/，下载最新编译好Golang二进制文件，</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://storage.googleapis.com/golang/go1.8.1.linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压到<code>/usr/local</code>目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -C /usr/<span class="built_in">local</span> -xvzf go1.8.1.linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"export PATH=<span class="variable">$PATH</span>:/usr/local/go/bin"</span> &gt;&gt;/etc/profile</span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h4><ul>
+<li><p>从GitHub的k8s的<a href="https://github.com/kubernetes/kubernetes/releases" target="_blank" rel="noopener">release</a>页面下载v1.6.4源码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/kubernetes/kubernetes/archive/v1.6.4.tar.gz /root</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压源码并编译，这里只编译Linux amd64架构</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar xvzf v1.6.4.tar.gz</span><br><span class="line"><span class="built_in">cd</span> kubernetes-1.6.4 &amp;&amp; make</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译完成后，二进制文件在<code>/root/ kubernetes-1.6.4/_output/bin</code>目录下</p>
+</li>
+<li><p>实际过程中，不需要编译所有的文件，<a href="https://github.com/kubernetes/kubernetes/tree/master/build/" target="_blank" rel="noopener">更多编译选项</a></p>
+</li>
+</ul>
+<hr>
+<h3 id="4-Master节点配置"><a href="#4-Master节点配置" class="headerlink" title="4. Master节点配置"></a>4. Master节点配置</h3><h4 id="etcd安装配置"><a href="#etcd安装配置" class="headerlink" title="etcd安装配置"></a>etcd安装配置</h4><ul>
+<li>在正式的生产环境，etcd节点需要单独安装，还可能安装多个etcd节点，这里为测试环境，将etcd节点安装在Master节点上。</li>
+</ul>
+<ul>
+<li><p>安装etcd，CentOS 7 的yum源etcd版本符合要求</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y etcd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改etcd配置文件并启动服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed -i s/localhost:2379/0.0.0.0:2379/g /etc/etcd/etcd.conf</span><br><span class="line">systemctl <span class="built_in">enable</span> etcd</span><br><span class="line">systemctl start etcd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建所接节点的Overlay网络以及设置地址段, <code>172.17.0.0/16</code>为Overlay网络地址段，类型为VXLAN，每个节点的子网从Overlay网络中选取一段子网掩码为24的子网，<a href="http://tonybai.com/2017/01/17/understanding-flannel-network-for-kubernetes/" target="_blank" rel="noopener">更多k8s网络细节</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">etcdctl mk /atomic.io/network/config <span class="string">'&#123;</span></span><br><span class="line"><span class="string">"Network": "172.17.0.0/16",</span></span><br><span class="line"><span class="string">"SubnetLen": 24,</span></span><br><span class="line"><span class="string">"Backend": &#123;</span></span><br><span class="line"><span class="string">     "Type": "vxlan",</span></span><br><span class="line"><span class="string">     "VNI": 7890</span></span><br><span class="line"><span class="string">     &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看Overlay网络的配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># etcdctl get /atomic.io/network/config</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="string">"Network"</span>: <span class="string">"172.17.0.0/16"</span>,</span><br><span class="line"><span class="string">"SubnetLen"</span>: 24,</span><br><span class="line"><span class="string">"Backend"</span>: &#123;</span><br><span class="line">     <span class="string">"Type"</span>: <span class="string">"vxlan"</span>,</span><br><span class="line">     <span class="string">"VNI"</span>: 7890</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="可执行文件安装"><a href="#可执行文件安装" class="headerlink" title="可执行文件安装"></a>可执行文件安装</h4><ul>
+<li><p>在编译k8s的<strong>Node节点</strong>上，将<code>/root/kubernetes-1.6.4/_output/bin</code>目录下的</p>
+<ul>
+<li><strong>kube-apiserver</strong></li>
+<li><strong>kube-controller-manager</strong></li>
+<li><strong>kube-scheduler</strong></li>
+<li><strong>kubectl</strong></li>
+</ul>
+<p>复制到<strong>Master节点</strong>的<code>/usr/bin/</code>目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /root/kubernetes-1.6.4/_output/bin</span><br><span class="line">scp kube-apiserver kube-controller-manager kube-scheduler kubectl root@master:/usr/bin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建systemctl对应的service服务以及配置文件，根据自己的的配置修改<strong>MASTER_ADDRESS</strong>和<strong>ETCD_SERVERS</strong>参数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Copyright 2016 The Kubernetes Authors.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Licensed under the Apache License, Version 2.0 (the "License");</span></span><br><span class="line"><span class="comment"># you may not use this file except in compliance with the License.</span></span><br><span class="line"><span class="comment"># You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#     http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment"># distributed under the License is distributed on an "AS IS" BASIS,</span></span><br><span class="line"><span class="comment"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment"># See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment"># limitations under the License.</span></span><br><span class="line"></span><br><span class="line">MASTER_ADDRESS=<span class="variable">$&#123;1:-"10.10.10.32"&#125;</span></span><br><span class="line">ETCD_SERVERS=<span class="variable">$&#123;2:-"http://10.10.10.32:2379"&#125;</span></span><br><span class="line">SERVICE_CLUSTER_IP_RANGE=<span class="variable">$&#123;3:-"10.254.0.0/16"&#125;</span></span><br><span class="line">ADMISSION_CONTROL=<span class="variable">$&#123;4:-"NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"&#125;</span></span><br><span class="line"></span><br><span class="line">mkdir -p /etc/kubernetes</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/kubernetes/config</span><br><span class="line"><span class="comment"># --logtostderr=true: log to standard error instead of files</span></span><br><span class="line">KUBE_LOGTOSTDERR=<span class="string">"--logtostderr=true"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --v=0: log level for V logs</span></span><br><span class="line">KUBE_LOG_LEVEL=<span class="string">"--v=0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --allow-privileged=false: If true, allow privileged containers.</span></span><br><span class="line">KUBE_ALLOW_PRIV=<span class="string">"--allow-privileged=false"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># How the controller-manager, scheduler, and proxy find the apiserver</span></span><br><span class="line">KUBE_MASTER=<span class="string">"--master=<span class="variable">$&#123;MASTER_ADDRESS&#125;</span>:8080"</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/kubernetes/apiserver</span><br><span class="line"><span class="comment"># --insecure-bind-address=127.0.0.1: The IP address on which to serve the --insecure-port.</span></span><br><span class="line">KUBE_API_ADDRESS=<span class="string">"--insecure-bind-address=0.0.0.0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --insecure-port=8080: The port on which to serve unsecured, unauthenticated access.</span></span><br><span class="line">KUBE_API_PORT=<span class="string">"--insecure-port=8080"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --kubelet-port=10250: Kubelet port</span></span><br><span class="line">NODE_PORT=<span class="string">"--kubelet-port=10250"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --etcd-servers=[]: List of etcd servers to watch (http://ip:port), </span></span><br><span class="line"><span class="comment"># comma separated. Mutually exclusive with -etcd-config</span></span><br><span class="line">KUBE_ETCD_SERVERS=<span class="string">"--etcd-servers=<span class="variable">$&#123;ETCD_SERVERS&#125;</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --advertise-address=&lt;nil&gt;: The IP address on which to advertise </span></span><br><span class="line"><span class="comment"># the apiserver to members of the cluster.</span></span><br><span class="line">KUBE_ADVERTISE_ADDR=<span class="string">"--advertise-address=<span class="variable">$&#123;MASTER_ADDRESS&#125;</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --service-cluster-ip-range=&lt;nil&gt;: A CIDR notation IP range from which to assign service cluster IPs. </span></span><br><span class="line"><span class="comment"># This must not overlap with any IP ranges assigned to nodes for pods.</span></span><br><span class="line">KUBE_SERVICE_ADDRESSES=<span class="string">"--service-cluster-ip-range=<span class="variable">$&#123;SERVICE_CLUSTER_IP_RANGE&#125;</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --admission-control="AlwaysAdmit": Ordered list of plug-ins </span></span><br><span class="line"><span class="comment"># to do admission control of resources into cluster. </span></span><br><span class="line"><span class="comment"># Comma-delimited list of: </span></span><br><span class="line"><span class="comment">#   LimitRanger, AlwaysDeny, SecurityContextDeny, NamespaceExists, </span></span><br><span class="line"><span class="comment">#   NamespaceLifecycle, NamespaceAutoProvision,</span></span><br><span class="line"><span class="comment">#   AlwaysAdmit, ServiceAccount, ResourceQuota, DefaultStorageClass</span></span><br><span class="line">KUBE_ADMISSION_CONTROL=<span class="string">"--admission-control=<span class="variable">$&#123;ADMISSION_CONTROL&#125;</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add your own!</span></span><br><span class="line">KUBE_API_ARGS=<span class="string">""</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">KUBE_APISERVER_OPTS=<span class="string">"   \$&#123;KUBE_LOGTOSTDERR&#125;         \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_LOG_LEVEL&#125;           \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_ETCD_SERVERS&#125;        \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_API_ADDRESS&#125;         \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_API_PORT&#125;            \\</span></span><br><span class="line"><span class="string">                        \$&#123;NODE_PORT&#125;                \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_ADVERTISE_ADDR&#125;      \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_ALLOW_PRIV&#125;          \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_SERVICE_ADDRESSES&#125;   \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_ADMISSION_CONTROL&#125;   \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_API_ARGS&#125;"</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/usr/lib/systemd/system/kube-apiserver.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Kubernetes API Server</span><br><span class="line">Documentation=https://github.com/kubernetes/kubernetes</span><br><span class="line">After=network.target</span><br><span class="line">After=etcd.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/config</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/apiserver</span><br><span class="line">ExecStart=/usr/bin/kube-apiserver <span class="variable">$&#123;KUBE_APISERVER_OPTS&#125;</span></span><br><span class="line">Restart=on-failure</span><br><span class="line">Type=notify</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/kubernetes/controller-manager</span><br><span class="line"><span class="comment">###</span></span><br><span class="line"><span class="comment"># The following values are used to configure the kubernetes controller-manager</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># defaults from config and apiserver should be adequate</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add your own!</span></span><br><span class="line">KUBE_CONTROLLER_MANAGER_ARGS=<span class="string">""</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">KUBE_CONTROLLER_MANAGER_OPTS=<span class="string">"  \$&#123;KUBE_LOGTOSTDERR&#125; \\</span></span><br><span class="line"><span class="string">                                \$&#123;KUBE_LOG_LEVEL&#125;   \\</span></span><br><span class="line"><span class="string">                                \$&#123;KUBE_MASTER&#125;      \\</span></span><br><span class="line"><span class="string">                                \$&#123;KUBE_CONTROLLER_MANAGER_ARGS&#125;"</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/usr/lib/systemd/system/kube-controller-manager.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Kubernetes Controller Manager</span><br><span class="line">Documentation=https://github.com/kubernetes/kubernetes</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/config</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/controller-manager</span><br><span class="line">ExecStart=/usr/bin/kube-controller-manager <span class="variable">$&#123;KUBE_CONTROLLER_MANAGER_OPTS&#125;</span></span><br><span class="line">Restart=on-failure</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/kubernetes/scheduler</span><br><span class="line"><span class="comment">###</span></span><br><span class="line"><span class="comment"># kubernetes scheduler config</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add your own!</span></span><br><span class="line">KUBE_SCHEDULER_ARGS=<span class="string">""</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">KUBE_SCHEDULER_OPTS=<span class="string">"   \$&#123;KUBE_LOGTOSTDERR&#125;     \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_LOG_LEVEL&#125;       \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_MASTER&#125;          \\</span></span><br><span class="line"><span class="string">                        \$&#123;KUBE_SCHEDULER_ARGS&#125;"</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/usr/lib/systemd/system/kube-scheduler.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Kubernetes Scheduler</span><br><span class="line">Documentation=https://github.com/kubernetes/kubernetes</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/config</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/scheduler</span><br><span class="line">ExecStart=/usr/bin/kube-scheduler <span class="variable">$&#123;KUBE_SCHEDULER_OPTS&#125;</span></span><br><span class="line">Restart=on-failure</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启k8s <strong>Master节点</strong>服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> svc <span class="keyword">in</span> kube-apiserver kube-controller-manager kube-scheduler; <span class="keyword">do</span> </span><br><span class="line">    systemctl restart <span class="variable">$svc</span></span><br><span class="line">    systemctl <span class="built_in">enable</span> <span class="variable">$svc</span></span><br><span class="line">    systemctl status <span class="variable">$svc</span> </span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看是否k8s相关服务启动成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -A | grep kube</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="iptables设置"><a href="#iptables设置" class="headerlink" title="iptables设置"></a>iptables设置</h4><p><strong>Master节点</strong>与<strong>Node节点</strong>之间一些服务需要进行通信，因此添加iptables条目。其中8080为<code>kubeAPIserver</code>服务使用的端口，2379为<code>etcd</code>服务使用的端口。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT -s 10.10.10.0/24 -p tcp --dport 8080 -j ACCEPT</span><br><span class="line">iptables -I INPUT -s 10.10.10.0/24 -p tcp --dport 2379 -j ACCEPT</span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<h4 id="hosts文件修改-1"><a href="#hosts文件修改-1" class="headerlink" title="hosts文件修改"></a>hosts文件修改</h4><p>添加所有节点的主机名解析</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt;/etc/hosts &lt;&lt;EOF</span><br><span class="line">10.10.10.32 master</span><br><span class="line">10.10.10.33 node1</span><br><span class="line">10.10.10.34 node2</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="5-Node节点配置"><a href="#5-Node节点配置" class="headerlink" title="5. Node节点配置"></a>5. Node节点配置</h3><h4 id="Flannel安装配置"><a href="#Flannel安装配置" class="headerlink" title="Flannel安装配置"></a>Flannel安装配置</h4><ul>
+<li><p>flannel安装， CentOS7 yum源的flannel版本符合要去</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y flannel</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改配置配置文件<code>/etc/sysconfig/flanneld</code>，其中10.10.10.32为安装了etcd服务的<strong>Master节点</strong>的IP地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FLANNEL_ETCD=<span class="string">"http://10.10.10.32:2379"</span></span><br><span class="line">FLANNEL_ETCD_KEY=<span class="string">"/atomic.io/network"</span></span><br></pre></td></tr></table></figure>
+<p>可以使用如下命令修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i s/127.0.0.1:2379/10.10.10.32:2379/g /etc/sysconfig/flanneld</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动服务，此时flannel服务向<strong>Master节点</strong>etcd服务请求分配一个子IP地址范围</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart flanneld</span><br><span class="line">systemctl <span class="built_in">enable</span> flanneld</span><br><span class="line">systemctl status flanneld</span><br></pre></td></tr></table></figure>
+<p>在<strong>Master节点</strong>查看<strong>Node节点</strong>flannel网络信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># etcdctl ls /atomic.io/network/subnets</span></span><br><span class="line">/atomic.io/network/subnets/172.17.43.0-24</span><br><span class="line">/atomic.io/network/subnets/172.17.98.0-24</span><br><span class="line">[root@master ~]<span class="comment"># etcdctl get /atomic.io/network/subnets/172.17.98.0-24</span></span><br><span class="line">&#123;<span class="string">"PublicIP"</span>:<span class="string">"10.10.10.34"</span>&#125;</span><br><span class="line">[root@master ~]<span class="comment"># etcdctl get /atomic.io/network/subnets/172.17.43.0-24</span></span><br><span class="line">&#123;<span class="string">"PublicIP"</span>:<span class="string">"10.10.10.33"</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="可执行文件安装-1"><a href="#可执行文件安装-1" class="headerlink" title="可执行文件安装"></a>可执行文件安装</h4><ul>
+<li><p>在编译k8s的<strong>Node节点</strong>上，将<code>kubernetes-1.6.4/_output/bin</code>目录下的</p>
+<ul>
+<li><strong>kube-proxy</strong></li>
+<li><strong>kubelet</strong></li>
+</ul>
+<p>复制到所有<strong>Node节点</strong>的<code>/usr/bin/</code>目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> kubernetes-1.6.4/_output/bin</span><br><span class="line">scp kube-proxy kubelet root@node1:/usr/bin</span><br><span class="line">scp kube-proxy kubelet root@node2:/usr/bin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建systemctl对应的service文件以及配置文件，根据自己的的配置修改<strong>MASTER_ADDRESS</strong>和<strong>NODE_HOSTNAME</strong>参数，<span style="color:red">其中<strong>NODE_HOSTNAME</strong>要与修改的hosts文件中的主机名解析一致！</span></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Copyright 2016 The Kubernetes Authors.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Licensed under the Apache License, Version 2.0 (the "License");</span></span><br><span class="line"><span class="comment"># you may not use this file except in compliance with the License.</span></span><br><span class="line"><span class="comment"># You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#     http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment"># distributed under the License is distributed on an "AS IS" BASIS,</span></span><br><span class="line"><span class="comment"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment"># See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment"># limitations under the License.</span></span><br><span class="line"></span><br><span class="line">MASTER_ADDRESS=<span class="variable">$&#123;1:-"10.10.10.32"&#125;</span></span><br><span class="line">NODE_HOSTNAME=<span class="variable">$&#123;2:-"node1"&#125;</span></span><br><span class="line"></span><br><span class="line">mkdir -p /etc/kubernetes</span><br><span class="line">mkdir -p /var/lib/kubelet</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/kubernetes/config</span><br><span class="line"><span class="comment"># --logtostderr=true: log to standard error instead of files</span></span><br><span class="line">KUBE_LOGTOSTDERR=<span class="string">"--logtostderr=true"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --v=0: log level for V logs</span></span><br><span class="line">KUBE_LOG_LEVEL=<span class="string">"--v=0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --allow-privileged=false: If true, allow privileged containers.</span></span><br><span class="line">KUBE_ALLOW_PRIV=<span class="string">"--allow-privileged=false"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># How the controller-manager, scheduler, and proxy find the apiserver</span></span><br><span class="line">KUBE_MASTER=<span class="string">"--master=<span class="variable">$&#123;MASTER_ADDRESS&#125;</span>:8080"</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/kubernetes/proxy</span><br><span class="line"><span class="comment">###</span></span><br><span class="line"><span class="comment"># kubernetes proxy config</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># default config should be adequate</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add your own!</span></span><br><span class="line">KUBE_PROXY_ARGS=<span class="string">""</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">KUBE_PROXY_OPTS=<span class="string">"   \$&#123;KUBE_LOGTOSTDERR&#125; \\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBE_LOG_LEVEL&#125;   \\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBE_MASTER&#125;    \\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBE_PROXY_ARGS&#125;"</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/usr/lib/systemd/system/kube-proxy.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Kubernetes Proxy</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/config</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/kube-proxy</span><br><span class="line">ExecStart=/usr/bin/kube-proxy <span class="variable">$&#123;KUBE_PROXY_OPTS&#125;</span></span><br><span class="line">Restart=on-failure</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/etc/kubernetes/kubelet</span><br><span class="line"><span class="comment"># --address=0.0.0.0: The IP address for the Kubelet to serve on (set to 0.0.0.0 for all interfaces)</span></span><br><span class="line">KUBELET__ADDRESS=<span class="string">"--address=0.0.0.0"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --port=10250: The port for the Kubelet to serve on. Note that "kubectl logs" will not work if you set this flag.</span></span><br><span class="line">KUBELET_PORT=<span class="string">"--port=10250"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --hostname-override="": If non-empty, will use this string as identification instead of the actual hostname.</span></span><br><span class="line">KUBELET_HOSTNAME=<span class="string">"--hostname-override=<span class="variable">$&#123;NODE_HOSTNAME&#125;</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --api-servers=[]: List of Kubernetes API servers for publishing events, </span></span><br><span class="line"><span class="comment"># and reading pods and services. (ip:port), comma separated.</span></span><br><span class="line">KUBELET_API_SERVER=<span class="string">"--api-servers=http://<span class="variable">$&#123;MASTER_ADDRESS&#125;</span>:8080"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># pod infrastructure container</span></span><br><span class="line">KUBELET_POD_INFRA_CONTAINER=<span class="string">"--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add your own!</span></span><br><span class="line">KUBELET_ARGS=<span class="string">""</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">KUBE_PROXY_OPTS=<span class="string">"   \$&#123;KUBE_LOGTOSTDERR&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBE_LOG_LEVEL&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBELET__ADDRESS&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBELET_PORT&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBELET_HOSTNAME&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBELET_API_SERVER&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBE_ALLOW_PRIV&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBELET_POD_INFRA_CONTAINER&#125;\\</span></span><br><span class="line"><span class="string">                    \$&#123;KUBELET_ARGS&#125;"</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF &gt;/usr/lib/systemd/system/kubelet.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Kubernetes Kubelet</span><br><span class="line">After=docker.service</span><br><span class="line">Requires=docker.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">WorkingDirectory=/var/lib/kubelet</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/config</span><br><span class="line">EnvironmentFile=-/etc/kubernetes/kubelet</span><br><span class="line">ExecStart=/usr/bin/kubelet\</span><br><span class="line"><span class="variable">$&#123;KUBE_PROXY_OPTS&#125;</span></span><br><span class="line">Restart=on-failure</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启k8s <strong>Node节点</strong>服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> svc <span class="keyword">in</span> docker kubelet kube-proxy; <span class="keyword">do</span> </span><br><span class="line">    systemctl restart <span class="variable">$svc</span></span><br><span class="line">    systemctl <span class="built_in">enable</span> <span class="variable">$svc</span></span><br><span class="line">    systemctl status <span class="variable">$svc</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看是否k8s相关服务启动成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -A | grep kube</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="Docker启动参数修改"><a href="#Docker启动参数修改" class="headerlink" title="Docker启动参数修改"></a>Docker启动参数修改</h4><p>Flannel创建的Overlay网络，修改Docker的启动参数，为了让所有节点的网卡docker0都处于可以相互通信。</p>
+<ul>
+<li><p>在<code>/lib/systemd/system</code>目录下，有两个关于docker服务的文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 system]<span class="comment"># ll docker*</span></span><br><span class="line">-rw-r--r-- 1 root root 1016 Jun  6 01:27 docker.service</span><br><span class="line"></span><br><span class="line">docker.service.d:</span><br><span class="line">total 4</span><br><span class="line">-rw-r--r-- 1 root root 47 Mar  6 21:54 flannel.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>docker.service.d/flannel.conf</code>内容为flannel修改Docker启动参数的环境变量文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 system]<span class="comment"># cat docker.service.d/flannel.conf </span></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=-/run/flannel/docker</span><br><span class="line">[root@node3 system]<span class="comment"># cat /run/flannel/docker</span></span><br><span class="line">DOCKER_OPT_BIP=<span class="string">"--bip=172.17.50.1/24"</span></span><br><span class="line">DOCKER_OPT_IPMASQ=<span class="string">"--ip-masq=true"</span></span><br><span class="line">DOCKER_OPT_MTU=<span class="string">"--mtu=1400"</span></span><br><span class="line">DOCKER_NETWORK_OPTIONS=<span class="string">" --bip=172.17.50.1/24 --ip-masq=true --mtu=1400"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将变量<code>DOCKER_NETWORK_OPTIONS</code>加入到Docker的启动参数，并重新启动Docker</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">'s/ExecStart=\/usr\/bin\/dockerd/&amp; $DOCKER_NETWORK_OPTIONS/'</span> /lib/systemd/system/docker.service</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="iptables设置-1"><a href="#iptables设置-1" class="headerlink" title="iptables设置"></a>iptables设置</h4><p><strong>Master节点</strong>与<strong>Node节点</strong>之间一些服务需要进行通信，此外<strong>Node节点</strong>之间也Overlay网络VXLAN通过UDP相互访问，因此添加iptables条目。10250为<code>kubelet</code>服务使用的端口。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT -s 10.10.10.0/24 -p tcp --dport 10250 -j ACCEPT</span><br><span class="line">iptables -I INPUT -s 10.10.10.0/24 -p udp  -j ACCEPT</span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<h4 id="hosts文件修改-2"><a href="#hosts文件修改-2" class="headerlink" title="hosts文件修改"></a>hosts文件修改</h4><p>添加所有节点的主机名解析</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt;/etc/hosts &lt;&lt;EOF</span><br><span class="line">10.10.10.32 master</span><br><span class="line">10.10.10.33 node1</span><br><span class="line">10.10.10.34 node2</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="6-配置验证"><a href="#6-配置验证" class="headerlink" title="6. 配置验证"></a>6. 配置验证</h3><h4 id="验证配置环境"><a href="#验证配置环境" class="headerlink" title="验证配置环境"></a>验证配置环境</h4><p>在Master节点运行命令<code>kubectl get no</code>，输入出信息如下，环境创建成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># kubectl get no</span></span><br><span class="line">NAME      STATUS     AGE       VERSION</span><br><span class="line">node1     NotReady   3d        v1.6.4+d6f433224538d</span><br><span class="line">node2     NotReady   3d        v1.6.4+d6f433224538d</span><br></pre></td></tr></table></figure>
+<h4 id="网络测试"><a href="#网络测试" class="headerlink" title="网络测试"></a>网络测试</h4><ul>
+<li><p>在<strong>Master节点</strong>可以查看所有<strong>Node节点</strong>获取的子网地址段</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]<span class="comment"># etcdctl ls /atomic.io/network/subnets</span></span><br><span class="line">/atomic.io/network/subnets/172.17.49.0-24</span><br><span class="line">/atomic.io/network/subnets/172.17.100.0-24</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<strong>Node节点</strong>2上ping <strong>Node节点</strong>1的docker0地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node2 ~]<span class="comment"># ping 172.17.100.1</span></span><br><span class="line">PING 172.17.100.1 (172.17.100.1) 56(84) bytes of data.</span><br><span class="line">64 bytes from 172.17.100.1: icmp_seq=1 ttl=64 time=1.09 ms</span><br><span class="line">64 bytes from 172.17.100.1: icmp_seq=2 ttl=64 time=0.367 ms</span><br><span class="line">64 bytes from 172.17.100.1: icmp_seq=3 ttl=64 time=0.315 ms</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在Node节点2上pingNode节点1的docker0地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node1 ~]<span class="comment"># ping 172.17.49.1</span></span><br><span class="line">PING 172.17.49.1 (172.17.49.1) 56(84) bytes of data.</span><br><span class="line">64 bytes from 172.17.49.1: icmp_seq=1 ttl=64 time=1.12 ms</span><br><span class="line">64 bytes from 172.17.49.1: icmp_seq=2 ttl=64 time=0.395 ms</span><br><span class="line">64 bytes from 172.17.49.1: icmp_seq=3 ttl=64 time=0.325 ms</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Flannel Overlay网络搭建成功</p>
+</li>
+</ul>
+<hr>
+<h3 id="7-Dashboard配置"><a href="#7-Dashboard配置" class="headerlink" title="7. Dashboard配置"></a>7. Dashboard配置</h3><p>Dashboard也作为一个Pod的形式，运行在kube-system命名空间。在<strong>Master节点</strong>上，下载yaml文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml</span><br></pre></td></tr></table></figure>
+<p>由于搭建的k8s集群之间没有相互进行验证，因此删除给定dashboard模版中的一些内容，修改后内容如下。注意一下几点：</p>
+<ul>
+<li>注释掉<code>ServiceAccount</code>以及<code>ClusterRoleBinding</code>类别</li>
+<li>修改APIServer地址，这里为<code>--apiserver-host=http://10.10.10.44:8080</code></li>
+<li>注释掉<code>Deployment</code>类别中关于<code>ServiceAccountName</code>选项</li>
+<li>如果不部署到Master节点上，注释<code>Deployment</code>类别中关于<code>tolerations</code>的选项</li>
+<li>添加<code>Service</code>类别的Node端口，这里端口为32345</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  replicas:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  revisionHistoryLimit:</span> <span class="number">10</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    matchLabels:</span></span><br><span class="line"><span class="attr">      k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    metadata:</span></span><br><span class="line"><span class="attr">      labels:</span></span><br><span class="line"><span class="attr">        k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      containers:</span></span><br><span class="line"><span class="attr">      - name:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">        image:</span> <span class="string">gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.1</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="attr">        - containerPort:</span> <span class="number">9090</span></span><br><span class="line"><span class="attr">          protocol:</span> <span class="string">TCP</span></span><br><span class="line"><span class="attr">        args:</span></span><br><span class="line"><span class="bullet">            -</span> <span class="bullet">--apiserver-host=http://10.10.10.44:8080</span></span><br><span class="line"><span class="attr">        livenessProbe:</span></span><br><span class="line"><span class="attr">          httpGet:</span></span><br><span class="line"><span class="attr">            path:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">            port:</span> <span class="number">9090</span></span><br><span class="line"><span class="attr">          initialDelaySeconds:</span> <span class="number">30</span></span><br><span class="line"><span class="attr">          timeoutSeconds:</span> <span class="number">30</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  type:</span> <span class="string">NodePort</span></span><br><span class="line"><span class="attr">  ports:</span></span><br><span class="line"><span class="attr">  - port:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">    targetPort:</span> <span class="number">9090</span></span><br><span class="line"><span class="attr">    nodePort:</span> <span class="number">32345</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br></pre></td></tr></table></figure>
+<p>然后在任意Node节点，使用<code>http://[Node IP]:32345</code>登录k8s集群的dashboard。</p>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/6/6 12:49</td>
+<td>文件创建</td>
+</tr>
+<tr>
+<td>修改1</td>
+<td>2017/6/6 13:15</td>
+<td>添加关于hosts以及iptables的修改</td>
+</tr>
+<tr>
+<td>修改2</td>
+<td>2017/6/17 11:40</td>
+<td>iptables修改</td>
+</tr>
+<tr>
+<td>修改3</td>
+<td>2016/6/19 14:11</td>
+<td>Dashboard添加</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a href="https://docs.docker.com/engine/installation/linux/centos/#os-requirements" target="_blank" rel="noopener">https://docs.docker.com/engine/installation/linux/centos/#os-requirements</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-go-1-7-on-centos-7" target="_blank" rel="noopener">https://www.digitalocean.com/community/tutorials/how-to-install-go-1-7-on-centos-7</a></li>
+<li><a href="http://www.cnblogs.com/yujinyu/p/6092572.html" target="_blank" rel="noopener">http://www.cnblogs.com/yujinyu/p/6092572.html</a></li>
+<li><a href="http://ju.outofmemory.cn/entry/249082" target="_blank" rel="noopener">http://ju.outofmemory.cn/entry/249082</a></li>
+<li><a href="http://dockone.io/article/1186" target="_blank" rel="noopener">http://dockone.io/article/1186</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/k8s/" rel="tag"># k8s</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/18/20180111 OpenWRT 日志保存/" rel="next" title="OpenWRT 日志保存">
+                <i class="fa fa-chevron-left"></i> OpenWRT 日志保存
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/06/Kubernetes 调研/" rel="prev" title="Kubernetes调研">
+                Kubernetes调研 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-简介"><span class="nav-number">1.</span> <span class="nav-text">1. 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-准备工作"><span class="nav-number">2.</span> <span class="nav-text">2. 准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟机创建"><span class="nav-number">2.1.</span> <span class="nav-text">虚拟机创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hosts文件修改"><span class="nav-number">2.2.</span> <span class="nav-text">hosts文件修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#selinux关闭"><span class="nav-number">2.3.</span> <span class="nav-text">selinux关闭</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables安装设置"><span class="nav-number">2.4.</span> <span class="nav-text">iptables安装设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NTP安装"><span class="nav-number">2.5.</span> <span class="nav-text">NTP安装</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Kubernetes编译"><span class="nav-number">3.</span> <span class="nav-text">3. Kubernetes编译</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#K8S源码编译"><span class="nav-number">3.1.</span> <span class="nav-text">K8S源码编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Docker安装"><span class="nav-number">3.2.</span> <span class="nav-text">Docker安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Golang安装"><span class="nav-number">3.3.</span> <span class="nav-text">Golang安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源码下载"><span class="nav-number">3.4.</span> <span class="nav-text">源码下载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Master节点配置"><span class="nav-number">4.</span> <span class="nav-text">4. Master节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#etcd安装配置"><span class="nav-number">4.1.</span> <span class="nav-text">etcd安装配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可执行文件安装"><span class="nav-number">4.2.</span> <span class="nav-text">可执行文件安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables设置"><span class="nav-number">4.3.</span> <span class="nav-text">iptables设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hosts文件修改-1"><span class="nav-number">4.4.</span> <span class="nav-text">hosts文件修改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Node节点配置"><span class="nav-number">5.</span> <span class="nav-text">5. Node节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Flannel安装配置"><span class="nav-number">5.1.</span> <span class="nav-text">Flannel安装配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可执行文件安装-1"><span class="nav-number">5.2.</span> <span class="nav-text">可执行文件安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Docker启动参数修改"><span class="nav-number">5.3.</span> <span class="nav-text">Docker启动参数修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables设置-1"><span class="nav-number">5.4.</span> <span class="nav-text">iptables设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hosts文件修改-2"><span class="nav-number">5.5.</span> <span class="nav-text">hosts文件修改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-配置验证"><span class="nav-number">6.</span> <span class="nav-text">6. 配置验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#验证配置环境"><span class="nav-number">6.1.</span> <span class="nav-text">验证配置环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网络测试"><span class="nav-number">6.2.</span> <span class="nav-text">网络测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Dashboard配置"><span class="nav-number">7.</span> <span class="nav-text">7. Dashboard配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">8.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

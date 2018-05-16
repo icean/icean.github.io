@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="OSPF 真实入侵测试">
+<meta name="keywords" content="network,ospf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OSPF 真实入侵测试">
+<meta property="og:url" content="http://blog.kompaz.win/2016/07/05/OSPF 真实入侵测试/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="OSPF 真实入侵测试">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_真实入侵测试/1-1.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.755Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OSPF 真实入侵测试">
+<meta name="twitter:description" content="OSPF 真实入侵测试">
+<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_真实入侵测试/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/07/05/OSPF 真实入侵测试/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OSPF 真实入侵测试 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/07/05/OSPF 真实入侵测试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OSPF 真实入侵测试
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-07-05 08:36:46" itemprop="dateCreated datePublished" datetime="2016-07-05T08:36:46+08:00">2016-07-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">OSPF 真实入侵测试</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><h4 id="抓包探测"><a href="#抓包探测" class="headerlink" title="抓包探测"></a>抓包探测</h4><ul>
+<li>使用Wireshark抓取到未链路验证的OSPF或者OSPFv3的hello数据包。</li>
+</ul>
+<h4 id="VirtualBox"><a href="#VirtualBox" class="headerlink" title="VirtualBox"></a>VirtualBox</h4><p>一台VirtualBox虚拟机需要接入到拓扑，虚拟机系统为CentOS6，有三块网卡，</p>
+<ul>
+<li>eth0为用于桥接到主机网卡，该网卡为抓取到OSPF或者OSPFv3的hello数据包的网卡</li>
+<li>eth1为host-only模式，用于本地宿主机通过xshell登录。</li>
+</ul>
+<h4 id="逻辑拓扑"><a href="#逻辑拓扑" class="headerlink" title="逻辑拓扑"></a>逻辑拓扑</h4><p>逻辑拓扑如下图所示，其实PC代表宿主机，Vigilante代表在宿主机中的虚拟机，虚拟机网卡eth0桥接到宿主机网卡。虚拟机系统为CentOS6，以安装配置好quagga。</p>
+<p>使用Wireshark抓包，抓到未加链路认证的ospf hello数据包</p>
+<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_真实入侵测试/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 逻辑拓扑</strong></center>
+
+<hr>
+<h3 id="2-入侵流程"><a href="#2-入侵流程" class="headerlink" title="2. 入侵流程"></a>2. 入侵流程</h3><h4 id="quagga服务器启动"><a href="#quagga服务器启动" class="headerlink" title="quagga服务器启动"></a>quagga服务器启动</h4><p>启动quagga相关的服务，zebra为模拟路由器的基本服务，ospfd为OSPF所需要的服务，偶是ospf6d为OSPFv3所需要的服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service zebra start</span><br><span class="line">service ospfd start</span><br><span class="line">service ospf6d start</span><br></pre></td></tr></table></figure>
+<h4 id="配置OSPF"><a href="#配置OSPF" class="headerlink" title="配置OSPF"></a>配置OSPF</h4><p>输入路由配置模式</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vtysh</span><br><span class="line">hostname# configure terminal</span><br><span class="line">hostname(config)# router ospf</span><br></pre></td></tr></table></figure>
+<p>配置路由id，应该选择一些比较冷僻的路由ID，避免和整个网络中其他OSPF路由ID重复，这里为2.2.2.178</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# router-id 2.2.2.178</span><br></pre></td></tr></table></figure>
+<p>其中不用配置eth0的IP地址，因为eth0的地址已经DHCP获得了，添加在OSPF中的网络，其中网络地址根据获取的IP计算，area号根据之前抓取的hello包所得。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# network  10.30.7.0/21 area 4</span><br><span class="line">hostname(config-router)# do write</span><br></pre></td></tr></table></figure>
+<p>查看邻居关系，若结果有邻居关系且为full，说明建立了邻居关系，如果关系为init，需要多等待一会。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vigilante# show ip ospf  neighbor  </span><br><span class="line"> Neighbor ID Pri State           Dead Time Address         Interface            RXmtL RqstL DBsmL</span><br><span class="line">2.2.2.9          1 Full/DR           36.907s 30.30.30.254    eth2:30.30.30.1          0     0     0</span><br></pre></td></tr></table></figure>
+<p>当邻居关系为Full的时候，可以查看路由表了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Vigilante</span># <span class="selector-tag">sh</span> <span class="selector-tag">ipv6</span>  <span class="selector-tag">route</span>  </span><br><span class="line"><span class="selector-tag">Codes</span>: <span class="selector-tag">K</span> <span class="selector-tag">-</span> <span class="selector-tag">kernel</span> <span class="selector-tag">route</span>, <span class="selector-tag">C</span> <span class="selector-tag">-</span> <span class="selector-tag">connected</span>, <span class="selector-tag">S</span> <span class="selector-tag">-</span> <span class="selector-tag">static</span>, <span class="selector-tag">R</span> <span class="selector-tag">-</span> <span class="selector-tag">RIPng</span>, <span class="selector-tag">O</span> <span class="selector-tag">-</span> <span class="selector-tag">OSPFv3</span>,</span><br><span class="line">       <span class="selector-tag">I</span> <span class="selector-tag">-</span> <span class="selector-tag">ISIS</span>, <span class="selector-tag">B</span> <span class="selector-tag">-</span> <span class="selector-tag">BGP</span>, * <span class="selector-tag">-</span> <span class="selector-tag">FIB</span> <span class="selector-tag">route</span>.</span><br><span class="line"></span><br><span class="line">C&gt;* ::1/128 is directly connected, lo</span><br><span class="line">C&gt;* 2001:cc0:2020:4008::/64 is directly connected, eth0</span><br><span class="line">C * fe80::/64 is directly connected, eth1</span><br><span class="line">C&gt;* fe80::/64 is directly connected, eth0</span><br><span class="line">C&gt;* fec0::/64 is directly connected, eth1</span><br><span class="line"><span class="selector-tag">Vigilante</span># <span class="selector-tag">sh</span> <span class="selector-tag">ip</span> <span class="selector-tag">route</span>  </span><br><span class="line"><span class="selector-tag">Codes</span>: <span class="selector-tag">K</span> <span class="selector-tag">-</span> <span class="selector-tag">kernel</span> <span class="selector-tag">route</span>, <span class="selector-tag">C</span> <span class="selector-tag">-</span> <span class="selector-tag">connected</span>, <span class="selector-tag">S</span> <span class="selector-tag">-</span> <span class="selector-tag">static</span>, <span class="selector-tag">R</span> <span class="selector-tag">-</span> <span class="selector-tag">RIP</span>, <span class="selector-tag">O</span> <span class="selector-tag">-</span> <span class="selector-tag">OSPF</span>,</span><br><span class="line">       <span class="selector-tag">I</span> <span class="selector-tag">-</span> <span class="selector-tag">ISIS</span>, <span class="selector-tag">B</span> <span class="selector-tag">-</span> <span class="selector-tag">BGP</span>, &gt; <span class="selector-tag">-</span> <span class="selector-tag">selected</span> <span class="selector-tag">route</span>, * <span class="selector-tag">-</span> <span class="selector-tag">FIB</span> <span class="selector-tag">route</span></span><br><span class="line"></span><br><span class="line">O   0.0.0.0/0 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">K&gt;* 0.0.0.0/0 via 10.211.7.254, eth0</span><br><span class="line">O&gt;* 10.1.1.0/30 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.3.3.0/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.4.1.0/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.0/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.4/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.8/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.12/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.16/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.20/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.24/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.28/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.32/30 [110/11] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.36/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.40/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.44/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.48/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.72/29 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.10.10.80/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.84/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.88/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.92/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.96/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.128/29 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.10.10.136/29 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.10.10.152/29 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.10.10.168/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.176/29 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.10.10.184/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.188/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.200/30 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.10.10.208/28 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.10.10.240/28 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.200.0.0/16 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.201.0.0/17 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.201.128.0/17 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.202.0.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.202.32.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.202.64.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.202.128.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.202.160.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.203.0.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.203.128.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.203.160.0/19 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.204.0.0/17 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.205.0.0/21 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 10.210.0.0/16 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O   10.211.0.0/21 [110/10] is directly connected, eth0, 00:00:51</span><br><span class="line">C&gt;* 10.211.0.0/21 is directly connected, eth0</span><br><span class="line">O&gt;* 10.211.8.0/21 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.211.16.0/21 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.211.24.0/21 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.211.40.0/21 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 10.211.48.0/21 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 121.195.186.0/28 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 121.195.186.32/27 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 121.195.186.64/26 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 121.195.186.128/25 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 124.16.64.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.65.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.66.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.67.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.68.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.70.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.72.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.73.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.74.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 124.16.75.0/24 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 124.16.75.11/32 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 124.16.98.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.99.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.100.0/23 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.102.0/23 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.104.0/23 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.106.0/23 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.108.0/22 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.112.0/22 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.116.0/22 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 124.16.120.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">C&gt;* 127.0.0.0/8 is directly connected, lo</span><br><span class="line">K&gt;* 169.254.0.0/16 is directly connected, eth1</span><br><span class="line">O&gt;* 172.16.4.0/22 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.8.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.9.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.10.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.11.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.13.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.14.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.32.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.33.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.35.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.16.40.0/22 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 172.31.216.0/23 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.10.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.11.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.12.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.13.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.14.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.15.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.16.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.17.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.18.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.19.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.20.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.21.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.22.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.23.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.24.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.25.0/24 [110/11] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.26.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.27.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.28.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.29.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.32.0/24 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.33.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.34.0/24 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.35.0/24 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.38.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.50.0/24 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.63.0/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.4/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.8/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.12/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.16/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.20/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.24/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.28/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.63.32/29 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.64.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.64.0/28 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.65.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 192.168.67.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.68.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.69.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.70.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.72.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.73.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.74.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.75.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">C&gt;* 192.168.86.0/24 is directly connected, eth1</span><br><span class="line">O&gt;* 192.168.94.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.96.0/24 [110/14] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.126.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.127.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.128.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.200.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.201.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.202.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.203.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.204.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.249.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.250.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.252.0/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.252.4/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.252.8/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.252.12/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.252.16/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.253.0/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.253.4/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 192.168.253.8/30 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.192.0/22 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.196.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.196.0/25 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.76.196.128/25 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.76.197.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.198.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.200.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.202.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.203.0/25 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.76.203.128/26 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.76.204.0/25 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.204.128/25 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.205.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.206.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.208.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.210.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.211.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.76.212.0/22 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.76.216.0/22 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.0.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.77.0.0/27 [110/1] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.77.0.32/27 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.0.128/25 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.1.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.2.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.4.0/22 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.8.0/22 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.12.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.14.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.15.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.16.0/25 [110/12] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.16.128/25 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.17.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.18.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.19.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.20.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.21.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.77.22.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.24.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.26.0/23 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.28.0/24 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.29.0/25 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.29.128/25 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.30.0/26 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.30.64/26 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br><span class="line">O&gt;* 210.77.30.128/25 [110/13] via 10.211.7.254, eth0, 00:00:15</span><br><span class="line">O&gt;* 210.77.31.0/24 [110/20] via 10.211.7.254, eth0, 00:00:14</span><br></pre></td></tr></table></figure>
+<h4 id="配置OSPFv3"><a href="#配置OSPFv3" class="headerlink" title="配置OSPFv3"></a>配置OSPFv3</h4><p>输入路由配置模式</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vtysh</span><br><span class="line">hostname# configure terminal</span><br><span class="line">hostname(config)# router ospf6</span><br></pre></td></tr></table></figure>
+<p>配置路由id，应该选择一些比较冷僻的路由ID，避免和整个网络中其他OSPF路由ID重复，这里为2.2.2.179</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# router-id 2.2.2.179</span><br></pre></td></tr></table></figure>
+<p>添加在OSPFv3中的网络，area必须为x.x.x.x这种格式，否则会报错。area信息获取同样从抓取的hello包中获知。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# interface eth0 area 0.0.0.4</span><br><span class="line">hostname(config-router)# do write</span><br></pre></td></tr></table></figure>
+<p>查看邻居关系，若结果有邻居关系且为full，说明建立了邻居关系</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vigilante# show ipv6  ospf6  neighbor  </span><br><span class="line">Neighbor ID     Pri    DeadTime  State/IfState         Duration I/F[State]</span><br><span class="line">2.2.2.26              1    00:00:37   Full/DR              00:09:23 eth2[DROther]</span><br></pre></td></tr></table></figure>
+<p>邻居关系为Full时候，则可以查看路由表了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Vigilante</span># <span class="selector-tag">sh</span> <span class="selector-tag">ipv6</span>  <span class="selector-tag">route</span></span><br><span class="line"><span class="selector-tag">Codes</span>: <span class="selector-tag">K</span> <span class="selector-tag">-</span> <span class="selector-tag">kernel</span> <span class="selector-tag">route</span>, <span class="selector-tag">C</span> <span class="selector-tag">-</span> <span class="selector-tag">connected</span>, <span class="selector-tag">S</span> <span class="selector-tag">-</span> <span class="selector-tag">static</span>, <span class="selector-tag">R</span> <span class="selector-tag">-</span> <span class="selector-tag">RIPng</span>, <span class="selector-tag">O</span> <span class="selector-tag">-</span> <span class="selector-tag">OSPFv3</span>,</span><br><span class="line">       <span class="selector-tag">I</span> <span class="selector-tag">-</span> <span class="selector-tag">ISIS</span>, <span class="selector-tag">B</span> <span class="selector-tag">-</span> <span class="selector-tag">BGP</span>, * <span class="selector-tag">-</span> <span class="selector-tag">FIB</span> <span class="selector-tag">route</span>.</span><br><span class="line"></span><br><span class="line">O&gt;* ::/0 [110/20] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">C&gt;* ::1/128 is directly connected, lo</span><br><span class="line">O&gt;* 2001:cc0:2020:1::/64 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1003::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1004::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1005::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1006::/64 [110/20] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1007::/64 [110/20] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1008::/64 [110/20] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1010::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1032::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1033::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1034::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:1035::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2000::/64 [110/20] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2010::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2011::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2012::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2013::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2014::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2015::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2016::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2017::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2018::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2020::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2021::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2022::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:2030::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:3001::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:3002::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:3003::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4001::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4002::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4004::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4005::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4006::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4007::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O   2001:cc0:2020:4008::/64 [110/1] is directly connected, eth0, 00:01:13</span><br><span class="line">C&gt;* 2001:cc0:2020:4008::/64 is directly connected, eth0</span><br><span class="line">O&gt;* 2001:cc0:2020:4009::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4010::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4012::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4013::/64 [110/20] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4014::/64 [110/1] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:1::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:2::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:3::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:4::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:5::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:6::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:7::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:8::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:9::/80 [110/2] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:10::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:11::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:12::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:13::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:14::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:15::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:16::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:17::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:20::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:21::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:22::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:23::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:24::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:25::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:26::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:27::/80 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4015:28::/80 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4016::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4017::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4018::/64 [110/2] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4020::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4021::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4022::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4023::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4024::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4025::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4026::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4027::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4028::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4029::/64 [110/5] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4030::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4031::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4032::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4033::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4035::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4036::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4039::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4043::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4044::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4047::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4049::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:4050::/64 [110/3] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:5001::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:5002::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br><span class="line">O&gt;* 2001:cc0:2020:5005::/64 [110/4] via fe80::7625:8aff:fe0e:b250, eth0, 00:01:09</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-入侵测试"><a href="#3-入侵测试" class="headerlink" title="3. 入侵测试"></a>3. 入侵测试</h3><h4 id="IPv4注入默认路由"><a href="#IPv4注入默认路由" class="headerlink" title="IPv4注入默认路由"></a>IPv4注入默认路由</h4><p>在Vigilante上，添加错误默认路由，并同时注入到ospf中，则所有的ospf路由器都会学习到该错误默认路由。则整个网络内所有终端都会把没有路由的数据抓发到Vigilante的eth1，这样所有终端也无法访问Internet了。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip route 0.0.0.0 0.0.0.0 eth1</span><br><span class="line">router ospf</span><br><span class="line">default-information originate always</span><br></pre></td></tr></table></figure>
+<h4 id="IPv4注入主机路由"><a href="#IPv4注入主机路由" class="headerlink" title="IPv4注入主机路由"></a>IPv4注入主机路由</h4><p>添加错误主机路由器，例如百度，则整个局域网内的主机无法正常访问百度了，因为百度的流量被路由到Vigilante。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip route 14.215.177.38 255.255.255.0 eth1</span><br><span class="line">router ospf</span><br><span class="line">redistribute  static</span><br></pre></td></tr></table></figure>
+<h4 id="IPv6注入错误路由"><a href="#IPv6注入错误路由" class="headerlink" title="IPv6注入错误路由"></a>IPv6注入错误路由</h4><p>类似IPv4</p>
+<hr>
+<h3 id="4-排错"><a href="#4-排错" class="headerlink" title="4. 排错"></a>4. 排错</h3><ul>
+<li>注意iptables和ip6tables的问题，放行协议号89。</li>
+<li>注意avast防火墙问题</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/ospf/" rel="tag"># ospf</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/03/X大_OSPFv3_入侵测试/" rel="next" title="X大 OSPFv3 入侵测试">
+                <i class="fa fa-chevron-left"></i> X大 OSPFv3 入侵测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/17/基础DNS学习/" rel="prev" title="基础DNS学习">
+                基础DNS学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-准备工作"><span class="nav-number">1.</span> <span class="nav-text">1. 准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#抓包探测"><span class="nav-number">1.1.</span> <span class="nav-text">抓包探测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VirtualBox"><span class="nav-number">1.2.</span> <span class="nav-text">VirtualBox</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑拓扑"><span class="nav-number">1.3.</span> <span class="nav-text">逻辑拓扑</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-入侵流程"><span class="nav-number">2.</span> <span class="nav-text">2. 入侵流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#quagga服务器启动"><span class="nav-number">2.1.</span> <span class="nav-text">quagga服务器启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置OSPF"><span class="nav-number">2.2.</span> <span class="nav-text">配置OSPF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置OSPFv3"><span class="nav-number">2.3.</span> <span class="nav-text">配置OSPFv3</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-入侵测试"><span class="nav-number">3.</span> <span class="nav-text">3. 入侵测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv4注入默认路由"><span class="nav-number">3.1.</span> <span class="nav-text">IPv4注入默认路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv4注入主机路由"><span class="nav-number">3.2.</span> <span class="nav-text">IPv4注入主机路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv6注入错误路由"><span class="nav-number">3.3.</span> <span class="nav-text">IPv6注入错误路由</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-排错"><span class="nav-number">4.</span> <span class="nav-text">4. 排错</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

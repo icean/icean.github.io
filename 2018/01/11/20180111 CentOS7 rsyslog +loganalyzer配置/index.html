@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="使用rsyslog +loganalyzer配置管理多台服务器配置">
+<meta name="keywords" content="rsyslog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS7 rsyslog +loganalyzer配置">
+<meta property="og:url" content="http://blog.kompaz.win/2018/01/11/20180111 CentOS7 rsyslog +loganalyzer配置/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="使用rsyslog +loganalyzer配置管理多台服务器配置">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://s5.51cto.com/wyfs02/M02/7F/B9/wKiom1cqNAmgHDCjAAChoWQm4MI349.png">
+<meta property="og:image" content="http://s4.51cto.com/wyfs02/M02/7F/B7/wKioL1cqNU2Q1LLCAAELO8IapEY181.png">
+<meta property="og:image" content="http://s4.51cto.com/wyfs02/M01/7F/B7/wKioL1cqNU2hBbwqAAEtExRXt1U565.png">
+<meta property="og:image" content="http://s4.51cto.com/wyfs02/M00/7F/B9/wKiom1cqNHigy2oJAAErad1aUL8851.png">
+<meta property="og:image" content="http://s4.51cto.com/wyfs02/M00/7F/B7/wKioL1cqNU6A8INuAADnfHC1M5U426.png">
+<meta property="og:image" content="http://s4.51cto.com/wyfs02/M02/7F/B9/wKiom1cqNHjjXiyvAAC2F9RtI7o224.png">
+<meta property="og:image" content="http://s2.51cto.com/wyfs02/M02/7F/B7/wKioL1cqNU6R3RhEAACtVFQo2Wo346.png">
+<meta property="og:image" content="http://s2.51cto.com/wyfs02/M00/7F/B9/wKiom1cqNHnAUrJmAAC1dcIKjxo395.png">
+<meta property="og:image" content="http://s2.51cto.com/wyfs02/M01/7F/B7/wKioL1cqNU_zgw7kAAC591Gyx7o617.png">
+<meta property="og:image" content="http://s1.51cto.com/wyfs02/M00/7F/B7/wKioL1cqNVDD1T5XAAHN-Ex87zU198.png">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.005Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS7 rsyslog +loganalyzer配置">
+<meta name="twitter:description" content="使用rsyslog +loganalyzer配置管理多台服务器配置">
+<meta name="twitter:image" content="http://s5.51cto.com/wyfs02/M02/7F/B9/wKiom1cqNAmgHDCjAAChoWQm4MI349.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2018/01/11/20180111 CentOS7 rsyslog +loganalyzer配置/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>CentOS7 rsyslog +loganalyzer配置 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2018/01/11/20180111 CentOS7 rsyslog +loganalyzer配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CentOS7 rsyslog +loganalyzer配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2018-01-11 00:00:00" itemprop="dateCreated datePublished" datetime="2018-01-11T00:00:00+08:00">2018-01-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">使用rsyslog +loganalyzer配置管理多台服务器配置</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h3><p>自己的OpenWRT有时候不知道为什么重启，OpenWRT试用<code>logread</code>命令可以查看buffer内保存的日志，但是重启后会消失。可以通过<code>logread</code>重定向方式将日志存储到本地，鉴于有多台OpenWRT，每个OpenWRT的日志都以文本文件的形式存储在OpenWRT本地存储中，这样也不利于日志分析。</p>
+<p>经过调研后决定试用rsyslog + loganalyzer这种方式，集中式管理所有OpenWRT的日志。</p>
+<hr>
+<h3 id="2-rsyslog配置说明"><a href="#2-rsyslog配置说明" class="headerlink" title="2. rsyslog配置说明"></a>2. rsyslog配置说明</h3><h4 id="日志过滤器"><a href="#日志过滤器" class="headerlink" title="日志过滤器"></a>日志过滤器</h4><p>在<code>rsyslog</code>中，提供了三种方式的过滤器方法：</p>
+<h5 id="基于设施-优先级的过滤器"><a href="#基于设施-优先级的过滤器" class="headerlink" title="基于设施/优先级的过滤器"></a>基于设施/优先级的过滤器</h5><p>基于设施/优先级的过滤器是最常用的方法，语法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FACILITY.PRIORITY</span><br></pre></td></tr></table></figure>
+<p><code>FACILITY</code>指定了产生日志消息的子系统，可选值为 <strong>auth</strong> , <strong>authpriv</strong> , <strong>cron</strong> , <strong>daemon</strong> , <strong>kern</strong> , <strong>lpr</strong> , <strong>mail</strong> , <strong>news</strong> , <strong>syslog</strong> , <strong>user</strong> , <strong>ftp</strong> , <strong>uucp</strong> , <strong>local0</strong> ~ <strong>local7</strong> 。</p>
+<p><code>PRIORITY</code>指定了日志消息的优先级，可用的优先级包含 <strong>debug (7)</strong> , <strong>info (6)</strong> , <strong>notice (5)</strong> , <strong>warning (4)</strong> , <strong>err (3)</strong> , <strong>crit (2)</strong> , <strong>alert (1)</strong> , <strong>emerg (0)</strong> 。</p>
+<blockquote>
+<p>前置符号<code>=</code>表明只有该优先级的消息会被捕获，<code>!</code>表明除了该优先级的消息之外的优先级会被捕获。除了前置符号外，可以使用符号<code>*</code><br>表示所有的设施或者优先级，对优先级部分使用<code>none</code>关键字会捕获所有没有指定优先级的消息。</p>
+</blockquote>
+<p>定义多个设施或者优先级使用<code>,</code>分隔，如果是多个 filter 的话，则使用<code>;</code>进行分隔。</p>
+<p>使用范例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kern.*                  <span class="comment"># 选择所有优先级的内核日志</span></span><br><span class="line">mail.crit                <span class="comment"># 选择所有mail 的优先级高于crit的日志</span></span><br><span class="line">cron.!info,!debug        <span class="comment"># 选择除了 info 和 debug 优先级的 cron 日志</span></span><br></pre></td></tr></table></figure>
+<h5 id="基于属性的过滤器"><a href="#基于属性的过滤器" class="headerlink" title="基于属性的过滤器"></a>基于属性的过滤器</h5><p>基于属性的过滤器语法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:PROPERTY, [!]COMPARE_OPERATION, <span class="string">"STRING"</span></span><br></pre></td></tr></table></figure>
+<p><code>:PROPERTY</code>是要比较的日志属性，<code>COMPARE_OPERATION</code> 为要执行的比较操作，这个的<code>!</code>表示取反的意思，<code>&quot;STRING&quot;</code>为比较的值。</p>
+<p>可以使用的比较操作：</p>
+<table>
+<thead>
+<tr>
+<th>比较操作</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>contains</td>
+<td>匹配提供的字符串值是否是属性的一部分，如果不区分大小写，使用<code>contains_i</code></td>
+</tr>
+<tr>
+<td>isequal</td>
+<td>比较属性和值是否相等</td>
+</tr>
+<tr>
+<td>startswith</td>
+<td>属性是否以指定字符串开始(<code>startswith_i</code>)</td>
+</tr>
+<tr>
+<td>regex</td>
+<td>正则表达式(POSIX BRE 基本正则)匹配</td>
+</tr>
+<tr>
+<td>ereregex</td>
+<td>正则表达式(POSIX ERE 扩展正则)匹配</td>
+</tr>
+<tr>
+<td>isempty</td>
+<td>判断属性是否为空，不需要 value</td>
+</tr>
+</tbody>
+</table>
+<p>使用范例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">:msg, contains, <span class="string">"error"</span></span><br><span class="line">:hostname, isequal, <span class="string">"host1"</span></span><br><span class="line">:msg, !regex, <span class="string">"fatal .* error"</span></span><br></pre></td></tr></table></figure>
+<h5 id="基于表达式的过滤器"><a href="#基于表达式的过滤器" class="headerlink" title="基于表达式的过滤器"></a>基于表达式的过滤器</h5><p>基于表达式的过滤器使用了<code>rsyslog</code>自定义的脚本语言<a href="http://www.rsyslog.com/doc/rainerscript.html" target="_blank" rel="noopener">RainerScript</a>构建复杂的filter，本文实验场景试用该改方式。更多试用方式，请参考链接<a href="http://www.rsyslog.com/doc/rainerscript.html" target="_blank" rel="noopener">RainerScript</a>。</p>
+<h4 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h4><p>Action定义了当匹配指定的 filter 的时候，执行什么操作。如果要指定多个 ACTION，使用 <code>&amp;</code>连接多个 ACTION。例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kern.=crit user1  </span><br><span class="line">&amp; ^<span class="built_in">test</span>-program;temp</span><br><span class="line">&amp; @192.168.0.1</span><br></pre></td></tr></table></figure>
+<p>这里的<code>;temp</code>指定了传递日志给 test-program 程序时（ <strong>^</strong> 开头表明日志发送给该可执行文件），使用它 temp 模板格式化日志。</p>
+<p>在 ACTION 后面追加<code>;模板名称</code>可以为指定的 action 使用该模板格式化日志。</p>
+<h5 id="保存日志到日志文件"><a href="#保存日志到日志文件" class="headerlink" title="保存日志到日志文件"></a>保存日志到日志文件</h5><p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FILTER PATH</span><br></pre></td></tr></table></figure>
+<p>这里的 <strong>PATH</strong> 指定了日志要保存到的文件。例如 <code>cron.* /var/log/cron.log</code> 指定了所有的定时任务日志都写入到<code>/var/log/cron.log</code>文件。</p>
+<p>除了上述方法记录日志（静态），也可以动态的生成日志文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FILTER ?DynamicFile</span><br></pre></td></tr></table></figure>
+<p>这里的<code>DynamicFile</code>是预定义的输出路径模板。</p>
+<h5 id="通过网络发送syslog"><a href="#通过网络发送syslog" class="headerlink" title="通过网络发送syslog"></a>通过网络发送syslog</h5><p><code>rsyslog</code>可以使用网络将日志消息发送或者接受日志，使用这个特性，可以实现使用单一的日志服务器统一管理多台服务器日志。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@[(zNUMBER)]HOST:[PORT]</span><br></pre></td></tr></table></figure>
+<p>这里的<code>@</code>告诉<code>syslog</code>使用 <em>UDP</em> 协议发送日志，要使用 <em>TCP</em> 的话，使用 <code>@@</code>。可选值<code>zNUMBER</code>设置了是否允许使用<code>zlib</code>对日志压缩（压缩级别1-9）。</p>
+<p>使用范例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">*.* @192.168.0.1        <span class="comment"># 使用 UDP 发送，默认端口514*.* </span></span><br><span class="line">@@example.com:18    <span class="comment"># 使用 TCP 发送到端口18， 默认10514</span></span><br><span class="line">*.* @(z9)[2001:db8::1]  <span class="comment"># UDP, ipv6，使用zlib级别9压缩</span></span><br></pre></td></tr></table></figure>
+<h5 id="丢弃日志"><a href="#丢弃日志" class="headerlink" title="丢弃日志"></a>丢弃日志</h5><p>要丢弃日志消息，使用<code>stop</code>动作。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FILTER stop</span><br></pre></td></tr></table></figure>
+<h4 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h4><p>任何<code>rsyslog</code>生成的日志都可以根据需要使用模板进行格式化，要创建模板，使用如下指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$template TEMPLATE_NAME,&quot;text %PROPERTY% more text&quot;, [OPTION]</span><br></pre></td></tr></table></figure>
+<p>这里的<code>$template</code>指令表明了接下来的内容定义了一个模板，<code>TEMPLATE_NAME</code>是模板的名称，接下来双引号之间的内容为模板的内容。</p>
+<blockquote>
+<p>这里还有一个 OPTION ， 它指定了模板的功能，支持选项为<code>sql</code>和<code>stdsql</code>，在使用数据库存储的时候会用到。</p>
+</blockquote>
+<h5 id="生成动态文件名"><a href="#生成动态文件名" class="headerlink" title="生成动态文件名"></a>生成动态文件名</h5><p>模板可以用来生成动态文件名，就如之前所述，在使用动态文件名的时候，需要在 ACTION 中的模板名称前增加<code>?</code>表明该文件名是动态生成的。</p>
+<p>例如:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$template</span> DynamicFile,<span class="string">"/var/log/test_logs/%timegenerated%-test.log"</span>*.* ?DynamicFile</span><br></pre></td></tr></table></figure>
+<p><code>timegenerated</code>属性从日志信息中提取出消息的时间戳，这样可以为每个日志生成唯一文件名称。</p>
+<h5 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h5><p>在模板中使用的属性是在<code>%</code>之间的内容，使用属性可以访问日志消息中的内容。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%PROPERTY_NAME[:FROM_CHAR:TO_CHAR:OPTION]%</span><br></pre></td></tr></table></figure>
+<p>可用的属性列表见<code>man rsyslog.conf</code>。</p>
+<h4 id="全局指令"><a href="#全局指令" class="headerlink" title="全局指令"></a>全局指令</h4><p>全局指令是<code>rsyslogd</code>守护进程的配置指令。所有的全局指令必须以<code>$</code>开始，每行只能有一个指令，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$MainMsgQueueSize</span> 50000</span><br></pre></td></tr></table></figure>
+<h4 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h4><p>在 rsyslog 中，队列用来传输数据，当 rsyslog 接收到一个消息的时候，首先传递消息预处理器，然后加入到主消息队列，接下来消息会从队列中取出传递给规则处理器。</p>
+<p>规则处理器是一个解析过滤引擎，它会基于配置文件中定义的规则，执行相应的动作(action)，每一个动作都有自己的动作队列，消息通过这个队列发送到对应的动作处理器，然后输出。对于同一个消息来说，可以同时传递这个消息给多个动作队列。</p>
+<h5 id="定义队列"><a href="#定义队列" class="headerlink" title="定义队列"></a>定义队列</h5><p>在配置文件<code>/etc/rsyslog.conf</code>文件中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$objectQueueType</span> queue_type</span><br></pre></td></tr></table></figure>
+<p>这里的队列类型可选值为 <strong>direct</strong> , <strong>linkedlist</strong> , <strong>fixedarray</strong> (内存队列), 或者 <strong>disk</strong> 。</p>
+<p>默认情况下，对于主队列，使用的是FixedArray队列（10000个消息长度），动作队列采用的是direct 队列</p>
+<hr>
+<h3 id="3-rsyslog服务器配置"><a href="#3-rsyslog服务器配置" class="headerlink" title="3. rsyslog服务器配置"></a>3. rsyslog服务器配置</h3><h4 id="selinux关闭"><a href="#selinux关闭" class="headerlink" title="selinux关闭"></a>selinux关闭</h4><p>关闭selinux，开启可能有未知的问题，具体原因不明。</p>
+<h4 id="启用网络传输模块"><a href="#启用网络传输模块" class="headerlink" title="启用网络传输模块"></a>启用网络传输模块</h4><p>CentOS7已经自带rsyslog服务，但是默认只处理本机的日志，若要处理远程客户端的日志，需要启用TCP或者UDP模块，也可以两者都启用。修改<code>/etc/rsyslog.conf</code>配置文件如下，默认端口为514。</p>
+<p>OpenWRT默认使用UDP传输！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Provides UDP syslog reception</span></span><br><span class="line"><span class="variable">$ModLoad</span> imudp</span><br><span class="line"><span class="variable">$UDPServerRun</span> 514 </span><br><span class="line">                                                                                                                                                                     </span><br><span class="line"><span class="comment"># Provides TCP syslog reception</span></span><br><span class="line"><span class="variable">$ModLoad</span> imtcp</span><br><span class="line"><span class="variable">$InputTCPServerRun</span> 514</span><br></pre></td></tr></table></figure>
+<h4 id="rsyslog选项修改"><a href="#rsyslog选项修改" class="headerlink" title="rsyslog选项修改"></a>rsyslog选项修改</h4><p>修改选项配置文件<code>/etc/sysconfig/rsyslog</code></p>
+<p>这里启用<strong>-r</strong>选项，接收远程客户端日志；启用<strong>-x</strong>选项，禁用DNS查询；<strong>-m 0</strong>选项具体用法不明确。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SYSLOGD_OPTIONS=<span class="string">"-r -x -m 0"</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">## -m 0 disables 'MARK' messages.                                                                                                                                 </span></span><br><span class="line"><span class="comment">## -r enables logging from remote machines</span></span><br><span class="line"><span class="comment">## -x disables DNS lookups on messages recieved with -r</span></span><br></pre></td></tr></table></figure>
+<h4 id="配置文件修改"><a href="#配置文件修改" class="headerlink" title="配置文件修改"></a>配置文件修改</h4><p>本文的例子例子如下，在目录<code>/etc/rsyslog.d/</code>添加配置文件<strong>router.conf</strong>，将不同的OpenWRT日志记录到不同的文件，实用了基于表达式的过滤器。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="variable">$fromhost</span>-ip == <span class="string">'172.18.1.1'</span> and <span class="variable">$programname</span> != <span class="string">'transmission-daemon'</span> and <span class="variable">$programname</span> != <span class="string">'dnsmasq'</span> <span class="keyword">then</span> /var/<span class="built_in">log</span>/openwrt1.log</span><br><span class="line">&amp; stop</span><br><span class="line"><span class="keyword">if</span> <span class="variable">$fromhost</span>-ip == <span class="string">'172.18.1.2'</span> and <span class="variable">$programname</span> != <span class="string">'transmission-daemon'</span> and <span class="variable">$programname</span> != <span class="string">'dnsmasq'</span> <span class="keyword">then</span>  /var/<span class="built_in">log</span>/openwrt2.log</span><br><span class="line">&amp; stop</span><br><span class="line"><span class="keyword">if</span> <span class="variable">$fromhost</span>-ip == <span class="string">'172.18.1.3'</span> and <span class="variable">$programname</span> != <span class="string">'transmission-daemon'</span> and <span class="variable">$programname</span> != <span class="string">'dnsmasq'</span> <span class="keyword">then</span> /var/<span class="built_in">log</span>/openwrt3.log</span><br><span class="line">&amp; stop</span><br><span class="line"><span class="keyword">if</span> <span class="variable">$fromhost</span>-ip == <span class="string">'172.18.1.4'</span> and <span class="variable">$programname</span> != <span class="string">'transmission-daemon'</span> and <span class="variable">$programname</span> != <span class="string">'dnsmasq'</span> <span class="keyword">then</span> /var/<span class="built_in">log</span>/openwrt4.log</span><br><span class="line">&amp; stop</span><br></pre></td></tr></table></figure>
+<p>上述过滤语句解释为：</p>
+<p>来自IP地址为<strong>172.18.1.1</strong>并且程序名字不为<strong>transmission-daemon</strong>与<strong>dnsmasq</strong>的日志，保存到 <code>/var/log/openwrt1.log</code>，后续动作<code>stop</code>，不将过滤后的结果继续保存的系统日志或者下一步处理。</p>
+<p>修改配置后，重启服务</p>
+<h4 id="iptables配置"><a href="#iptables配置" class="headerlink" title="iptables配置"></a>iptables配置</h4><p>添加对应的iptables条目，放行TCP/UDP的514端口，并重启iptables服务。</p>
+<p>到目前位置，可以远程集中接收来自多个OpenWRT的日志到rsyslog服务器。</p>
+<hr>
+<h3 id="4-loganalyzer配置"><a href="#4-loganalyzer配置" class="headerlink" title="4. loganalyzer配置"></a>4. loganalyzer配置</h3><h4 id="配置LAMP"><a href="#配置LAMP" class="headerlink" title="配置LAMP"></a>配置LAMP</h4><p>安装mariadb-server、mariadb</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install mariadb-server mariadb -y</span><br></pre></td></tr></table></figure>
+<p>安装Apache及PHP</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install httpd -y</span><br><span class="line">yum install php php-gd php-xml php-mysql -y</span><br></pre></td></tr></table></figure>
+<p>启动服务并加入开机自启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl start httpd.service</span><br><span class="line">systemctl <span class="built_in">enable</span> httpd.service</span><br><span class="line">systemctl start mysqld.service</span><br><span class="line">systemctl <span class="built_in">enable</span> mysqld.service</span><br></pre></td></tr></table></figure>
+<p>初始化mariadb，设置root登录密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/mysql_secure_installation</span><br></pre></td></tr></table></figure>
+<p>测试php环境，在<code>/var/www/html/</code>下创建<code>index.php</code>文件，内容如下，浏览器查看是否正常。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>    </span><br><span class="line">  phpinfo()    </span><br><span class="line">  <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="安装rsyslog-mysql"><a href="#安装rsyslog-mysql" class="headerlink" title="安装rsyslog-mysql"></a>安装rsyslog-mysql</h4><p>安装rsyslog 连接MySQL数据库的模块</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install rsyslog-mysql -y</span><br></pre></td></tr></table></figure>
+<h4 id="导入SQL语句"><a href="#导入SQL语句" class="headerlink" title="导入SQL语句"></a>导入SQL语句</h4><p>修改<code>/usr/share/doc/rsyslog-x.x.x/mysql-createDB.sql</code>中创建数据库语句的编码，这样中文不会乱码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE SystemEvents</span><br><span class="line">(</span><br><span class="line">......</span><br><span class="line">)DEFAULT CHARSET=utf8;</span><br></pre></td></tr></table></figure>
+<p>导入相关SQL语句，创建相关的数据库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/share/doc/rsyslog-x.x.x/</span><br><span class="line">mysql -uroot -p&lt;mysql-createDB.sql</span><br></pre></td></tr></table></figure>
+<p>导入之后，在数据中创建了数据库<strong>SysLog</strong>、两张空表<strong>SystemEvents</strong> 和<strong>SystemEventsProperties</strong></p>
+<h4 id="创建rsyslog用户"><a href="#创建rsyslog用户" class="headerlink" title="创建rsyslog用户"></a>创建rsyslog用户</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; grant all on Syslog.* to rsyslog@&apos;localhost&apos; identified by &apos;******&apos;;</span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">mysql&gt; exit</span><br></pre></td></tr></table></figure>
+<h4 id="启用rsyslog-mysql模块"><a href="#启用rsyslog-mysql模块" class="headerlink" title="启用rsyslog-mysql模块"></a>启用rsyslog-mysql模块</h4><p>在配置文件<code>/etc/rsyslog.conf</code>中添加全局变量<code>$Modload ommysql</code>，一个例子如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*.* :ommysql:localhost,Syslog,rsyslog,rootroot <span class="comment">#所有日志存入数据库Syslog，账户名rsyslog，密码rootroot</span></span><br></pre></td></tr></table></figure>
+<p>或者使用基于表达式方式，例子如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="variable">$programname</span> != <span class="string">'transmission-daemon'</span> and <span class="variable">$programname</span> != <span class="string">'dnsmasq'</span> <span class="keyword">then</span> :ommysql:localhost,Syslog,rsyslog,rootroot</span><br><span class="line">&amp; /var/spool/rsyslog/test.log                                                                                                                                        </span><br><span class="line">&amp; stop</span><br></pre></td></tr></table></figure>
+<h4 id="重启rsyslog服务"><a href="#重启rsyslog服务" class="headerlink" title="重启rsyslog服务"></a>重启rsyslog服务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart rsyslog.service</span><br></pre></td></tr></table></figure>
+<h4 id="loganalyzer下载安装"><a href="#loganalyzer下载安装" class="headerlink" title="loganalyzer下载安装"></a>loganalyzer下载安装</h4><p>去<a href="http://loganalyzer.adiscon.com/" target="_blank" rel="noopener">loganalyzer</a>官方网站下载最新的稳定版本，当前为4.1.6，并拷贝源码到<code>/var/www/</code>目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">wget http://download.adiscon.com/loganalyzer/loganalyzer-4.1.6.tar.gz</span><br><span class="line">tar xvzf loganalyzer-4.1.6.tar.gz</span><br><span class="line">cp -r loganalyzer-4.1.6/src/ /var/www/loganalyzer</span><br></pre></td></tr></table></figure>
+<p>创建配置文件，后续loganalyzer安装向导会使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"><span class="built_in">cd</span> loganalyzer-4.1.6/contrib</span><br><span class="line">sh configure.sh</span><br><span class="line">chmod 666 config.php</span><br><span class="line">cp config.php /var/www/loganalyzer</span><br></pre></td></tr></table></figure>
+<h4 id="http访问口令配置"><a href="#http访问口令配置" class="headerlink" title="http访问口令配置"></a>http访问口令配置</h4><p>鉴于loganalyzer不登录也能查看日志，因此在配置文件目录<code>/etc/httpd/conf.d</code>下添加apache配置文件<code>log.conf</code>，同时添加目录映射。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Alias /log /var/www/loganalyzer</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">Directory</span> /<span class="attr">var</span>/<span class="attr">www</span>/<span class="attr">loganalyzer</span>&gt;</span>                                                                                                                                     </span><br><span class="line">  AuthType Basic</span><br><span class="line">  AuthUserFile /etc/httpd/.htpasswd</span><br><span class="line">  AuthName "Sign In Here To Gain Access To the Site !"</span><br><span class="line">  Require valid-user</span><br><span class="line"><span class="tag">&lt;/<span class="name">Directory</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="loganalyzer网页向导配置"><a href="#loganalyzer网页向导配置" class="headerlink" title="loganalyzer网页向导配置"></a>loganalyzer网页向导配置</h4><p>打开浏览器，输入<code>http://[rsyslog服务器IP]/log</code>，输入http账户密码后，进入网页向导配置。</p>
+<p>这里引用了其他博客的图片。</p>
+<center><a href="http://s5.51cto.com/wyfs02/M02/7F/B9/wKiom1cqNAmgHDCjAAChoWQm4MI349.png" target="_blank" rel="noopener"><img src="http://s5.51cto.com/wyfs02/M02/7F/B9/wKiom1cqNAmgHDCjAAChoWQm4MI349.png" alt="wKiom1cqNAmgHDCjAAChoWQm4MI349.png"></a>&lt;/center<center style="color:purple"><strong>图4-1</strong></center>
+
+
+<p>点击next进行系统环境测试：</p>
+<center><a href="http://s4.51cto.com/wyfs02/M02/7F/B7/wKioL1cqNU2Q1LLCAAELO8IapEY181.png" target="_blank" rel="noopener"><img src="http://s4.51cto.com/wyfs02/M02/7F/B7/wKioL1cqNU2Q1LLCAAELO8IapEY181.png" alt="wKioL1cqNU2Q1LLCAAELO8IapEY181.png"></a></center><center style="color:purple"><strong>图4-2</strong></center>
+
+<p>此处提示没有config.php文件，使用contrib中的configure.sh脚本可生成；</p>
+<center><a href="http://s4.51cto.com/wyfs02/M01/7F/B7/wKioL1cqNU2hBbwqAAEtExRXt1U565.png" target="_blank" rel="noopener"><img src="http://s4.51cto.com/wyfs02/M01/7F/B7/wKioL1cqNU2hBbwqAAEtExRXt1U565.png" alt="wKioL1cqNU2hBbwqAAEtExRXt1U565.png"></a></center><center style="color:purple"><strong>图4-3</strong></center>
+
+<p>本文前面已经添加了<code>config.php</code>文件并配置权限为666</p>
+<center><a href="http://s4.51cto.com/wyfs02/M00/7F/B9/wKiom1cqNHigy2oJAAErad1aUL8851.png" target="_blank" rel="noopener"><img src="http://s4.51cto.com/wyfs02/M00/7F/B9/wKiom1cqNHigy2oJAAErad1aUL8851.png" alt="wKiom1cqNHigy2oJAAErad1aUL8851.png"></a></center><center style="color:purple"><strong>图4-4</strong></center>
+
+<p>继续下一步，填写数据库信息</p>
+<center><a href="http://s4.51cto.com/wyfs02/M00/7F/B7/wKioL1cqNU6A8INuAADnfHC1M5U426.png" target="_blank" rel="noopener"><img src="http://s4.51cto.com/wyfs02/M00/7F/B7/wKioL1cqNU6A8INuAADnfHC1M5U426.png" alt="wKioL1cqNU6A8INuAADnfHC1M5U426.png"></a></center><center style="color:purple"><strong>图4-5</strong></center>
+
+<p>点击next生成数据库中的表；</p>
+<center><a href="http://s4.51cto.com/wyfs02/M02/7F/B9/wKiom1cqNHjjXiyvAAC2F9RtI7o224.png" target="_blank" rel="noopener"><img src="http://s4.51cto.com/wyfs02/M02/7F/B9/wKiom1cqNHjjXiyvAAC2F9RtI7o224.png" alt="wKiom1cqNHjjXiyvAAC2F9RtI7o224.png"></a></center><center style="color:purple"><strong>图4-6</strong></center>
+
+<p>设置管理员</p>
+<center><a href="http://s2.51cto.com/wyfs02/M02/7F/B7/wKioL1cqNU6R3RhEAACtVFQo2Wo346.png" target="_blank" rel="noopener"><img src="http://s2.51cto.com/wyfs02/M02/7F/B7/wKioL1cqNU6R3RhEAACtVFQo2Wo346.png" alt="wKioL1cqNU6R3RhEAACtVFQo2Wo346.png"></a></center><center style="color:purple"><strong>图4-7</strong></center>
+
+<p>创建第一个系统日志source</p>
+<center><a href="http://s2.51cto.com/wyfs02/M00/7F/B9/wKiom1cqNHnAUrJmAAC1dcIKjxo395.png" target="_blank" rel="noopener"><img src="http://s2.51cto.com/wyfs02/M00/7F/B9/wKiom1cqNHnAUrJmAAC1dcIKjxo395.png" alt="wKiom1cqNHnAUrJmAAC1dcIKjxo395.png"></a></center><center style="color:purple"><strong>图4-8</strong></center>
+
+<center><a href="http://s2.51cto.com/wyfs02/M01/7F/B7/wKioL1cqNU_zgw7kAAC591Gyx7o617.png" target="_blank" rel="noopener"><img src="http://s2.51cto.com/wyfs02/M01/7F/B7/wKioL1cqNU_zgw7kAAC591Gyx7o617.png" alt="wKioL1cqNU_zgw7kAAC591Gyx7o617.png"></a></center><center style="color:purple"><strong>图4-9</strong></center>
+
+<p>完成</p>
+<center><a href="http://s1.51cto.com/wyfs02/M00/7F/B7/wKioL1cqNVDD1T5XAAHN-Ex87zU198.png" target="_blank" rel="noopener"><img src="http://s1.51cto.com/wyfs02/M00/7F/B7/wKioL1cqNVDD1T5XAAHN-Ex87zU198.png" alt="wKioL1cqNVDD1T5XAAHN-Ex87zU198.png"></a></center><center style="color:purple"><strong>图4-10</strong></center>
+
+<p>部署完毕，更多需要查看文档</p>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2018/1/11</td>
+<td>创建</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://aicode.cc/shi-yongrsyslog-guan-li-ri-zhi.html" target="_blank" rel="noopener">https://aicode.cc/shi-yongrsyslog-guan-li-ri-zhi.html</a></li>
+<li><a href="http://blog.51cto.com/11070714/1770242" target="_blank" rel="noopener">http://blog.51cto.com/11070714/1770242</a></li>
+<li><a href="https://www.2cto.com/os/201102/83854.html" target="_blank" rel="noopener">https://www.2cto.com/os/201102/83854.html</a></li>
+<li><a href="http://www.rsyslog.com/doc/v8-stable/" target="_blank" rel="noopener">http://www.rsyslog.com/doc/v8-stable/</a></li>
+<li><a href="http://blog.csdn.net/xdnabl/article/details/51120873" target="_blank" rel="noopener">http://blog.csdn.net/xdnabl/article/details/51120873</a></li>
+</ul>
+</center>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/rsyslog/" rel="tag"># rsyslog</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/05/20180105 CentOS7 Git 服务器与客户端/" rel="next" title="Git服务器搭建与常见问题总结">
+                <i class="fa fa-chevron-left"></i> Git服务器搭建与常见问题总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/08/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-前言"><span class="nav-number">1.</span> <span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-rsyslog配置说明"><span class="nav-number">2.</span> <span class="nav-text">2. rsyslog配置说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#日志过滤器"><span class="nav-number">2.1.</span> <span class="nav-text">日志过滤器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#基于设施-优先级的过滤器"><span class="nav-number">2.1.1.</span> <span class="nav-text">基于设施/优先级的过滤器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于属性的过滤器"><span class="nav-number">2.1.2.</span> <span class="nav-text">基于属性的过滤器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于表达式的过滤器"><span class="nav-number">2.1.3.</span> <span class="nav-text">基于表达式的过滤器</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Action"><span class="nav-number">2.2.</span> <span class="nav-text">Action</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#保存日志到日志文件"><span class="nav-number">2.2.1.</span> <span class="nav-text">保存日志到日志文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通过网络发送syslog"><span class="nav-number">2.2.2.</span> <span class="nav-text">通过网络发送syslog</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#丢弃日志"><span class="nav-number">2.2.3.</span> <span class="nav-text">丢弃日志</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模板"><span class="nav-number">2.3.</span> <span class="nav-text">模板</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#生成动态文件名"><span class="nav-number">2.3.1.</span> <span class="nav-text">生成动态文件名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#属性"><span class="nav-number">2.3.2.</span> <span class="nav-text">属性</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全局指令"><span class="nav-number">2.4.</span> <span class="nav-text">全局指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队列"><span class="nav-number">2.5.</span> <span class="nav-text">队列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#定义队列"><span class="nav-number">2.5.1.</span> <span class="nav-text">定义队列</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-rsyslog服务器配置"><span class="nav-number">3.</span> <span class="nav-text">3. rsyslog服务器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#selinux关闭"><span class="nav-number">3.1.</span> <span class="nav-text">selinux关闭</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启用网络传输模块"><span class="nav-number">3.2.</span> <span class="nav-text">启用网络传输模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rsyslog选项修改"><span class="nav-number">3.3.</span> <span class="nav-text">rsyslog选项修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件修改"><span class="nav-number">3.4.</span> <span class="nav-text">配置文件修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables配置"><span class="nav-number">3.5.</span> <span class="nav-text">iptables配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-loganalyzer配置"><span class="nav-number">4.</span> <span class="nav-text">4. loganalyzer配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置LAMP"><span class="nav-number">4.1.</span> <span class="nav-text">配置LAMP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装rsyslog-mysql"><span class="nav-number">4.2.</span> <span class="nav-text">安装rsyslog-mysql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#导入SQL语句"><span class="nav-number">4.3.</span> <span class="nav-text">导入SQL语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建rsyslog用户"><span class="nav-number">4.4.</span> <span class="nav-text">创建rsyslog用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启用rsyslog-mysql模块"><span class="nav-number">4.5.</span> <span class="nav-text">启用rsyslog-mysql模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重启rsyslog服务"><span class="nav-number">4.6.</span> <span class="nav-text">重启rsyslog服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#loganalyzer下载安装"><span class="nav-number">4.7.</span> <span class="nav-text">loganalyzer下载安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#http访问口令配置"><span class="nav-number">4.8.</span> <span class="nav-text">http访问口令配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#loganalyzer网页向导配置"><span class="nav-number">4.9.</span> <span class="nav-text">loganalyzer网页向导配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">5.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. 简介Kubernetes是Google开源的容器集群管理系统，其提供应用部署、维护、 扩展机制等功能，利用Kubernetes能方便地管理跨机器运行容器化的应用，其主要功能如下：  使用Docker对应用程序包装(package)、实例化(instantiate)、运行(run)。 以集群的方式运行、管理跨机器的容器。 解决Docker跨机器容器之间的通讯问题。 Kubernetes的自我修">
+<meta name="keywords" content="k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes调研">
+<meta property="og:url" content="http://blog.kompaz.win/2017/06/06/Kubernetes 调研/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. 简介Kubernetes是Google开源的容器集群管理系统，其提供应用部署、维护、 扩展机制等功能，利用Kubernetes能方便地管理跨机器运行容器化的应用，其主要功能如下：  使用Docker对应用程序包装(package)、实例化(instantiate)、运行(run)。 以集群的方式运行、管理跨机器的容器。 解决Docker跨机器容器之间的通讯问题。 Kubernetes的自我修">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/kubernetes/2-1.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/kubernetes/2-2.gif">
+<meta property="og:image" content="http://blog.kompaz.win/images/kubernetes/3-3.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/kubernetes/3-1.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/kubernetes/3-2.png">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.422Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kubernetes调研">
+<meta name="twitter:description" content="1. 简介Kubernetes是Google开源的容器集群管理系统，其提供应用部署、维护、 扩展机制等功能，利用Kubernetes能方便地管理跨机器运行容器化的应用，其主要功能如下：  使用Docker对应用程序包装(package)、实例化(instantiate)、运行(run)。 以集群的方式运行、管理跨机器的容器。 解决Docker跨机器容器之间的通讯问题。 Kubernetes的自我修">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/kubernetes/2-1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/06/06/Kubernetes 调研/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Kubernetes调研 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/06/06/Kubernetes 调研/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kubernetes调研
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-06-06 13:26:00" itemprop="dateCreated datePublished" datetime="2017-06-06T13:26:00+08:00">2017-06-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h3><p>Kubernetes是Google开源的容器集群管理系统，其提供应用部署、维护、 扩展机制等功能，利用Kubernetes能方便地管理跨机器运行容器化的应用，其主要功能如下：</p>
+<ul>
+<li>使用Docker对应用程序包装(package)、实例化(instantiate)、运行(run)。</li>
+<li>以集群的方式运行、管理跨机器的容器。</li>
+<li>解决Docker跨机器容器之间的通讯问题。</li>
+<li>Kubernetes的自我修复机制使得容器集群总是运行在用户期望的状态。</li>
+</ul>
+<a id="more"></a>
+<hr>
+<h3 id="2-主要概念"><a href="#2-主要概念" class="headerlink" title="2. 主要概念"></a>2. 主要概念</h3><h4 id="框架图"><a href="#框架图" class="headerlink" title="框架图"></a>框架图</h4><center><img src="http://blog.kompaz.win/images/kubernetes/2-1.png" width="500px"></center><center style="color:purple"><strong>图2-1 Kubernete框架图</strong></center>
+
+<h4 id="Kubernetes-Master"><a href="#Kubernetes-Master" class="headerlink" title="Kubernetes Master"></a>Kubernetes Master</h4><p>集群拥有一个Kubernetes Master。Kubernetes Master提供集群的独特视角，并且拥有一系列组件，比如Kubernetes API Server。master节点包括用来创建和复制Pod的Replication Controller。</p>
+<h5 id="API-Server"><a href="#API-Server" class="headerlink" title="API Server"></a>API Server</h5><p>API Server提供可以用来和集群交互的REST端点，其核心功能为提供了对Kubernetes各类资源对象的增、删、改、查以及Watch等HTTP REST接口，为集群内各个功能模块之间的数据交互和通信的中心枢纽，其还有以下的功能特征</p>
+<ul>
+<li>集群管理的API入口</li>
+<li>资源配额控制的入口</li>
+<li>提供了完备的集群安全机制</li>
+</ul>
+<h5 id="Replication-Controller"><a href="#Replication-Controller" class="headerlink" title="Replication Controller"></a>Replication Controller</h5><p>Replication Controller确保任意时间都有指定数量的Pod“副本”在运行。</p>
+<ul>
+<li>如果为某个Pod创建了Replication Controller并且指定3个副本，它会创建3个Pod，并且持续监控它们。如果某个Pod不响应，那么Replication Controller会替换它。</li>
+<li>如果之前不响应的Pod恢复了，现在就有4个Pod了，那么Replication Controller会将其中一个终止保持总数为3。</li>
+<li>如果在运行中将副本总数改为5，Replication Controller会立刻启动2个新Pod，保证总数为5。还可以按照这样的方式缩小Pod，这个特性在执行滚动升级时很有用。</li>
+</ul>
+<h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><p><a href="http://kubernetes.io/v1.1/docs/user-guide/services.html" target="_blank" rel="noopener">Service</a>是定义一系列Pod以及访问这些Pod的策略的一层抽象服务。Service通过Label找到Pod组。</p>
+<p>现在，假定有2个后台Pod，并且定义后台Service的名称为<code>backend-service</code>，该Service会完成如下两件重要的事情：</p>
+<ul>
+<li>会为Service创建一个本地集群的DNS入口，因此前端Pod只需要DNS查找主机名为backend-service，就能够解析出前端应用程序可用的IP地址。</li>
+<li>现在前端已经得到了后台服务的IP地址，但是它应该访问2个后台Pod的哪一个呢？Service在这2个后台Pod之间提供透明的负载均衡，会将请求分发给其中的任意一个。通过每个Node上运行的代理（kube-proxy）完成。</li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/kubernetes/2-2.gif" width="500px"></center><center style="color:purple"><strong>图2-2 Service</strong></center>
+
+<h4 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h4><p><strong>节点</strong>是物理或者虚拟机器，作为Kubernetes worker，通常称为Minion。每个节点都运行如下Kubernetes关键组件：</p>
+<ul>
+<li>Kubelet：是主节点代理。</li>
+<li>Kube-proxy：Service使用其将链接路由到Pod，如上文所述。</li>
+<li>Docker或Rocket：Kubernetes使用的容器技术来创建容器。</li>
+</ul>
+<h5 id="Pods"><a href="#Pods" class="headerlink" title="Pods"></a>Pods</h5><p>Pod为Kubernetes操作的基本单元，把相关的一个或者多个容器构成一个Pod。通常Pod里运行相同的应用。一组共享相同的Volumes以及网络命名空间的IP和Port。</p>
+<h5 id="Label"><a href="#Label" class="headerlink" title="Label"></a>Label</h5><p>Labels是用于区分Pod、Service、Replication Controller的key/value键值对，Pod、Service、 Replication Controller可以有多个label，但是每个label的key只能对应一个value。</p>
+<p>Labels是Service和Replication Controller运行的基础，为了将访问Service的请求转发给后端提供服务的多个容器，正是通过标识容器的labels来选择正确的容器。</p>
+<p>Replication Controller也使用labels来管理通过pod 模板创建的一组容器，这样Replication Controller可以更加容易，方便地管理多个容器，无论有多少容器。</p>
+<h5 id="kubelet"><a href="#kubelet" class="headerlink" title="kubelet"></a>kubelet</h5><p>在Kubernetes集群中，每个节点都会启动一个kubelet服务进程，该进程用于处理Master节点下发到本节点的任务，管理Pod以及Pod中的容器。每个Kubelet进程会在API Server上注册节点自身的信息，定期向Master回报节点资源的使用情况，并通过cAdvisor监控容器和节点资源。</p>
+<h5 id="kube-proxy"><a href="#kube-proxy" class="headerlink" title="kube-proxy"></a>kube-proxy</h5><p>Service为Kubernetes的抽象概念，kube-proxy为一个反向代理，将客户端访问的请求，负责转发到后方的Pod。</p>
+<p>在Kubernetes集群中，每个节点都会运行一个kube-proxy服务，其核心的功能是将某个Service的访问转发到后端的多个Pod实例上。</p>
+<hr>
+<h3 id="3-监控框架调研"><a href="#3-监控框架调研" class="headerlink" title="3. 监控框架调研"></a>3. 监控框架调研</h3><h4 id="Kubernetes监控工具Heapster"><a href="#Kubernetes监控工具Heapster" class="headerlink" title="Kubernetes监控工具Heapster"></a>Kubernetes监控工具Heapster</h4><h5 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h5><p>Heapster是容器集群监控和性能分析工具，天然的支持<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">Kubernetes</a>和CoreOS。</p>
+<p>Kubernetes有个出名的监控agent—<strong>cAdvisor</strong>。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)，每个Node上的cAdvisor进行汇总，然后导到第三方工具(如InfluxDB)。</p>
+<h5 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h5><p>在较新的版本中，Kubernetes已经将cAdvisor功能集成到kubelet组件中，每个Node节点可以直接进行web访问。</p>
+<center><img src="http://blog.kompaz.win/images/kubernetes/3-3.png" width="500px"></center><center style="color:purple"><strong>图3-1 Heapster框架</strong></center>
+
+<ul>
+<li>Heapster首先从K8S Master获取集群中所有Node的信息</li>
+<li>通过这些Node上的kubelet获取有用数据，而kubelet本身的数据则是从cAdvisor得到</li>
+<li>所有获取到的数据都被推到Heapster配置的后端存储中，并还支持数据的可视化，后端存储 + 可视化的方法，如InfluxDB + grafana</li>
+</ul>
+<h5 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h5><p>Heapster可获取的Metrics。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>描述</th>
+<th>分类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cpu/limit</td>
+<td>cpu预设值，yaml文件可设置</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>cpu/node_reservation</td>
+<td>kube节点的cpu预设值，类似cpu/limit</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>cpu/node_utilization</td>
+<td>cpu利用率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>cpu/request</td>
+<td>cpu请求资源，yaml文件可设置</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>cpu/usage</td>
+<td>cpu使用</td>
+<td>累计值</td>
+</tr>
+<tr>
+<td>cpu/usage_rate</td>
+<td>cpu使用速率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>filesystem/limit</td>
+<td>文件系统限制</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>filesystem/usage</td>
+<td>文件系统使用</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/limit</td>
+<td>内存限制，yaml文件可设置</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/major_page_faults</td>
+<td>内存主分页错误</td>
+<td>累计值</td>
+</tr>
+<tr>
+<td>memory/major_page_faults_rate</td>
+<td>内存主分页错误速率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/node_reservation</td>
+<td>节点内存预设值</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/node_utilization</td>
+<td>节点内存使用率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/page_faults</td>
+<td>内存分页错误</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/page_faults_rate</td>
+<td>内存分页错误速率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/request</td>
+<td>内存申请，yaml文件可设置</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/usage</td>
+<td>内存使用</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>memory/working_set</td>
+<td>内存工作使用</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>network/rx</td>
+<td>网络接收总流量</td>
+<td>累计值</td>
+</tr>
+<tr>
+<td>network/rx_errors</td>
+<td>网络接收错误数</td>
+<td>不确定</td>
+</tr>
+<tr>
+<td>network/rx_errors_rate</td>
+<td>网络接收错误数速率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>network/rx_rate</td>
+<td>网络接收速率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>network/tx</td>
+<td>网络发送总流量</td>
+<td>累计值</td>
+</tr>
+<tr>
+<td>network/tx_errors</td>
+<td>网络发送错误数</td>
+<td>不确定</td>
+</tr>
+<tr>
+<td>network/tx_errors_rate</td>
+<td>网络发送错误数速率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>network/tx_rate</td>
+<td>网络发送速率</td>
+<td>瞬时值</td>
+</tr>
+<tr>
+<td>uptime</td>
+<td>容器启动时间，毫秒</td>
+<td>瞬时值</td>
+</tr>
+</tbody>
+</table>
+<p>参考资料：<br>API文档： <a href="https://github.com/kubernetes/heapster/blob/master/docs/model.md" target="_blank" rel="noopener">https://github.com/kubernetes/ … el.md</a><br>Metrics: <a href="https://github.com/kubernetes/heapster/blob/master/docs/storage-schema.md" target="_blank" rel="noopener">https://github.com/kubernetes/ … ma.md</a></p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><ul>
+<li>对于较大规模的k8s集群，heapster目前的cache方式会吃掉大量内存。</li>
+<li>因为要定时获取整个集群的容器信息，信息存储在内存会成为问题，再加上heaspter要支持api获取临时metrics。</li>
+<li>如果将heapster以pod方式运行，很容易出现OOM。所以目前建议关掉cache,并以standalone的方式独立出k8s平台， 建议一套K8s，只运行一套heapster容器（heapster1.0版本后内部分为event和metric两个进程）。</li>
+<li>heapster其抓取的监控数据可以按pod，container，namespace等方式分组</li>
+</ul>
+<h4 id="爱奇艺-App-Engine-监控框架Dadvisor"><a href="#爱奇艺-App-Engine-监控框架Dadvisor" class="headerlink" title="爱奇艺 App Engine 监控框架Dadvisor"></a>爱奇艺 App Engine 监控框架Dadvisor</h4><h5 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h5><p>爱奇艺 App Engine（iQIYI App Engine，简称 QAE）</p>
+<p>dAdvisor，取意 Docker Advisor；dAdvisor 最初有一些监控指标来自于 Docker API，后来完全废弃从 Docker API 读取数据，Docker API 非常脆弱，包括 Docker Daemon，时常卡住。所以 dAdvisor 的监控数据也都直接来自于 cgroups 数据。</p>
+<h5 id="框架-1"><a href="#框架-1" class="headerlink" title="框架"></a>框架</h5><center><img src="http://blog.kompaz.win/images/kubernetes/3-1.png" width="500px"></center><center style="color:purple"><strong>图3-2 QAE 监控和预警</strong></center>
+
+<p>Docker 的最佳实践不推荐在容器中运行多个进程，QAE也遵守这个最佳实践，将容器的监控实现在了容器外部，即计算节点上。</p>
+<ul>
+<li>每个计算节点上有一个容器的监控 agent 叫 dAdviser</li>
+<li>dAdviser会负责监控所有 QAE 容器，并且采集包括 CPU、内存、磁盘、网络上/下行速率等基础数据</li>
+<li>收集的基础数据通过使用 Graphite 的聚合功能，将属于同一个应用的所有监控数据聚合成应用的数据</li>
+<li>应用的监控也非常重要，因为一个业务通常由多个容器组成，所以这里需要监控例如：每个容器的状态，是否健康，所有容器数量，不健康容器占总数的比例；整个业务的流量情况，QPS 是多少等等。有了容器和应用的监控数据后，就可以基于这些数据配置报警了，在报警方面，QAE 对接了一个内部报警平台，支持多个渠道报警</li>
+</ul>
+<h5 id="日志框架"><a href="#日志框架" class="headerlink" title="日志框架"></a>日志框架</h5><center><img src="http://blog.kompaz.win/images/kubernetes/3-2.png" width="500px"></center><center style="color:purple"><strong>图3-2 QAE 日志</strong></center>
+
+<p>与监控类似，QAE日志采用容器外采集方案，在每个节点上，部署运行一个log-agent来负责采集日志。</p>
+<h5 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h5><ul>
+<li>采集：CPU、内存、磁盘、网络</li>
+<li>集成现有 Graphite 服务</li>
+<li>统计数据方便（Graphite 内置一些聚合操作符）</li>
+<li>呈现方便（Graphite Render URL API）</li>
+<li>开发量不大</li>
+</ul>
+<h4 id="Zabbix容器监控"><a href="#Zabbix容器监控" class="headerlink" title="Zabbix容器监控"></a>Zabbix容器监控</h4><h5 id="简介-2"><a href="#简介-2" class="headerlink" title="简介"></a>简介</h5><p>Zabbix 作为老牌的基础监控软件，应用非常广泛，但是，对于容器的快速兴起，Zabbix 并没有准备好</p>
+<h5 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h5><ul>
+<li>在镜像安装 Zabbix 这个 footprint 比较大，因为在一个计算节点上往往需要运行多个容器，而 Zabbix 占用资源也不小，另外也不符合 Docker 最佳实践</li>
+<li>Zabbix 的数据统计/聚合比较复杂，因为 Zabbix 是为单机设计的，也就是这里的单个容器，而对于容器化的业务来说，整个业务的监控指标实际比单个容器的指标更为重要</li>
+</ul>
+<hr>
+<h3 id="修订版本"><a href="#修订版本" class="headerlink" title="修订版本"></a>修订版本</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/6/6 13:26</td>
+<td>文件创建</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/k8s/" rel="tag"># k8s</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/06/Kubernetes v1.6.4 CentOS 7 编译安装/" rel="next" title="Kubernetes v1.6.4 CentOS 7 编译安装">
+                <i class="fa fa-chevron-left"></i> Kubernetes v1.6.4 CentOS 7 编译安装
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/28/CentOS7 minimal阅读调试K8S代码/" rel="prev" title="CentOS7 minimal阅读调试K8S代码">
+                CentOS7 minimal阅读调试K8S代码 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-简介"><span class="nav-number">1.</span> <span class="nav-text">1. 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-主要概念"><span class="nav-number">2.</span> <span class="nav-text">2. 主要概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#框架图"><span class="nav-number">2.1.</span> <span class="nav-text">框架图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kubernetes-Master"><span class="nav-number">2.2.</span> <span class="nav-text">Kubernetes Master</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#API-Server"><span class="nav-number">2.2.1.</span> <span class="nav-text">API Server</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Replication-Controller"><span class="nav-number">2.2.2.</span> <span class="nav-text">Replication Controller</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Service"><span class="nav-number">2.3.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Node"><span class="nav-number">2.4.</span> <span class="nav-text">Node</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Pods"><span class="nav-number">2.4.1.</span> <span class="nav-text">Pods</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Label"><span class="nav-number">2.4.2.</span> <span class="nav-text">Label</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#kubelet"><span class="nav-number">2.4.3.</span> <span class="nav-text">kubelet</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#kube-proxy"><span class="nav-number">2.4.4.</span> <span class="nav-text">kube-proxy</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-监控框架调研"><span class="nav-number">3.</span> <span class="nav-text">3. 监控框架调研</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kubernetes监控工具Heapster"><span class="nav-number">3.1.</span> <span class="nav-text">Kubernetes监控工具Heapster</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#简介"><span class="nav-number">3.1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#框架"><span class="nav-number">3.1.2.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用"><span class="nav-number">3.1.3.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#总结"><span class="nav-number">3.1.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#爱奇艺-App-Engine-监控框架Dadvisor"><span class="nav-number">3.2.</span> <span class="nav-text">爱奇艺 App Engine 监控框架Dadvisor</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#简介-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#框架-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#日志框架"><span class="nav-number">3.2.3.</span> <span class="nav-text">日志框架</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#特点"><span class="nav-number">3.2.4.</span> <span class="nav-text">特点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Zabbix容器监控"><span class="nav-number">3.3.</span> <span class="nav-text">Zabbix容器监控</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#简介-2"><span class="nav-number">3.3.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#问题"><span class="nav-number">3.3.2.</span> <span class="nav-text">问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本"><span class="nav-number">4.</span> <span class="nav-text">修订版本</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. 起因鉴于实验室以及寝室均有科技网的IPv6，同时感谢IPv6 hosts，通过修改终端PC或者OpenWRT的hosts文件，可以利用科技网的IPv6愉快地Googling以及看油管，所以一直没考虑在OpenWRT上折腾Shadowsocks的透明代理什么的，但是IPv6环境不是总有的，毕业之后，可能基本告别了原生IPv6的环境，所以在某天晚上突然觉得应该在OpenWRT上配置一下Shado">
+<meta name="keywords" content="network,openwrt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT Shadowsocks+GFWList 流量自动分流">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/24/OpenWRT Shadowsocks+GFWList 流量自动分流/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. 起因鉴于实验室以及寝室均有科技网的IPv6，同时感谢IPv6 hosts，通过修改终端PC或者OpenWRT的hosts文件，可以利用科技网的IPv6愉快地Googling以及看油管，所以一直没考虑在OpenWRT上折腾Shadowsocks的透明代理什么的，但是IPv6环境不是总有的，毕业之后，可能基本告别了原生IPv6的环境，所以在某天晚上突然觉得应该在OpenWRT上配置一下Shado">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://fishcried.com/img/iptables_netfilter.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_shadowsocks+gfwlist/4-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/openwrt_shadowsocks+gfwlist/4-2.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.606Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT Shadowsocks+GFWList 流量自动分流">
+<meta name="twitter:description" content="1. 起因鉴于实验室以及寝室均有科技网的IPv6，同时感谢IPv6 hosts，通过修改终端PC或者OpenWRT的hosts文件，可以利用科技网的IPv6愉快地Googling以及看油管，所以一直没考虑在OpenWRT上折腾Shadowsocks的透明代理什么的，但是IPv6环境不是总有的，毕业之后，可能基本告别了原生IPv6的环境，所以在某天晚上突然觉得应该在OpenWRT上配置一下Shado">
+<meta name="twitter:image" content="http://fishcried.com/img/iptables_netfilter.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/24/OpenWRT Shadowsocks+GFWList 流量自动分流/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT Shadowsocks+GFWList 流量自动分流 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/24/OpenWRT Shadowsocks+GFWList 流量自动分流/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT Shadowsocks+GFWList 流量自动分流
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-24 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-24T16:29:00+08:00">2017-03-24</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-起因"><a href="#1-起因" class="headerlink" title="1. 起因"></a>1. 起因</h3><p>鉴于实验室以及寝室均有科技网的IPv6，同时感谢<a href="https://github.com/lennylxx/ipv6-hosts" target="_blank" rel="noopener">IPv6 hosts</a>，通过修改终端PC或者OpenWRT的hosts文件，可以利用科技网的IPv6愉快地Googling以及看油管，所以一直没考虑在OpenWRT上折腾Shadowsocks的透明代理什么的，但是IPv6环境不是总有的，毕业之后，可能基本告别了原生IPv6的环境，所以在某天晚上突然觉得应该在OpenWRT上配置一下Shadowsocks透明代理。</p>
+<a id="more"></a>
+<hr>
+<h3 id="2-理论基础"><a href="#2-理论基础" class="headerlink" title="2. 理论基础"></a>2. 理论基础</h3><p>根据调研，可简单归纳为几点</p>
+<ul>
+<li>利用dnsmasq-full版本进行流量分离，国内的流量走默认的链路就好，对于<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>中的域名，为了避免DNS污染，利用Shadowsocks查询<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>中的域名</li>
+<li>将<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>中的域名查询结果保存到一个ipset中</li>
+<li>利用iptables，将匹配ipset列表中的流量，重定向到Shadowsocks</li>
+</ul>
+<p>通俗地讲一下这个原理，路由器是一个指路的，管的地方就那么大，可能是一家的几台设备。在没有透明代理配置的时候是这样的：</p>
+<ul>
+<li><p><strong>手机A</strong>：老铁，去<code>gxxgle.com.hk</code>咋走啊？</p>
+</li>
+<li><p><strong>路由器</strong>：我也不知道啊，我去查查。</p>
+<p><em>过了一会，路由器对手机A说</em></p>
+</li>
+<li><p><strong>路由器</strong>：去<code>gxxgle.com.hk</code>走<code>1.2.3.4</code>大道，前边直走就行</p>
+</li>
+<li><p><strong>手机A</strong>：谢老铁了，我去也！</p>
+<p><em>过了一会</em></p>
+</li>
+</ul>
+<ul>
+<li><strong>手机A</strong>：扎心了，老铁，你骗我，这道路信息根本不完善，甚至前方道路都不通！去<code>gxxgle.com.hk</code>都被遣返了！</li>
+<li><strong>路由器</strong>：怪我了？我也是从我的上级查询到！</li>
+</ul>
+<p>在配置了透明代理之后</p>
+<ul>
+<li><strong>手机A</strong>：老铁，去<code>facebxxxk.com</code>咋走啊？这次别坑我啊！</li>
+<li><strong>路由器</strong>：小点声，最新消息，最近得到一份机密名单，你要去的地方在名单内，那个地方不能走正常大路了，甚至都不能从上级那边问到正确的线路信息，甚至从国外的老铁那边都问不到正确的信息。</li>
+<li><strong>手机A</strong>：那可咋整啊？</li>
+<li><strong>路由器</strong>：别急别急，我在国外有个亲戚，他能告诉我正确的线路信息，容我问问。</li>
+<li><strong>手机A</strong>：不是从国外都问不到正确的线路信息吗？你咋问到的呢？</li>
+<li><strong>路由器</strong>：我和国外的亲戚通过秘密的通道联络的，好了，帮你问到正确的线路信息了。</li>
+<li><strong>手机A</strong>：辛苦辛苦，那我走了！我走大路了啊！</li>
+<li><strong>路由器</strong>：急啥急啥，就算你拿到正确的道路信息，你走大路也出不去！据说去那里的大路查的很严的，像你这种穿着80号制服的，是重点打击对象，见一个遣返一个，你去找我的小弟1080，让他把你打扮，然后通关的时候就说去找我国外的亲戚，别说你是去<code>facebxxxk.com</code>，你先到我亲戚那里，然后你再转道去<code>facebxxxk.com</code></li>
+<li><strong>手机A</strong>：那我乔装打扮了之后，真的能混过去吗？</li>
+<li><strong>路由器</strong>：暂时还能混过去，现在那边查的还没那么狠，给你套一件别的号的衣服，起码现在可以蒙混过关的，不过以后就不知道会怎么样了！</li>
+<li><strong>手机A</strong>：好好谢谢！那我先过去了，辛苦您嘞！</li>
+<li><strong>路由器</strong>：没事没事，下一位！</li>
+<li><strong>手机B</strong>：大哥，我要去<code>baidu.xxx</code>，请问咋走咧？</li>
+<li><strong>路由器</strong>：我给你查查！哦，你直走就行！</li>
+<li><strong>手机B</strong>：我也是穿80号制服的，为啥就能直走咧？</li>
+<li><strong>路由器</strong>：哪那么多废话，你要去的地方没在秘密名单里！赶紧滚！</li>
+</ul>
+<hr>
+<h3 id="3-实现步骤"><a href="#3-实现步骤" class="headerlink" title="3. 实现步骤"></a>3. 实现步骤</h3><h4 id="OpenWRT基础配置"><a href="#OpenWRT基础配置" class="headerlink" title="OpenWRT基础配置"></a>OpenWRT基础配置</h4><p>此处略去OpenWRT的基础配置，请参考《<a href="http://blog.kompaz.win/2016/11/14/NetGear%20%E5%88%B7%20OpenWrt/">NetGear 刷OpenWRT</a>》，本文使用的硬件设备为Netgear WNDR4300，OpenWRT固件版本为Chaos Calmer 15.05.1。</p>
+<h4 id="相关软件包安装"><a href="#相关软件包安装" class="headerlink" title="相关软件包安装"></a>相关软件包安装</h4><p>首先确保路由器已经联网，使用命令<code>opkg update</code>更新软件包，手动安装某些依赖，更新软件包后，一些依赖也会自动下载，ipset安装之后，需要重启路由器。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg install iptables-mod-nat-extra ipset iptables-mod-tproxy</span><br></pre></td></tr></table></figure>
+<p>卸载原来的<strong>dnsmasq</strong>，安装<strong>dnsmasq-full</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg remove dnsmasq</span><br><span class="line">opkg install dnsmasq-full</span><br></pre></td></tr></table></figure>
+<p>官方的源中没有<strong>Shadowsocks</strong>，这时候要根据自己路由器的CPU型号进行选择，下载<strong>Shadowsocks-libev</strong>版本，<a href="https://sourceforge.net/projects/openwrt-dist/files/?source=navbar" target="_blank" rel="noopener">下载地址</a>，网站上还有<strong>shadowsocks-libev-spec</strong>版本，这里不使用该版本。使用PUTTY将下载的软件包上传并安装，安装的过程中会自动下载一些依赖包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg install /tmp/shadowsocks-libev_2.4.8-2_ar71xx.ipk</span><br></pre></td></tr></table></figure>
+<p><strong>重启路由器之后，因为ipset组件的生效，需要重启设备！</strong></p>
+<h4 id="Shadowsocks配置"><a href="#Shadowsocks配置" class="headerlink" title="Shadowsocks配置"></a>Shadowsocks配置</h4><p>编辑<code>/etc/shadowsocks.json</code>，填写服务器信息，如下所示，服务器地址可以为IPv6或者IPv4地址，端口号、密码和加密方式根据Shadowsocks服务器配置的信息填写。关于Shadowsocks的服务器如何配置，请自行Google。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"server"</span>: <span class="string">"x.x.x.x"</span>,</span><br><span class="line">    <span class="attr">"server_port"</span>: xxxx,</span><br><span class="line">    <span class="attr">"local_port"</span>: <span class="number">1080</span>,</span><br><span class="line">    <span class="attr">"password"</span>: <span class="string">"xxxxxx"</span>,</span><br><span class="line">    <span class="attr">"timeout"</span>: <span class="number">60</span>,</span><br><span class="line">    <span class="attr">"method"</span>: <span class="string">"aes-256-cfb"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="启动脚本文件修改"><a href="#启动脚本文件修改" class="headerlink" title="启动脚本文件修改"></a>启动脚本文件修改</h4><p>编辑<code>/etc/init.d/shadowsocks</code>，修改为如下内容，需要启动<strong>ss-redir</strong>、<strong>ss-tunnel</strong> 这两个服务</p>
+<ul>
+<li><strong>ss-redir</strong>，可以重定向流量到<strong>Shadowsocks</strong>，默认使用本地<strong>TCP</strong>和<strong>UDP</strong>1080端口侦听</li>
+<li><strong>ss-tunnel</strong>，查询DNS，避免DNS污染，使用的是<strong>UDP</strong>！本地侦听端口为5353，远程DNS地址<code>8.8.8.8</code>，端口为标准DNS端口53</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/bin/sh /etc/rc.common</span></span><br><span class="line"></span><br><span class="line">START=95</span><br><span class="line"></span><br><span class="line">SERVICE_USE_PID=1</span><br><span class="line">SERVICE_WRITE_PID=1</span><br><span class="line">SERVICE_DAEMONIZE=1</span><br><span class="line">SERVICE_PID_FILE=/var/run/shadowsocks.pid</span><br><span class="line">CONFIG=/etc/shadowsocks.json</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span></span>() &#123;</span><br><span class="line">        <span class="comment">#service_start /usr/bin/ss-local -c $CONFIG -b 0.0.0.0</span></span><br><span class="line">        service_start /usr/bin/ss-redir -c <span class="variable">$CONFIG</span> -b 0.0.0.0 -f <span class="variable">$SERVICE_PID_FILE</span></span><br><span class="line">        service_start /usr/bin/ss-tunnel -c <span class="variable">$CONFIG</span> -b 0.0.0.0 -l 5353 -L 8.8.8.8:53 -u</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">stop</span></span>() &#123;</span><br><span class="line">        <span class="comment">#service_stop /usr/bin/ss-local</span></span><br><span class="line">        service_stop /usr/bin/ss-redir</span><br><span class="line">        service_stop /usr/bin/ss-tunnel</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置开机启动并启动<strong>Shadowsocks</strong>，并使用<code>netstat -tulp</code>命令，查看相关服务是否已经启动，5353以及1080端口处于侦听状态。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/shadowsocks <span class="built_in">enable</span></span><br><span class="line">/etc/init.d/shadowsocks start</span><br></pre></td></tr></table></figure>
+<h4 id="ipset-amp-amp-iptables设置"><a href="#ipset-amp-amp-iptables设置" class="headerlink" title="ipset &amp;&amp; iptables设置"></a>ipset &amp;&amp; iptables设置</h4><p>添加一个名字为<code>redir</code>的<strong>ipset</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipset -N redir iphash</span><br></pre></td></tr></table></figure>
+<p>手动添加IP地址进行测试，查看<strong>ipset</strong>。创建的<strong>ipset</strong>存在于内存中，重启后将会消失。更多关于<strong>ipset</strong>的用法，请自行Google。</p>
+<ul>
+<li>IP <code>220.181.57.217</code>为百度的地址，用于TCP测试</li>
+<li>IP <code>217.10.68.152</code>为<code>stun.ekiga.net</code>的IP地址，是<strong>nattypetester</strong>用于UDP测试的默认地址</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment"># ipset add redir 220.181.57.217</span></span><br><span class="line">root@OpenWrt:~<span class="comment"># ipset add redir 217.10.68.152</span></span><br><span class="line">root@OpenWrt:~<span class="comment"># ipset list</span></span><br><span class="line">Name: redir</span><br><span class="line">Type: <span class="built_in">hash</span>:ip</span><br><span class="line">Revision: 4</span><br><span class="line">Header: family inet hashsize 1024 maxelem 65536</span><br><span class="line">Size <span class="keyword">in</span> memory: 12504</span><br><span class="line">References: 2</span><br><span class="line">Members:</span><br><span class="line">220.181.57.217</span><br><span class="line">217.10.68.152</span><br></pre></td></tr></table></figure>
+<p>在nat表和mangle表分别添加shadowsocks链</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -N shadowsocks</span><br><span class="line">iptables -t mangle -N shadowsocks</span><br></pre></td></tr></table></figure>
+<p>在nat表的shadowsocks链，不需要处理shadowsocks服务器地址以及私有IP地址段、本地回环地址、组播等地址，因此对以上这些IP地址段执行RETURN动作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A shadowsocks -d x.x.x.x -j RETURN </span><br><span class="line"><span class="meta">#</span><span class="bash"> x.x.x.x为shadowsocks服务器地址</span></span><br><span class="line">iptables -t nat -A shadowsocks -d 0.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 10.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 127.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 169.254.0.0/16 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 172.16.0.0/12 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 192.168.0.0/16 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 224.0.0.0/4 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 240.0.0.0/4 -j RETURN</span><br></pre></td></tr></table></figure>
+<p>在nat表的shadowsocks链中，添加TCP重定向条目，将匹配名字为<code>redir</code>的<strong>ipset</strong>列表中的IP地址，重定向到本地1080端口，也就是<strong>ss-redir</strong>服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A shadowsocks -p tcp -m <span class="built_in">set</span> --match-set redir dst -j REDIRECT --to-port 1080</span><br></pre></td></tr></table></figure>
+<p>在mangle表的shadowsocks链，添加UDP重定向条目，将匹配名字为<code>redir</code>的<strong>ipset</strong>列表中的地址，并排除目的端口为53（DNS查询 ，该查询通过ss-tunnel），通过<strong>TPROXY</strong>转发到本地1080端口</p>
+<p>TPROXY主要功能如下:</p>
+<ul>
+<li>重定向一部分经过路由选择的流量到本地路由进程(类似NAT中的REDIRECT)</li>
+<li>使用非本地IP作为SOURCE IP初始化连接</li>
+<li>无需iptables参与，在非本地IP上起监听</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t mangle -A shadowsocks -p udp -m set --match-set redir dst ! --dport 53 -j TPROXY --on-port 1080 --tproxy-mark 0x01/0x01</span><br></pre></td></tr></table></figure>
+<p>还需要添加对应的路由规则和路由条目，转发打上标记的数据包。针对标记为<code>0x01/0x01</code>的数据包，查找table 100进行转发</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ip route add local default dev lo table 100</span><br><span class="line">ip rule add fwmark 0x01/0x01 lookup 100</span><br><span class="line"><span class="meta">#</span><span class="bash">查看路由器表100</span></span><br><span class="line">ip route list table 100</span><br></pre></td></tr></table></figure>
+<p>虽然已经创建好了shadowsocks链，但是还需要将shadowsocks链挂载到表中</p>
+<center><img src="http://fishcried.com/img/iptables_netfilter.png" alt="img"></center><center style="color:purple"><strong>图3-1 iptables</strong></center>
+
+<p>如果只是想让接入OpenWRT的客户端使用<strong>ss-redir</strong>方式透明转发，接入客户端的数据包到达<strong>PREROUTING</strong>链之后，在进行路由判断之前，数据包经过shadowsocks链进行过滤，因此添加</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -p tcp -j shadowsocks</span><br><span class="line">iptables -t mangle -A PREROUTING -j shadowsocks</span><br></pre></td></tr></table></figure>
+<p>如果想让OpenWRT本机也能使用<strong>ss-redir</strong>进行透明转发，因为本机的数据来自协议栈的高层，数据包经过<strong>OUTPUT</strong>链之后，数据包经过shadowsocks链进行过滤</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A OUTPUT -p tcp -j shadowsocks</span><br><span class="line">iptables -t mangle -A OUTPUT -j shadowsocks</span><br></pre></td></tr></table></figure>
+<h4 id="dnsmasq-full设置"><a href="#dnsmasq-full设置" class="headerlink" title="dnsmasq-full设置"></a>dnsmasq-full设置</h4><p>到目前为止，实现了一个简易版的流量自动分流，只不过要手动添加IP地址，这远远达不到需求的，因此还需要<strong>dnsmasq-full</strong>的帮助！</p>
+<p>修改<code>/etc/dnsmasq.conf</code>,最后添加<code>conf-dir=/etc/dnsmasq.d</code>，然后新建<code>/etc/dnsmasq.d</code>目录，切换到该目录并添加配置文件，该目录下可以添加多个配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"conf-dir=/etc/dnsmasq.d"</span>&gt;&gt;/etc/dnsmasq.conf</span><br><span class="line">mkdir /etc/dnsmasq.d</span><br><span class="line"><span class="built_in">cd</span> /etc/dnsmasq.d</span><br><span class="line">touch redir_test.conf</span><br></pre></td></tr></table></figure>
+<p>通过对配置文件<code>redir_test.conf</code>进行配置，可以对DNS请求进行区别对待了，添加如下测试样例：对于域名为<code>baidu.com</code>相关的DNS请求，转发到服务器8.8.8.8的53端口进行查询，并将查询的结果返回给查询者，同时也将查询结果加入<strong>ipset</strong>中</p>
+<p><span style="color:red">每次修改配置文件后，执行命令<code>/etc/init.d/dnsmasq restart</code>重启dnsmasq服务！</span></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server=/baidu.com/8.8.8.8<span class="comment">#53</span></span><br><span class="line">ipset=/google.com/redir</span><br></pre></td></tr></table></figure>
+<p>这样，所有到<code>baidu.com</code>的请求，因为解析的IP地址都加入了<strong>ipset</strong>，根据<strong>iptables</strong>的匹配结果，都重定向到了<strong>ss-redir</strong>服务的1080端口。</p>
+<p>但是这只是个测试，了解dnsmasq如何对DNS请求区别对待的。为了避免DNS污染，需要把所有<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>中的域名，都通过<strong>ss-tunnel</strong>服务进行查询，来获取正确的DNS应答结果，因此要在<code>redir.conf</code>中添加所有<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>中的域名，并向<strong>ss-tunnel</strong>服务进行查询，例如如下所示。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server=/google.com/127.0.0.1<span class="comment">#5353</span></span><br><span class="line">ipset=/google.com/redir</span><br><span class="line">server=/facebook.com/127.0.0.1<span class="comment">#5353</span></span><br><span class="line">ipset=/facebook.com/redir</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+<p>尝试过自己搭建转发类型DNS，并使用非标准端口，但是经过测试，但是仍无法避免大部分的DNS查询结果被污染。</p>
+<h4 id="GFWList2dnsmasq"><a href="#GFWList2dnsmasq" class="headerlink" title="GFWList2dnsmasq"></a>GFWList2dnsmasq</h4><p>手动创建dnsmasq配置文件工程量巨大，因此需要自动可以将<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>转化为dnsmasq配置文件，感谢<a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">gfwlist2dnsmasq</a>的作者，拷贝该项目到路由器<code>/root</code>目录（该目录已经挂载了移动硬盘，没挂载移动硬盘请考虑路由器的存储空间）</p>
+<p>在OpenWRT上，需要先安装一些软件包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install coreutils-base64 curl ca-certificates</span><br></pre></td></tr></table></figure>
+<p>创建计划任务，在每天1点的时候，根据<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>创建最文件，例如文件名为<code>redir-2017-3-24.conf</code>。然后删除<code>/etc/dnsmasq.d/</code>目录下所有与<code>redir-*</code>匹配的文件，最后拷贝最新的<code>redir-2017-x-xx.conf</code>到<code>/etc/dnsmasq.d/</code>目录，重启<strong>dnsmasq</strong>服务</p>
+<p>关于<code>gfwlist2dnsmasq.sh</code>具体如何使用，自行查看<a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">gfwlist2dnsmasq</a>的ReadMe</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 1 * * * sh /root/gfwlist2dnsmasq/gfwlist2dnsmasq.sh -p 5353 -s redir -o /root/gfwlist2dnsmasq/dnsmasq/redir-`date <span class="string">"+%Y-%m-%d"</span>`.conf \</span><br><span class="line">&amp;&amp; rm -rf /etc/dnsmasq.d/redir-* \</span><br><span class="line">&amp;&amp; cp /root/gfwlist2dnsmasq/dnsmasq/redir-`date <span class="string">"+%Y-%m-%d"</span>`.conf /etc/dnsmasq.d/ \</span><br><span class="line">&amp;&amp; /etc/init.d/dnsmasq restart</span><br></pre></td></tr></table></figure>
+<p>一些域名没有收录到<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>，因此可以手动添加额外的配置文件，但是该配置文件名字不要和<code>redir-*</code>匹配！</p>
+<hr>
+<h3 id="4-问题总结"><a href="#4-问题总结" class="headerlink" title="4. 问题总结"></a>4. 问题总结</h3><p>在配置过程中，教程写的很清晰明了，但是还是因为<strong>dnsmasq</strong>的问题，耽搁了好长时间，归咎于自己考虑问题的不全面性！</p>
+<h4 id="dnsmasq服务不启动"><a href="#dnsmasq服务不启动" class="headerlink" title="dnsmasq服务不启动"></a>dnsmasq服务不启动</h4><p>最早手动添加域名到 <code>/etc/dnsmasq.d/</code>下的配置文件中，经过测试，发现无法解析该域名，经过排查，可能是配置文件编码格式的问题，导致了<strong>dnsmasq</strong>服务无法启动</p>
+<h4 id="ss-tunnel无法返回查询结果"><a href="#ss-tunnel无法返回查询结果" class="headerlink" title="ss-tunnel无法返回查询结果"></a>ss-tunnel无法返回查询结果</h4><p>这个问题困扰了很久，测试了很多次，发现<strong>ss-tunnel</strong>对DNS请求的结果没有响应，最开始怀疑是这个服务有问题，所以一度放弃了使用<strong>ss-tunnel</strong>对<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>域名进行查询的办法，尝试了几种办法之后，例如使用自建的转发DNS服务器，使用<strong>pdnsd</strong>，但是均以失败告终。最后决定再试试<strong>ss-tunnel</strong>。</p>
+<p>这次决定对到<strong>ss-tunnel</strong>的DNS请求进行跟踪，在路由器上安装了<strong>tcpdump</strong></p>
+<ul>
+<li><p>抓取到本地5353端口的数据包，结果如下, 说明dnsmasq已经将<a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">GFWList</a>域名解析转到了<code>127.0.0.1:5353</code>，即是<strong>ss-tunnel</strong>服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment"># tcpdump -i lo port 5353</span></span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on lo, link-type EN10MB (Ethernet), capture size 65535 bytes</span><br><span class="line">11:06:01.610434 IP 127.0.0.1.64437 &gt; 127.0.0.1.mdns: 24001+ A (QM)? www.google.com.hk. (35)</span><br><span class="line">11:06:04.551767 IP 127.0.0.1.57007 &gt; 127.0.0.1.mdns: 43838+ A (QM)? www.gstatic.com. (33)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>手动启动<strong>ss-tunnel</strong>服务，<code>-v</code>参数很重要，可以显示接收的请求，如下所示，说明<strong>ss-tunnel</strong>已经转发DNS请求</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment"># /usr/bin/ss-tunnel -c /etc/shadowsocks.json -b 0.0.0.0 -l 5353 -L 8.8.8.8:53 -u -v</span></span><br><span class="line"> 2017-03-24 12:24:35 INFO: initializing ciphers... aes-256-cfb</span><br><span class="line"> 2017-03-24 12:24:35 INFO: tcp port reuse enabled</span><br><span class="line"> 2017-03-24 12:24:35 INFO: UDP relay enabled</span><br><span class="line"> 2017-03-24 12:24:35 INFO: udp port reuse enabled</span><br><span class="line"> 2017-03-24 12:24:35 INFO: listening at 0.0.0.0:5353</span><br><span class="line"> 2017-03-24 12:24:36 INFO: [udp] cache miss: 8.8.8.8:53 &lt;-&gt; 127.0.0.1:31507</span><br><span class="line"> 2017-03-24 12:24:36 INFO: [udp] cache miss: 8.8.8.8:53 &lt;-&gt; 127.0.0.1:42275</span><br><span class="line"> 2017-03-24 12:24:36 INFO: [udp] cache miss: 8.8.8.8:53 &lt;-&gt; 127.0.0.1:50455</span><br><span class="line"> 2017-03-24 12:24:36 INFO: [udp] cache miss: 8.8.8.8:53 &lt;-&gt; 127.0.0.1:62218</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>现在还需要确认<strong>ss-tunnel</strong>是否已经转发到Shadowsocks服务器端，通过利用tcpdump分别在路由器、Shadowsocks端进行抓包对比</p>
+</li>
+<li><p>路由器端抓取8081端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0.2 host 8081</span><br></pre></td></tr></table></figure>
+<p>结果如下所示，发现所有的UDP请求都被Shadowsocks服务器返回一个ICMP不可达类型消息</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_shadowsocks+gfwlist/4-1.jpg" width="750px"></center><center style="color:purple"><strong>图4-1 路由器端抓包</strong></center>
+</li>
+<li><p>Shadowsocks服务器抓取8081端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 host 8081</span><br></pre></td></tr></table></figure>
+<p>结果如下所示，发现所有的UDP请求都被接收到了，但是没有任何回应！经过对比，发现数据包里的数据载荷与在路由器端抓到的包一致，也就是说DNS请求确实被转发到Shadowsocks服务器了！</p>
+<center><img src="http://blog.kompaz.win/images/openwrt_shadowsocks+gfwlist/4-2.jpg" width="750px"></center><center style="color:purple"><strong>图4-2 服务器端抓包</strong></center>
+</li>
+<li><p>从上述结果可以看出，是Shadowsocks服务器端出现了问题，查看了一下Shadowsocks服务器端的<strong>iptables</strong>和<strong>ip6tables</strong>，<strong>原来没有允许UDP通过8081端口！</strong>所有的问题，都是在这里！</p>
+</li>
+</ul>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/3/24</td>
+<td>文档创建</td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2017/11/7</td>
+<td>添加UDP转发</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://github.com/shadowsocks/shadowsocks-libev/issues/121" target="_blank" rel="noopener">https://github.com/shadowsocks/shadowsocks-libev/issues/121</a></li>
+<li><a href="https://github.com/cokebar/gfwlist2dnsmasq" target="_blank" rel="noopener">https://github.com/cokebar/gfwlist2dnsmasq</a></li>
+<li><a href="https://github.com/gfwlist/gfwlist" target="_blank" rel="noopener">https://github.com/gfwlist/gfwlist</a></li>
+<li><a href="https://cokebar.info/archives/962" target="_blank" rel="noopener">https://cokebar.info/archives/962</a></li>
+<li><a href="https://kyonli.com/p/18" target="_blank" rel="noopener">https://kyonli.com/p/18</a></li>
+<li><a href="https://softwaredownload.gitbooks.io/openwrt-fanqiang/ebook/03.3.html" target="_blank" rel="noopener">https://softwaredownload.gitbooks.io/openwrt-fanqiang/ebook/03.3.html</a></li>
+<li><a href="https://www.kernel.org/doc/Documentation/networking/tproxy.txt" target="_blank" rel="noopener">https://www.kernel.org/doc/Documentation/networking/tproxy.txt</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/openwrt/" rel="tag"># openwrt</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/20/PPTP over IKEv2/" rel="next" title="PPTP over IKEv2 配置">
+                <i class="fa fa-chevron-left"></i> PPTP over IKEv2 配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/OpenWRT tinc/" rel="prev" title="OpenWRT Tinc配置">
+                OpenWRT Tinc配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-起因"><span class="nav-number">1.</span> <span class="nav-text">1. 起因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-理论基础"><span class="nav-number">2.</span> <span class="nav-text">2. 理论基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现步骤"><span class="nav-number">3.</span> <span class="nav-text">3. 实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OpenWRT基础配置"><span class="nav-number">3.1.</span> <span class="nav-text">OpenWRT基础配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#相关软件包安装"><span class="nav-number">3.2.</span> <span class="nav-text">相关软件包安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shadowsocks配置"><span class="nav-number">3.3.</span> <span class="nav-text">Shadowsocks配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启动脚本文件修改"><span class="nav-number">3.4.</span> <span class="nav-text">启动脚本文件修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ipset-amp-amp-iptables设置"><span class="nav-number">3.5.</span> <span class="nav-text">ipset &amp;&amp; iptables设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dnsmasq-full设置"><span class="nav-number">3.6.</span> <span class="nav-text">dnsmasq-full设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GFWList2dnsmasq"><span class="nav-number">3.7.</span> <span class="nav-text">GFWList2dnsmasq</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-问题总结"><span class="nav-number">4.</span> <span class="nav-text">4. 问题总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dnsmasq服务不启动"><span class="nav-number">4.1.</span> <span class="nav-text">dnsmasq服务不启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ss-tunnel无法返回查询结果"><span class="nav-number">4.2.</span> <span class="nav-text">ss-tunnel无法返回查询结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">5.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

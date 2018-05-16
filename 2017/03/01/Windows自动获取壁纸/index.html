@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="windows自带的Powershell和任务计划程序自动获取壁纸，例如Win10系统的聚焦功能的锁屏壁纸，必应搜索的每日的图片故事">
+<meta name="keywords" content="Windows">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows自动获取壁纸">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/01/Windows自动获取壁纸/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="windows自带的Powershell和任务计划程序自动获取壁纸，例如Win10系统的聚焦功能的锁屏壁纸，必应搜索的每日的图片故事">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.890Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Windows自动获取壁纸">
+<meta name="twitter:description" content="windows自带的Powershell和任务计划程序自动获取壁纸，例如Win10系统的聚焦功能的锁屏壁纸，必应搜索的每日的图片故事">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/01/Windows自动获取壁纸/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Windows自动获取壁纸 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/01/Windows自动获取壁纸/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Windows自动获取壁纸
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-01 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-01T16:29:00+08:00">2017-03-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/教程/" itemprop="url" rel="index"><span itemprop="name">教程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">windows自带的Powershell和任务计划程序自动获取壁纸，例如Win10系统的聚焦功能的锁屏壁纸，必应搜索的每日的图片故事</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-聚焦壁纸获取"><a href="#1-聚焦壁纸获取" class="headerlink" title="1. 聚焦壁纸获取"></a>1. 聚焦壁纸获取</h3><h4 id="脚本编写"><a href="#脚本编写" class="headerlink" title="脚本编写"></a>脚本编写</h4><p>聚焦所用图片的文件存储是无后缀的，将小于100KB的过滤，大于100KB的拷贝到<code>F:\Picture\Wallpaper\Spotlight\CopyAssets\</code>并添加jpg后缀</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">foreach</span>(<span class="variable">$file</span> <span class="keyword">in</span> (<span class="built_in">Get-Item</span> <span class="string">"$(<span class="variable">$env:LOCALAPPDATA</span>)\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets\*"</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> ((<span class="built_in">Get-Item</span> <span class="variable">$file</span>).length <span class="nomarkup">-lt</span> <span class="number">100</span>kb) &#123; <span class="keyword">continue</span> &#125;</span><br><span class="line">    <span class="built_in">Copy-Item</span> <span class="variable">$file</span>.FullName <span class="string">"F:\Picture\Wallpaper\Spotlight\CopyAssets\$(<span class="variable">$file</span>.Name).jpg"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将添加后缀的文件根据宽度进行分类，其中宽1920的文件拷贝一份到<code>F:\Picture\Wallpaper\Favorites</code>，该路径存放为动态播放壁纸的文件夹，然后再移动到<code>F:\Picture\Wallpaper\Spotlight\Horizontal</code>备份，宽1080的文件移动到<code>F:\Picture\Wallpaper\Spotlight\Vertical</code>备份<br><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">foreach</span>(<span class="variable">$newfile</span> <span class="keyword">in</span> (<span class="built_in">Get-Item</span> <span class="string">"F:\Picture\Wallpaper\Spotlight\CopyAssets\*"</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="variable">$image</span> = <span class="built_in">New-Object</span> -comObject WIA.ImageFile;</span><br><span class="line">    <span class="variable">$image</span>.LoadFile(<span class="variable">$newfile</span>.FullName);</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$image</span>.Width.ToString() <span class="nomarkup">-eq</span> <span class="string">"1920"</span>)&#123;<span class="built_in">Copy-Item</span> <span class="variable">$newfile</span>.FullName <span class="string">"F:\Picture\Wallpaper\Favorites"</span> -Force;</span><br><span class="line">							       <span class="built_in">Move-Item</span> <span class="variable">$newfile</span>.FullName <span class="string">"F:\Picture\Wallpaper\Spotlight\Horizontal"</span> -Force;</span><br><span class="line">							       &#125;</span><br><span class="line">    <span class="keyword">elseif</span>(<span class="variable">$image</span>.Width.ToString() <span class="nomarkup">-eq</span> <span class="string">"1080"</span>)&#123; <span class="built_in">Move-Item</span> <span class="variable">$newfile</span>.FullName <span class="string">"F:\Picture\Wallpaper\Spotlight\Vertical"</span> -Force; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Remove-Item</span> <span class="string">"F:\Picture\Wallpaper\Spotlight\CopyAssets\*"</span>;</span><br></pre></td></tr></table></figure></p>
+<p>将上述内容一并保存后缀为<code>.ps1</code>的powershell脚本</p>
+<h4 id="powershell权限修改"><a href="#powershell权限修改" class="headerlink" title="powershell权限修改"></a>powershell权限修改</h4><p>由于<a href="http://www.xitonghe.com/win10/" target="_blank" rel="noopener">windows10</a>默认的任务计划没有权限执行ps1脚本，因此首先需要用管理员运行Windows PowerShell，然后输入 </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Set-ExecutionPolicy</span> Unrestricted</span><br></pre></td></tr></table></figure>
+<p>进行权限更改，输入Y确认</p>
+<p>本次修改后，不用再次修改powershell执行权限</p>
+<h4 id="计划任务创建"><a href="#计划任务创建" class="headerlink" title="计划任务创建"></a>计划任务创建</h4><ul>
+<li>配置位置：<strong>控制面板 -&gt; 系统和安全性-&gt; 管理工具-&gt; 任务计划程序</strong></li>
+<li>常规：<ul>
+<li>名称：例如GetWallPaper</li>
+<li>描述：可选</li>
+<li>安全选项：<ul>
+<li>更改用户或组：输入system，这样运行的任务会后台运行，不会有弹窗</li>
+<li>勾选<strong>使用最高权限运行</strong></li>
+</ul>
+</li>
+<li>配置：这里选择Windows 10</li>
+</ul>
+</li>
+<li>触发器：<ul>
+<li>新建一个触发器，例如每隔一天或者每隔几小时</li>
+</ul>
+</li>
+<li>操作：<ul>
+<li>操作：启动程序</li>
+<li>程序或者脚本：powershell</li>
+<li>可选参数：powershell脚本的绝对路径，例如<code>D:\Users\xxxx\Documents\PowerShell\wallpaper_get.ps1</code></li>
+</ul>
+</li>
+</ul>
+<p>这样Windows就可以自动获取聚焦的图片</p>
+<hr>
+<h3 id="2-必应壁纸获取"><a href="#2-必应壁纸获取" class="headerlink" title="2. 必应壁纸获取"></a>2. 必应壁纸获取</h3><h4 id="脚本编写-1"><a href="#脚本编写-1" class="headerlink" title="脚本编写"></a>脚本编写</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> Save-BingTodayImage()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">#必应图片故事API</span></span><br><span class="line">    <span class="variable">$bingImageApi</span> =<span class="string">'http://www.bing.com/HPImageArchive.aspx?format=xml&amp;idx=0&amp;n=1&amp;mkt=zh-cn'</span></span><br><span class="line">    <span class="variable">$bingUri</span> = <span class="string">'http://www.bing.com/'</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment"># 获取图片链接</span></span><br><span class="line">    [xml]<span class="variable">$bingImageXml</span> = (<span class="built_in">Invoke-WebRequest</span> -Uri <span class="variable">$bingImageApi</span>).Content</span><br><span class="line">    <span class="built_in">Write-Host</span> <span class="string">"Story: $( <span class="variable">$bingImageXml</span>.images.image.copyright ) "</span> </span><br><span class="line"></span><br><span class="line">    <span class="variable">$imgLink</span> = <span class="string">'&#123;0&#125;&#123;1&#125;'</span> -f <span class="variable">$bingUri</span> , <span class="variable">$bingImageXml</span>.images.image.url</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 下载和保存图片</span></span><br><span class="line">    <span class="variable">$imageDir</span> = <span class="string">"F:\Picture\Wallpaper\Bing\"</span></span><br><span class="line">    <span class="keyword">if</span>( <span class="nomarkup">-not</span> (<span class="built_in">Test-Path</span> <span class="variable">$imageDir</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">        mkdir <span class="variable">$imageDir</span> | <span class="built_in">Out-Null</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$imageFile</span> = <span class="built_in">Join-Path</span> <span class="variable">$imageDir</span> ( <span class="string">'&#123;0&#125;.jpg'</span> -f <span class="variable">$bingImageXml</span>.images.image.fullstartdate)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">Invoke-WebRequest</span> -Uri <span class="variable">$imgLink</span> -OutFile <span class="variable">$imageFile</span></span><br><span class="line">	<span class="built_in">Copy-Item</span> <span class="variable">$imageFile</span> <span class="string">"F:\Picture\Wallpaper\Favorites"</span> -Force;</span><br><span class="line">	</span><br><span class="line">	<span class="variable">$imageStoryDir</span> = <span class="string">"F:\Picture\Wallpaper\Bing\Story"</span></span><br><span class="line">	<span class="keyword">if</span>( <span class="nomarkup">-not</span> (<span class="built_in">Test-Path</span> <span class="variable">$imageStoryDir</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">        mkdir <span class="variable">$imageStoryDir</span> | <span class="built_in">Out-Null</span></span><br><span class="line">    &#125;</span><br><span class="line">	<span class="variable">$date</span> = $(<span class="built_in">Get-Date</span>).ToString(<span class="string">'yyyy-MM-dd'</span>);</span><br><span class="line">    echo <span class="string">"Story of <span class="variable">$date</span> $( <span class="variable">$bingImageXml</span>.images.image.copyright )"</span> &gt;&gt; <span class="string">"<span class="variable">$imageStoryDir</span>\timeline.txt"</span></span><br><span class="line">	</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$imageFile</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取今日必应背景图片</span></span><br><span class="line"><span class="variable">$image</span>=Save-BingTodayImage</span><br></pre></td></tr></table></figure>
+<h4 id="计划任务创建-1"><a href="#计划任务创建-1" class="headerlink" title="计划任务创建"></a>计划任务创建</h4><p>类似<strong>聚焦壁纸获取-&gt;计划任务创建</strong></p>
+<hr>
+<h3 id="3-壁纸归档"><a href="#3-壁纸归档" class="headerlink" title="3. 壁纸归档"></a>3. 壁纸归档</h3><p>壁纸常年累积，难免会堆积过多，为了能看到更多不同壁纸，可以按年月对壁纸进行归档</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">foreach</span>(<span class="variable">$file</span> <span class="keyword">in</span> (<span class="built_in">Get-Item</span> <span class="string">"F:\Picture\Wallpaper\Favorites\*"</span>))</span><br><span class="line">&#123;</span><br><span class="line">   <span class="comment">#获取每个文件的创建时间</span></span><br><span class="line">    <span class="keyword">if</span> ((<span class="built_in">Get-Item</span> <span class="variable">$file</span>).lastwritetime <span class="nomarkup">-lt</span> $(<span class="built_in">Get-Date</span>).ToString(<span class="string">'yyyy-MM'</span>)) &#123; </span><br><span class="line">    	     <span class="comment">#获取时间中的年月，格式例如2017-01</span></span><br><span class="line">		<span class="variable">$folder</span> = <span class="variable">$file</span>.lastwritetime.ToString(<span class="string">'yyyy-MM'</span>);</span><br><span class="line">   		   <span class="comment">#获取时间中的年，格式例如2017</span></span><br><span class="line">		<span class="variable">$year</span> = <span class="variable">$file</span>.lastwritetime.ToString(<span class="string">'yyyy'</span>);</span><br><span class="line">		<span class="comment">#检测以该文件创建时间的年份命名的文件夹是否存在，例如2017，如果存在</span></span><br><span class="line">		<span class="keyword">if</span>((<span class="built_in">Test-Path</span> <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>"</span>))&#123;</span><br><span class="line">		         <span class="comment">#检测该目录下，检测以该文件创建时间的年月命令的文件夹是否存在，例如2017-01，存在将文件移动到该文件夹下</span></span><br><span class="line">			<span class="keyword">if</span>((<span class="built_in">Test-Path</span> <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span>)) &#123;</span><br><span class="line">				<span class="built_in">Move-Item</span> <span class="variable">$file</span>.FullName <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span> -Force;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">#不存以该文件创建时间的年月命名的文件夹，先创建，再将文件移动到该文件夹下</span></span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="built_in">New-Item</span> <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span> -ItemType directory -Force;</span><br><span class="line">				<span class="built_in">Move-Item</span> <span class="variable">$file</span>.FullName <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span> -Force;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">#如果不存在以该文件创建时间的年命名的文件夹</span></span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">#创建以该文件创建时间的年份命名的文件夹</span></span><br><span class="line">			<span class="built_in">New-Item</span> <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>"</span> -ItemType directory -Force;</span><br><span class="line">			<span class="comment">#检测该目录下，检测以该文件创建时间的年月命令的文件夹是否存在，例如2017-01，存在将文件移动到该文件夹下</span></span><br><span class="line">			<span class="keyword">if</span>((<span class="built_in">Test-Path</span> <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span>)) &#123;</span><br><span class="line">				<span class="built_in">Move-Item</span> <span class="variable">$file</span>.FullName <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span> -Force;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">#不存以该文件创建时间的年月命名的文件夹，先创建，再将文件移动到该文件夹下</span></span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="built_in">New-Item</span> <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span> -ItemType directory -Force;</span><br><span class="line">				<span class="built_in">Move-Item</span> <span class="variable">$file</span>.FullName <span class="string">"F:\Picture\Wallpaper\History\<span class="variable">$year</span>\<span class="variable">$folder</span>"</span> -Force;</span><br><span class="line">			&#125;		</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h3><ul>
+<li><a href="http://www.xitonghe.com/jiaocheng/Windows10-9338.html" target="_blank" rel="noopener">http://www.xitonghe.com/jiaocheng/Windows10-9338.html</a></li>
+<li><a href="http://www.pstips.net/set-wallpaper-by-bing-image.html" target="_blank" rel="noopener">http://www.pstips.net/set-wallpaper-by-bing-image.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Windows/" rel="tag"># Windows</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/01/XX卡破解 - v3/" rel="next" title="XX卡破解 - UID固化卡片数值修改">
+                <i class="fa fa-chevron-left"></i> XX卡破解 - UID固化卡片数值修改
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/02/Strongswan Linux host-to-host/" rel="prev" title="Strongswan Linux host-to-host 配置">
+                Strongswan Linux host-to-host 配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-聚焦壁纸获取"><span class="nav-number">1.</span> <span class="nav-text">1. 聚焦壁纸获取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#脚本编写"><span class="nav-number">1.1.</span> <span class="nav-text">脚本编写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#powershell权限修改"><span class="nav-number">1.2.</span> <span class="nav-text">powershell权限修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计划任务创建"><span class="nav-number">1.3.</span> <span class="nav-text">计划任务创建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-必应壁纸获取"><span class="nav-number">2.</span> <span class="nav-text">2. 必应壁纸获取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#脚本编写-1"><span class="nav-number">2.1.</span> <span class="nav-text">脚本编写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计划任务创建-1"><span class="nav-number">2.2.</span> <span class="nav-text">计划任务创建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-壁纸归档"><span class="nav-number">3.</span> <span class="nav-text">3. 壁纸归档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-参考"><span class="nav-number">4.</span> <span class="nav-text">4. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

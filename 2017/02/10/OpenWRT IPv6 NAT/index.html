@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="虽然IPv6在设计之初，没有考虑NAT，在主流的网络设备上也没有IPv6的NAT配置，但 Linux 内核从 3.7 版本开始实现了 IPv6 的 NAT，OpenWRT接入客户端以NAT的形式访问访问IPv6互联网">
+<meta name="keywords" content="network,openwrt,router">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT IPv6 NAT">
+<meta property="og:url" content="http://blog.kompaz.win/2017/02/10/OpenWRT IPv6 NAT/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="虽然IPv6在设计之初，没有考虑NAT，在主流的网络设备上也没有IPv6的NAT配置，但 Linux 内核从 3.7 版本开始实现了 IPv6 的 NAT，OpenWRT接入客户端以NAT的形式访问访问IPv6互联网">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.554Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT IPv6 NAT">
+<meta name="twitter:description" content="虽然IPv6在设计之初，没有考虑NAT，在主流的网络设备上也没有IPv6的NAT配置，但 Linux 内核从 3.7 版本开始实现了 IPv6 的 NAT，OpenWRT接入客户端以NAT的形式访问访问IPv6互联网">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/02/10/OpenWRT IPv6 NAT/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT IPv6 NAT | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/02/10/OpenWRT IPv6 NAT/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT IPv6 NAT
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-02-10 20:33:00" itemprop="dateCreated datePublished" datetime="2017-02-10T20:33:00+08:00">2017-02-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">虽然IPv6在设计之初，没有考虑NAT，在主流的网络设备上也没有IPv6的NAT配置，但 Linux 内核从 3.7 版本开始实现了 IPv6 的 NAT，OpenWRT接入客户端以NAT的形式访问访问IPv6互联网</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-IPv6-NAT"><a href="#1-IPv6-NAT" class="headerlink" title="1. IPv6 NAT"></a>1. IPv6 NAT</h3><p>虽然IPv6在设计之初，没有考虑NAT，在主流的网络设备上也没有IPv6的NAT配置，但 Linux 内核从 3.7 版本开始实现了 IPv6 的 NAT</p>
+<hr>
+<h3 id="2-OpenWRT配置"><a href="#2-OpenWRT配置" class="headerlink" title="2. OpenWRT配置"></a>2. OpenWRT配置</h3><h4 id="2-1-软件包安装"><a href="#2-1-软件包安装" class="headerlink" title="2.1 软件包安装"></a>2.1 软件包安装</h4><p><span style="color:red">现在假设OpenWRT为初始化状态</span>，安装相应的软件包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install ip6tables kmod-ipv6 kmod-ipt-nat6 kmod-ip6tables kmod-ip6tables-extra luci-proto-ipv6 iputils-traceroute6</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<ul>
+<li><code>kmod-ipv6</code>并非必须</li>
+<li><code>kmod-ipt-nat6</code>提供IPv6的NAT支持</li>
+<li><code>ip6tables</code>,·<code>kmod-ip6tables</code>,<code>kmod-ip6tables-extra</code>等提供IPv6防火墙</li>
+<li><code>luci-proto-ipv6</code>为LuCI提供IPv6设置选项</li>
+<li><code>iputils-traceroute6</code>为IPv6提供traceroute功能(<code>mtr</code>是个不错的支持双栈的<code>traceroute</code>替代品，占用的存储空间相对大些)</li>
+</ul>
+<h4 id="2-2-IPv6私网地址"><a href="#2-2-IPv6私网地址" class="headerlink" title="2.2 IPv6私网地址"></a>2.2 IPv6私网地址</h4><p>OpenWRT在默认情况下，会分配一个IPv6私网地址段，登录网页管理，在<strong>Network-&gt;Interfaces</strong>页面底下有<strong>Global network options-&gt;IPv6 ULA-Prefix</strong>这里应该有一个随机的<code>fd</code>开头的<code>/64</code>IPv6地址段，LAN客户端可以从这个地址段自动获取私有的IPv6地址，<a href="https://zh.wikipedia.org/wiki/DHCPv6" target="_blank" rel="noopener">DHCPv6</a>和<a href="https://zh.wikipedia.org/wiki/IPv6#.E6.97.A0.E7.8A.B6.E6.80.81.E5.9C.B0.E5.9D.80.E8.87.AA.E5.8A.A8.E9.85.8D.E7.BD.AE.EF.BC.88SLAAC.EF.BC.89" target="_blank" rel="noopener">无状态地址自动配置（SLAAC）</a>默认已经开启</p>
+<h4 id="2-3-IPv6私网地址网关配置"><a href="#2-3-IPv6私网地址网关配置" class="headerlink" title="2.3 IPv6私网地址网关配置"></a>2.3 IPv6私网地址网关配置</h4><p>缺省配置下，LAN客户端获取的私有IPv6地址没有IPv6网关的</p>
+<p>在<strong>Network-&gt;Interfaces-&gt;LAN</strong>下的<strong>DHCP Server</strong>部分的<strong>IPv6 Settings</strong>选项卡部分，勾选<strong>Always announce default router</strong>，否则OpenWRT不会向LAN客户端推送OpenWRT私有的IPv6网关地址</p>
+<p>为了确保设置生效，最好重启路由器</p>
+<h4 id="2-4-NAT设置"><a href="#2-4-NAT设置" class="headerlink" title="2.4 NAT设置"></a>2.4 NAT设置</h4><p>客户端有了私有的IPv6地址之后，私有地址可以单向路由到互联网中的，但是无法被路由回LAN客户端。因此需要在OpenWRT上开启IPv6 NAT。在默认情况下，OpenWRT防火墙不会配置ip6tables的NAT表，因此在OpenWRT命令下手动添加如下规则</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip6tables -t nat -A POSTROUTING -o eth0.2 -j MASQUERADE</span><br><span class="line">ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">ip6tables -A FORWARD -i br-lan -j ACCEPT</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>eth0.2</code>为OpenWRT的获取全球可路由IPv6地址的WAN口名称，这个名字不是防火墙区域名字，也不是LuCI里面<code>Network-&gt;Interfaces</code>里面看到的名字，而是<code>ifconfig</code>看到的网卡名字</li>
+<li><code>br-lan</code>为LAN口对应名称，也是通过<code>ifconfig</code>看到的网卡名字</li>
+</ul>
+<h4 id="2-5-路由条目添加"><a href="#2-5-路由条目添加" class="headerlink" title="2.5 路由条目添加"></a>2.5 路由条目添加</h4><p>到当前设置，LAN客户端可以访问OpenWRT的IPv6公网所在网段，不能访问该网段以外的IPv6地址，原因不明，查看IPv6路由表，发现存在默认路由，因此需要添加全球可路由IPv6路由到OpenWRT</p>
+<p>查询下一条地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment">#route -A inet6 | grep ::/0 | awk '&#123;print $2&#125;</span></span><br><span class="line">fe80::3a22:d6ff:febf:1b00</span><br></pre></td></tr></table></figure>
+<p>根据默认路由，可知<code>fe80::3a22:d6ff:febf:1b00</code>为下一条的本地链路地址，然后添加全球可路由IPv6地址的路由条目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route -A inet6 add 2000::/3 gw fe80::3a22:d6ff:febf:1b00 dev eth0.2</span><br></pre></td></tr></table></figure>
+<h4 id="2-6-LAN客户端测试"><a href="#2-6-LAN客户端测试" class="headerlink" title="2.6 LAN客户端测试"></a>2.6 LAN客户端测试</h4><p>在Windows客户端使用tracert命令，结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\xxxx&gt;tracert bt.byr.cn</span><br><span class="line"></span><br><span class="line">通过最多 30 个跃点跟踪</span><br><span class="line">到 bt.byr.cn [2001:da8:215:4078:250:56ff:fe97:654d] 的路由:</span><br><span class="line"></span><br><span class="line">  1     1 ms     3 ms     2 ms  fd42:adf7:c821::1</span><br><span class="line">  2    28 ms   145 ms     3 ms  xxxx:xxxx:xxxx:xxxx:3a22:d6ff:febf:1b00</span><br><span class="line">  3    54 ms     8 ms     3 ms  xxxx:xxxx:xxxx:ffff::1</span><br><span class="line">  4     7 ms    12 ms    34 ms  xxxx:xxxx:1fff::1d</span><br><span class="line">  5     4 ms    10 ms     3 ms  xxxx:xxxx:1fff::fffd</span><br><span class="line">  6   126 ms   155 ms   155 ms  xxxx:xxxx:1fff::1ea</span><br><span class="line">  7   343 ms   141 ms   119 ms  cernet2.net [2001:252:0:1::1]</span><br><span class="line">  8   124 ms   132 ms   149 ms  2001:da8:1:1c::2</span><br><span class="line">  9   110 ms   119 ms   133 ms  2001:da8:1:50e::2</span><br><span class="line"> 10   111 ms   142 ms   124 ms  cernet2.net [2001:da8:ad:1000::2]</span><br><span class="line"> 11   126 ms   139 ms   124 ms  cernet2.net [2001:da8:ad:3001::2]</span><br><span class="line"> 12   122 ms   115 ms   110 ms  2001:da8:215:0:10:0:3:2</span><br><span class="line"> 13     *      108 ms   116 ms  2001:da8:215:0:10:0:4:32</span><br><span class="line"> 14   112 ms     *      139 ms  2001:da8:215:4078:250:56ff:fe97:654d</span><br></pre></td></tr></table></figure>
+<h4 id="2-7-配置保存"><a href="#2-7-配置保存" class="headerlink" title="2.7 配置保存"></a>2.7 配置保存</h4><p>每次重启，添加的ip6tables和路由条目都会消失，因此需要将这些配置添加开机启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF &gt;&gt;/etc/rc.local</span><br><span class="line">    ip6tables -t nat -A POSTROUTING -o eth0.2 -j MASQUERADE</span><br><span class="line">    ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">    ip6tables -A FORWARD -i br-lan -j ACCEPT</span><br><span class="line">    route -A inet6 add 2000::/3 gw fe80::3a22:d6ff:febf:1b00 dev eth0.2</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>如果IPv6环境发生改变，路由器的IPv6网关也会随之改变，因此创建 /etc/hotplug.d/iface/90-ipv6脚本，修改文件属性为755，内容如下。其中网关地址的获取有两种方式，选择其中一种</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">[ <span class="string">"<span class="variable">$ACTION</span>"</span> = ifup ] || <span class="built_in">exit</span> 0</span><br><span class="line"></span><br><span class="line">[ <span class="string">"<span class="variable">$INTERFACE</span>"</span> = wan6 ] &amp;&amp; &#123;              </span><br><span class="line">    route -A inet6 add 2000::/3 gw $(traceroute6 -n tv.byr.cn | grep <span class="string">'^ 1'</span> |  awk <span class="string">'&#123;print $2&#125;'</span>) dev $(uci -q get network.wan6.ifname)</span><br><span class="line">  <span class="comment">#route -A inet6 add 2000::/3 gw $(route -A inet6 | grep ::/0 | awk '&#123;print $2&#125;') dev $(uci -q get network.wan6.ifname)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或者内容如下</p>
+<hr>
+<h3 id="3-参考"><a href="#3-参考" class="headerlink" title="3. 参考"></a>3. 参考</h3><p><a href="https://github.com/tuna/ipv6.tsinghua.edu.cn/blob/master/openwrt.md" target="_blank" rel="noopener">https://github.com/tuna/ipv6.tsinghua.edu.cn/blob/master/openwrt.md</a></p>
+<p><a href="https://blog.blahgeek.com/2014/02/22/openwrt-ipv6-nat/" target="_blank" rel="noopener">https://blog.blahgeek.com/2014/02/22/openwrt-ipv6-nat/</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/openwrt/" rel="tag"># openwrt</a>
+          
+            <a href="/tags/router/" rel="tag"># router</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/09/XX卡破解 - v2/" rel="next" title="XX卡破解 - 相关字段查找">
+                <i class="fa fa-chevron-left"></i> XX卡破解 - 相关字段查找
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/16/Github Pages 部署Hexo静态博客 + 多终端账户同步管理/" rel="prev" title="GitHub Pages 部署Hexo静态博客 + 多终端/账户同步管理">
+                GitHub Pages 部署Hexo静态博客 + 多终端/账户同步管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-IPv6-NAT"><span class="nav-number">1.</span> <span class="nav-text">1. IPv6 NAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-OpenWRT配置"><span class="nav-number">2.</span> <span class="nav-text">2. OpenWRT配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-软件包安装"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 软件包安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-IPv6私网地址"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 IPv6私网地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-IPv6私网地址网关配置"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 IPv6私网地址网关配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-NAT设置"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 NAT设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-路由条目添加"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 路由条目添加</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-6-LAN客户端测试"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 LAN客户端测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-7-配置保存"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 配置保存</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-参考"><span class="nav-number">3.</span> <span class="nav-text">3. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

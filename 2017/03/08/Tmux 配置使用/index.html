@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文介绍了Tmux的配置与使用">
+<meta name="keywords" content="shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tmux配置使用">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/08/Tmux 配置使用/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="本文介绍了Tmux的配置与使用">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/tmux/1-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/tmux/3-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/tmux/3-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/tmux/3-3.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/tmux/3-4.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/tmux/5-1.gif">
+<meta property="og:image" content="http://blog.kompaz.win/images/tmux/5-2.gif">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.813Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tmux配置使用">
+<meta name="twitter:description" content="本文介绍了Tmux的配置与使用">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/tmux/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/08/Tmux 配置使用/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Tmux配置使用 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/08/Tmux 配置使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Tmux配置使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-08 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-08T16:29:00+08:00">2017-03-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">本文介绍了Tmux的配置与使用</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h3><p>tmux是一种窗口管理程序，主要功能如下</p>
+<ul>
+<li>提供窗口组随时存储和恢复，即使SSH断开或者机器重启，也可以恢复原来的窗口状态</li>
+<li>多会话、多窗口以及窗格分割，具体展示如图1-1所示，状态栏的配置在后续会介绍<ul>
+<li>会话（session），一组窗口的集合，通常可以用于一个任务，会话可以自己进行命名</li>
+<li>窗口（windos），单个课件窗口，窗口有自己的编号</li>
+<li>窗格（Pane），大窗口分割的小块窗口</li>
+</ul>
+</li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/tmux/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 tmux元素展现</strong></center>
+
+<hr>
+<h3 id="2-安装"><a href="#2-安装" class="headerlink" title="2. 安装"></a>2. 安装</h3><p>以CentOS7为例，安装tmux，但是版本比较低，为1.8</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install tmux</span><br></pre></td></tr></table></figure>
+<p>可以在CentOS7上编译安装版本更高的2.6，有更多新功能，不过需要安装一些库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install libevent-devel ncurses-devel -y</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-基本操作"><a href="#3-基本操作" class="headerlink" title="3.基本操作"></a>3.基本操作</h3><p><code>Prefix-Command</code>前置操作：所有下面介绍的快捷键，都必须以前置操作开始。tmux默认的前置操作是<code>CTRL+b</code>。例如新建一个窗口，首先按<code>CTRL+b</code>，然后<code>c</code>键创建一个窗口，以下操作均为默认快捷键</p>
+<table>
+<thead>
+<tr>
+<th>Session 操作</th>
+<th>快捷键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查看所有session</td>
+<td>Prefix s</td>
+</tr>
+<tr>
+<td>离开session</td>
+<td>Prefix d</td>
+</tr>
+<tr>
+<td>重命令当前session</td>
+<td>Prefix $</td>
+</tr>
+<tr>
+<td><strong>Windows操作</strong></td>
+<td><strong>快捷键</strong></td>
+</tr>
+<tr>
+<td>新建窗口</td>
+<td>Prefix c</td>
+</tr>
+<tr>
+<td>关闭一个窗口</td>
+<td>Prefix &amp;</td>
+</tr>
+<tr>
+<td>根据编号切换窗口</td>
+<td>Prefix 窗口编号</td>
+</tr>
+<tr>
+<td><strong>Pane操作</strong></td>
+<td><strong>快捷键</strong></td>
+</tr>
+<tr>
+<td>切换到下一个窗格</td>
+<td>Prefix o</td>
+</tr>
+<tr>
+<td>垂直拆分一个新窗格</td>
+<td>Prefix “</td>
+</tr>
+<tr>
+<td>水平拆分一个新窗格</td>
+<td>Prefix %</td>
+</tr>
+</tbody>
+</table>
+<p>以上只是操作的一部分，更多操作以及快捷键自定义，可以在配置文件中修改</p>
+<hr>
+<h3 id="3-Tmux订制"><a href="#3-Tmux订制" class="headerlink" title="3. Tmux订制"></a>3. Tmux订制</h3><p>以下配置以tmux 1.8为例</p>
+<h4 id="颜色模式设置"><a href="#颜色模式设置" class="headerlink" title="颜色模式设置"></a>颜色模式设置</h4><p>使用256色启动tmux，若使用默认命令启动tmux，无法识别vim的配色，可以在.bashrc中加入如下内容，则tmux以256色启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> tmux=<span class="string">'tmux -2'</span></span><br></pre></td></tr></table></figure>
+<h4 id="基本设置"><a href="#基本设置" class="headerlink" title="基本设置"></a>基本设置</h4><p>在用户根目录下创建<code>.tmux.conf</code>文件，根据配置文件的内容，可以对tmux的快捷键以及样式进行订制</p>
+<p>基本设置如下，更多选项，使用<code>man</code>命令查看，不同版本的tmux中不通用，一些选项不相同</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g default-terminal <span class="string">"screen-256color"</span></span><br><span class="line"><span class="built_in">set</span> -g display-time 3000</span><br><span class="line"><span class="built_in">set</span> -g escape-time 0</span><br><span class="line"><span class="built_in">set</span> -g <span class="built_in">history</span>-limit 65535</span><br><span class="line"><span class="built_in">set</span> -g base-index 1</span><br><span class="line"><span class="built_in">set</span> -g pane-base-index 1</span><br><span class="line"><span class="built_in">set</span> -g <span class="built_in">set</span>-titles-string <span class="string">'#T'</span></span><br></pre></td></tr></table></figure>
+<p>配置文件加载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> r <span class="built_in">source</span> ~/.tmux.conf \; display <span class="string">"Configuration reloaded!"</span></span><br></pre></td></tr></table></figure>
+<h4 id="控制台设置"><a href="#控制台设置" class="headerlink" title="控制台设置"></a>控制台设置</h4><p>修改进入控制台的快捷键，可以设置为自己习惯的组合键，同时释放默认快捷键。因为<code>Ctrl+B</code>和vim的翻页操作冲突，这里前置键修改为<code>Ctrl+L</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g prefix ^l</span><br><span class="line">unbind ^b</span><br><span class="line"><span class="built_in">bind</span> l send-prefix</span><br></pre></td></tr></table></figure>
+<h4 id="窗格设置"><a href="#窗格设置" class="headerlink" title="窗格设置"></a>窗格设置</h4><p>修改水平切割为<code>|</code>，垂直切割为<code>-</code>，方便记忆</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> c new-window -c </span><br><span class="line"><span class="built_in">bind</span> | split-window -h -c </span><br><span class="line"><span class="built_in">bind</span> - split-window -c</span><br></pre></td></tr></table></figure>
+<p>按照vim快捷键的习惯切换窗格</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> k selectp -U <span class="comment"># above (prefix k)</span></span><br><span class="line"><span class="built_in">bind</span> j selectp -D <span class="comment"># below (prefix j)</span></span><br><span class="line"><span class="built_in">bind</span> h selectp -L <span class="comment"># left (prefix h)</span></span><br><span class="line"><span class="built_in">bind</span> l selectp -R <span class="comment"># right (prefix l)</span></span><br></pre></td></tr></table></figure>
+<p>调整当前窗格的大小</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> -r ^k resizep -U 10 <span class="comment"># upward (prefix Ctrl+k)</span></span><br><span class="line"><span class="built_in">bind</span> -r ^j resizep -D 10 <span class="comment"># downward (prefix Ctrl+j)</span></span><br><span class="line"><span class="built_in">bind</span> -r ^h resizep -L 10 <span class="comment"># to the left (prefix Ctrl+h)</span></span><br><span class="line"><span class="built_in">bind</span> -r ^l resizep -R 10 <span class="comment"># to the right (prefix Ctrl+l)</span></span><br></pre></td></tr></table></figure>
+<p>移动当前窗格</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> &lt; swapp -U</span><br><span class="line"><span class="built_in">bind</span> &gt; swapp -D</span><br></pre></td></tr></table></figure>
+<p>选择最后一个窗格/窗口，关闭一个窗格，关闭所有窗格</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> e lastp</span><br><span class="line"><span class="built_in">bind</span> ^e last</span><br><span class="line"><span class="built_in">bind</span> q killp</span><br><span class="line"><span class="built_in">bind</span> ^q killw</span><br></pre></td></tr></table></figure>
+<h4 id="复制设置"><a href="#复制设置" class="headerlink" title="复制设置"></a>复制设置</h4><p>像vim模式一样复制窗口内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> Escape copy-mode</span><br><span class="line"><span class="built_in">bind</span> ^p pasteb</span><br><span class="line"><span class="built_in">bind</span> -t vi-copy v begin-selection</span><br><span class="line"><span class="built_in">bind</span> -t vi-copy y copy-selection</span><br></pre></td></tr></table></figure>
+<h4 id="鼠标设置"><a href="#鼠标设置" class="headerlink" title="鼠标设置"></a>鼠标设置</h4><p>鼠标控制，可以通过鼠标点击选择窗口/窗口，调整窗格大小，以及通过鼠标滚轮进行翻页，同时进入复制模式，用鼠标进行选择复制。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setw -g mode-mouse on</span><br><span class="line"><span class="built_in">set</span> -g mouse-select-pane on</span><br><span class="line"><span class="built_in">set</span> -g mouse-resize-pane on</span><br><span class="line"><span class="built_in">set</span> -g mouse-select-window on</span><br></pre></td></tr></table></figure>
+<p><strong>小技巧</strong></p>
+<ul>
+<li><p>在当前窗口滚动鼠标滚轮后，可以进行翻页和复制，如图3-1所示，红色圈出的代表进入了复制模式，可以用鼠标进行选择复制范围</p>
+<center><img src="http://blog.kompaz.win/images/tmux/3-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图3-1 tmux内复制</strong></center>
+</li>
+<li><p>剪切板的范围被限制在tmux以及服务器内。例如在Windows上使用xshell，想复制一段信息到Windows系统剪切板，此时按住<code>shift</code>键可以恢复ssh软件的选择功能，同理，粘贴到窗口内，也需要按住<code>shift</code>键，例如图3-2所示</p>
+<center><img src="http://blog.kompaz.win/images/tmux/3-2.jpg" alt="1-1"></center><center style="color:purple"><strong>图3-2 xshell选择复制</strong></center>
+</li>
+<li><p>如果tmux进行了窗格的左右切割，想复制某个窗格中的一段多行的文字，按住<code>shift</code>键，会把另一个窗格相同一行的文字选择也选择上，这时候需要<code>shift+alt</code>进行选择内容，如图3-3所示</p>
+<center><img src="http://blog.kompaz.win/images/tmux/3-3.jpg" alt="1-1"></center><center style="color:purple"><strong>图3-3 xshell选择复制</strong></center>
+
+</li>
+</ul>
+<h4 id="状态栏配置"><a href="#状态栏配置" class="headerlink" title="状态栏配置"></a>状态栏配置</h4><p>配置状态栏以及其颜色，颜色可以以16进制的方式设置，例如<code>#00875f</code>，但是范围只是256色范围。也可以像<code>colour235</code>这种方式设置颜色，具体颜色以及对应，如图3-4所示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g status-utf8 on</span><br><span class="line"><span class="built_in">set</span> -g status-interval 1</span><br><span class="line"><span class="built_in">set</span> -g status-keys vi</span><br><span class="line"></span><br><span class="line">setw -g mode-keys vi</span><br><span class="line">setw -g allow-rename off</span><br><span class="line">setw -g automatic-rename off</span><br><span class="line"></span><br><span class="line"><span class="comment">#-- colorscheme --#</span></span><br><span class="line"><span class="comment"># modes</span></span><br><span class="line">setw -g clock-mode-colour colour223</span><br><span class="line">setw -g mode-attr bold</span><br><span class="line">setw -g mode-fg colour223</span><br><span class="line">setw -g mode-bg colour235</span><br><span class="line"></span><br><span class="line"><span class="comment">#panes</span></span><br><span class="line"><span class="built_in">set</span> -g pane-border-fg <span class="string">'#00875f'</span></span><br><span class="line"><span class="built_in">set</span> -g pane-border-bg <span class="string">'#005f5f'</span></span><br><span class="line"><span class="built_in">set</span> -g pane-active-border-fg <span class="string">'#005f5f'</span></span><br><span class="line"><span class="built_in">set</span> -g pane-active-border-bg <span class="string">'#00875f'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># statusbar</span></span><br><span class="line"><span class="built_in">set</span> -g status-justify left</span><br><span class="line"><span class="built_in">set</span> -g status-bg colour235</span><br><span class="line"><span class="built_in">set</span> -g status-fg colour248</span><br><span class="line"><span class="built_in">set</span> -g status-attr dim</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -g status-left <span class="string">'#[fg=colour235,bg=#ffc000,bold] ❐ #S #[fg=#ffc000,bg=#990000,nobold]⮀#[fg=#d7bdbd,bg=#990000,bold] #(whoami) #[fg=#990000,bg=colour241]⮀ #[fg=colour235,bg=colour241,bold] #(hostname -s) #[fg=colour241,bg=colour235,nobold]⮀'</span></span><br><span class="line"><span class="built_in">set</span> -g status-left-attr bright</span><br><span class="line"><span class="built_in">set</span> -g status-left-length 80</span><br><span class="line"></span><br><span class="line"><span class="comment">#set -g status-right "</span></span><br><span class="line"><span class="built_in">set</span> -g status-right <span class="string">'#[fg=colour241,bg=colour235]⮂#[fg=colour233,bg=colour241,bold] %H:%M #[fg=#0f38ad,bg=colour241]⮂#[fg=colour233,bg=#0f68ad,bold] %-d %b '</span></span><br><span class="line"><span class="built_in">set</span> -g status-right-attr bright</span><br><span class="line"><span class="built_in">set</span> -g status-right-length 80</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -g window-status-format <span class="string">"#[fg=colour235,bg=colour234]⮀ #[fg=white,bg=colour234]#I ⮁ #W #[fg=colour234,bg=colour235]⮀"</span></span><br><span class="line"><span class="built_in">set</span> -g window-status-current-format <span class="string">"#[fg=colour235,bg=colour120]⮀#[fg=colour25,bg=colour120,noreverse,bold] #I ⮁ #W #[fg=colour120,bg=colour235,nobold]⮀"</span></span><br><span class="line"><span class="built_in">set</span> -wg window-status-separator <span class="string">""</span></span><br></pre></td></tr></table></figure>
+<center><img src="http://blog.kompaz.win/images/tmux/3-4.png" alt="1-1"></center><center style="color:purple"><strong>图3-4 256色色表</strong></center>
+
+<h4 id="提示信息设置"><a href="#提示信息设置" class="headerlink" title="提示信息设置"></a>提示信息设置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g message-attr bold</span><br><span class="line"><span class="built_in">set</span> -g message-fg colour223</span><br><span class="line"><span class="built_in">set</span> -g message-bg colour235</span><br></pre></td></tr></table></figure>
+<h4 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h4><p>在编译安装新版本中，可以使用插件，插件安装方式参考 <a href="https://github.com/tmux-plugins/tpm" target="_blank" rel="noopener">https://github.com/tmux-plugins/tpm</a></p>
+<p>保存会话功能插件，详细参见<a href="https://github.com/tmux-plugins/tmux-resurrect" target="_blank" rel="noopener">https://github.com/tmux-plugins/tmux-resurrect</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g @plugin <span class="string">'tmux-plugins/tmux-resurrect'</span></span><br><span class="line"><span class="built_in">set</span> -g @resurrect-capture-pane-contents <span class="string">'on'</span></span><br><span class="line"><span class="built_in">set</span> -g @resurrect-strategy-vim <span class="string">'session'</span></span><br></pre></td></tr></table></figure>
+<p>在tmux中更好地使用鼠标，详细参见<a href="https://github.com/NHDaly/tmux-better-mouse-mode" target="_blank" rel="noopener">https://github.com/NHDaly/tmux-better-mouse-mode</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g @plugin <span class="string">'nhdaly/tmux-better-mouse-mode'</span></span><br><span class="line"><span class="built_in">set</span> -g @scroll-without-changing-pane <span class="string">'on'</span></span><br><span class="line"><span class="built_in">set</span> -g @<span class="built_in">emulate</span>-scroll-for-no-mouse-alternate-buffer <span class="string">'on'</span></span><br><span class="line"><span class="comment">#set -g @scroll-down-exit-copy-mode 'off'</span></span><br></pre></td></tr></table></figure></p>
+<p>显示CPU使用率，同时也要修改状态栏，详细参见<a href="https://github.com/tmux-plugins/tmux-cpu" target="_blank" rel="noopener">https://github.com/tmux-plugins/tmux-cpu</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g @plugin <span class="string">'tmux-plugins/tmux-cpu'</span></span><br><span class="line"><span class="built_in">set</span> -g @cpu_low_icon <span class="string">"ᚋ"</span></span><br><span class="line"><span class="built_in">set</span> -g @cpu_medium_icon <span class="string">"ᚌ"</span></span><br><span class="line"><span class="built_in">set</span> -g @cpu_high_icon <span class="string">"ᚍ"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -g @cpu_low_fg_color <span class="string">"#[fg=#87ff87]"</span></span><br><span class="line"><span class="built_in">set</span> -g @cpu_medium_fg_color <span class="string">"#[fg=#ffff00]"</span></span><br><span class="line"><span class="built_in">set</span> -g @cpu_high_fg_color <span class="string">"#[fg=#990000]"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> -g @cpu_low_bg_color <span class="string">"#[bg=#87ff87]"</span></span><br><span class="line"><span class="built_in">set</span> -g @cpu_medium_bg_color <span class="string">"#[bg=#ffff00]"</span></span><br><span class="line"><span class="built_in">set</span> -g @cpu_high_bg_color <span class="string">"#[bg=#990000]"</span></span><br></pre></td></tr></table></figure></p>
+<p>修改后的状态栏如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g status-right <span class="string">'#&#123;prefix_highlight&#125;  #[fg=#262626]#&#123;cpu_fg_color&#125;⮂#&#123;cpu_bg_color&#125;#[fg=#121212] CPU: #&#123;cpu_icon&#125;#&#123;cpu_percentage&#125; #&#123;cpu_bg_color&#125;#[fg=#303030]⮂#[fg=#121212,bg=#303030,bold] %H:%M #[fg=#0f38ad,bg=#303030]⮂#[fg=#121212,bg=#0f68ad,bold] %-d %b '</span></span><br></pre></td></tr></table></figure></p>
+<p>当按下前置键的时候，状态栏显示状态，同时也要修改状态栏，如上所示，详细参见<a href="https://github.com/tmux-plugins/tmux-prefix-highlight" target="_blank" rel="noopener">https://github.com/tmux-plugins/tmux-prefix-highlight</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g @plugin <span class="string">'tmux-plugins/tmux-prefix-highlight'</span></span><br><span class="line"><span class="built_in">set</span> -g @prefix_highlight_fg <span class="string">'#121212'</span></span><br><span class="line"><span class="built_in">set</span> -g @prefix_highlight_bg <span class="string">'#99ff00'</span></span><br><span class="line"><span class="built_in">set</span> -g @prefix_highlight_show_copy_mode <span class="string">'on'</span></span><br><span class="line"><span class="built_in">set</span> -g @prefix_highlight_copy_mode_attr <span class="string">'fg=#121212,bg=yellow,bold'</span></span><br><span class="line"><span class="built_in">set</span> -g @prefix_highlight_output_prefix <span class="string">'['</span></span><br><span class="line"><span class="built_in">set</span> -g @prefix_highlight_output_suffix <span class="string">']'</span></span><br></pre></td></tr></table></figure></p>
+<p>tmux日志记录，详细参加<a href="https://github.com/tmux-plugins/tmux-logging" target="_blank" rel="noopener">https://github.com/tmux-plugins/tmux-logging</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> -g @plugin <span class="string">'tmux-plugins/tmux-logging'</span></span><br><span class="line"><span class="built_in">set</span> -g @plugin <span class="string">'tmux-plugins/tmux-sidebar'</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="5-Expect脚本问题"><a href="#5-Expect脚本问题" class="headerlink" title="5. Expect脚本问题"></a>5. Expect脚本问题</h3><p>expect脚本自动ssh登录之后，当终端窗口发生变化时，默认expect不会将终端窗口大小改变的信号传送到远程的服务器上，这样会导致tmux窗口的格式可能会被打乱，如图5-1所示。</p>
+<center><img src="http://blog.kompaz.win/images/tmux/5-1.gif" alt="1-1"></center><center style="color:purple"><strong>图5-1 未获取窗口大小信号</strong></center>
+
+<p>为解决这个问题，需要在expect脚本中捕获窗口大小改变的信号，脚本如下所示，trap函数为捕获窗口大小改变的函数。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/expect -f</span></span><br><span class="line"><span class="comment">#trap sigwinch spawned</span></span><br><span class="line"><span class="built_in">trap</span> &#123;</span><br><span class="line"> <span class="built_in">set</span> rows [stty rows]</span><br><span class="line"> <span class="built_in">set</span> cols [stty columns]</span><br><span class="line"> stty rows <span class="variable">$rows</span> columns <span class="variable">$cols</span> &lt; <span class="variable">$spawn_out</span>(slave,name)</span><br><span class="line">&#125; WINCH</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> password <span class="string">"123456"</span></span><br><span class="line">spawn ssh 172.16.31.11 -l root -X</span><br><span class="line">expect &#123;</span><br><span class="line">    <span class="string">"*yes/no"</span> &#123; send <span class="string">"yes\r"</span>; exp_continue &#125;</span><br><span class="line">    <span class="string">"*password:"</span> &#123; send <span class="string">"<span class="variable">$password</span>\r"</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line">interact</span><br></pre></td></tr></table></figure>
+<p>使用以上脚本自动SSH登录之后，效果如图5-2所示，tmux状态栏以及内容可以自动调整</p>
+<center><img src="http://blog.kompaz.win/images/tmux/5-2.gif" alt="1-1"></center><center style="color:purple"><strong>图5-2 获取窗口大小信号</strong></center>
+
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/03/08</td>
+<td>文档创建</td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2017/12/23</td>
+<td>添加插件配置</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="http://cenalulu.github.io/linux/tmux/" target="_blank" rel="noopener">http://cenalulu.github.io/linux/tmux/</a></li>
+<li><a href="http://mingxinglai.com/cn/2012/09/tmux/" target="_blank" rel="noopener">http://mingxinglai.com/cn/2012/09/tmux/</a></li>
+<li><a href="http://www.d0u9.xyz/vim-solarized-zhu-ti-pei-se-xiao-jie/" target="_blank" rel="noopener">http://www.d0u9.xyz/vim-solarized-zhu-ti-pei-se-xiao-jie/</a></li>
+<li><a href="https://github.com/gpakosz/.tmux" target="_blank" rel="noopener">https://github.com/gpakosz/.tmux</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shell/" rel="tag"># shell</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/02/Strongswan Linux host-to-host/" rel="next" title="Strongswan Linux host-to-host 配置">
+                <i class="fa fa-chevron-left"></i> Strongswan Linux host-to-host 配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/12/OpenStack Neutron介绍/" rel="prev" title="OpenStack Neutron介绍">
+                OpenStack Neutron介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-简介"><span class="nav-number">1.</span> <span class="nav-text">1. 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-安装"><span class="nav-number">2.</span> <span class="nav-text">2. 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-基本操作"><span class="nav-number">3.</span> <span class="nav-text">3.基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Tmux订制"><span class="nav-number">4.</span> <span class="nav-text">3. Tmux订制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#颜色模式设置"><span class="nav-number">4.1.</span> <span class="nav-text">颜色模式设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基本设置"><span class="nav-number">4.2.</span> <span class="nav-text">基本设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#控制台设置"><span class="nav-number">4.3.</span> <span class="nav-text">控制台设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#窗格设置"><span class="nav-number">4.4.</span> <span class="nav-text">窗格设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复制设置"><span class="nav-number">4.5.</span> <span class="nav-text">复制设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#鼠标设置"><span class="nav-number">4.6.</span> <span class="nav-text">鼠标设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#状态栏配置"><span class="nav-number">4.7.</span> <span class="nav-text">状态栏配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提示信息设置"><span class="nav-number">4.8.</span> <span class="nav-text">提示信息设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插件"><span class="nav-number">4.9.</span> <span class="nav-text">插件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Expect脚本问题"><span class="nav-number">5.</span> <span class="nav-text">5. Expect脚本问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">6.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

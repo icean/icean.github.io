@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="主路由器Netgear位置远，影响网络体验；设想过在单独置办一个路由器，但是希望两个路由器的局域网之间可以进行通信；构思通过中继路由器对主路由器的SSID进行中继">
+<meta name="keywords" content="network,openwrt,router">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT 无线中继">
+<meta property="og:url" content="http://blog.kompaz.win/2016/10/29/OpenWRT 无线中继/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="主路由器Netgear位置远，影响网络体验；设想过在单独置办一个路由器，但是希望两个路由器的局域网之间可以进行通信；构思通过中继路由器对主路由器的SSID进行中继">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://i.imgur.com/OA0NKDF.png">
+<meta property="og:image" content="http://i.imgur.com/IoXvhfk.png">
+<meta property="og:image" content="http://i.imgur.com/uKnMcxw.png">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.680Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT 无线中继">
+<meta name="twitter:description" content="主路由器Netgear位置远，影响网络体验；设想过在单独置办一个路由器，但是希望两个路由器的局域网之间可以进行通信；构思通过中继路由器对主路由器的SSID进行中继">
+<meta name="twitter:image" content="http://i.imgur.com/OA0NKDF.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/10/29/OpenWRT 无线中继/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT 无线中继 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/10/29/OpenWRT 无线中继/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT 无线中继
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-10-29 09:21:25" itemprop="dateCreated datePublished" datetime="2016-10-29T09:21:25+08:00">2016-10-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">主路由器Netgear位置远，影响网络体验；设想过在单独置办一个路由器，但是希望两个路由器的局域网之间可以进行通信；构思通过中继路由器对主路由器的SSID进行中继</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h3><h4 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h4><ul>
+<li>主路由器Netgear位置远，影响网络体验</li>
+<li>设想过在单独置办一个路由器，但是希望两个路由器的局域网之间可以进行通信。</li>
+<li>构思通过中继路由器对主路由器的SSID进行中继</li>
+</ul>
+<h4 id="WDS"><a href="#WDS" class="headerlink" title="WDS"></a>WDS</h4><p>WDS连接，再购买一个Netgear路由器，使得主从路由器通过WDS连接，实现无缝漫游。查阅了NetGear的<a href="http://club.netgear.cn/Knowledgebase/Document.aspx?Did=234" target="_blank" rel="noopener">官方资料</a>之后，再综合其他资料，如下理由放弃该方案：</p>
+<ul>
+<li>WDS是非标准协议，不同厂商很可能不兼容，而且芯片、固件版本最好一致。</li>
+<li>Netgear官方支持的WDS协议，路由器的加密只支持WEP方式，不支持WPA2。</li>
+</ul>
+<h4 id="OpenWRT"><a href="#OpenWRT" class="headerlink" title="OpenWRT"></a>OpenWRT</h4><ul>
+<li><p>Routed Client Mode， 拓展的路由器网络还有经过一个NAT到上级网络</p>
+<center><img src="http://i.imgur.com/OA0NKDF.png" alt=""></center><center style="color:purple"><strong>图1-2 路由客户端模式</strong></center>
+</li>
+<li><p>Bridged Client Mode (brcm-2.4 only)，拓展的路由器可以和原来的路由器位于同一个网络，后来买路由器网卡不支持，放弃。</p>
+<center><img src="http://i.imgur.com/IoXvhfk.png" alt=""></center><center style="color:purple"><strong>图1-3 桥接客户端模式(仅仅brcm-2.4)</strong></center>
+</li>
+<li><p>Bridged Client Mode (with relayd)，使用relayed软件进行中继，伪桥接方式，<a href="https://wiki.openwrt.org/doc/recipes/relayclient" target="_blank" rel="noopener">介绍资料</a>。</p>
+<center><img src="http://i.imgur.com/uKnMcxw.png" alt=""></center><center style="color:purple"><strong>图1-4 使用relayed桥接客户端模式</strong></center>
+
+</li>
+</ul>
+<hr>
+<h3 id="2-路由客户端模式"><a href="#2-路由客户端模式" class="headerlink" title="2.  路由客户端模式"></a>2.  路由客户端模式</h3><h4 id="连接无线网络"><a href="#连接无线网络" class="headerlink" title="连接无线网络"></a>连接无线网络</h4><ul>
+<li>配置位置：Network → WiFi → 选择5G/2.4G网卡 → Scan</li>
+<li>出现无线网络列表之后，选择要中继的SSID，本文要中继的SSID是Onion-5G，然后输入无线网路密码</li>
+<li>Network选择创建一个新的虚拟适配器WWAN</li>
+<li>保存之后，过一会在Network → Interface 会看到一个WWAN的虚拟适配器，并从Onion-5G获取到了IP地址，假设这里是192.168.1.7/24</li>
+</ul>
+<h4 id="防火墙设置"><a href="#防火墙设置" class="headerlink" title="防火墙设置"></a>防火墙设置</h4><ul>
+<li>配置位置：Network → Interface</li>
+<li>选择刚才生成的wwan虚拟适配器，然后转到Firewall Settings，确认分配到防火墙区域为wan</li>
+<li>保存生效</li>
+</ul>
+<h4 id="IPv6中继设置"><a href="#IPv6中继设置" class="headerlink" title="IPv6中继设置"></a>IPv6中继设置</h4><p>与之前设置OpenWRT IPv6中继的方法相同</p>
+<h4 id="LAN配置"><a href="#LAN配置" class="headerlink" title="LAN配置"></a>LAN配置</h4><p>修改LAN接口IP地址段，因为使用的NAT模式，所以LAN接口的IP地址段不能与主路由器的IP段（192.168.1.0/24）重复，主假设修改的IP地址段为10.10.10.0/24</p>
+<h4 id="无线配置"><a href="#无线配置" class="headerlink" title="无线配置"></a>无线配置</h4><p>创建一个新的SSID，并桥接到LAN接口</p>
+<ul>
+<li>配置位置：Network → WiFi → 选择5G/2.4G网卡 → Add</li>
+<li>ESSID：Onion-5G+<ul>
+<li>疑问：此处可以设置为Onion-5G吗？SSID相同会有什么干扰吗？</li>
+</ul>
+</li>
+<li>Mode：Access Point</li>
+<li>Network： LAN</li>
+</ul>
+<h4 id="终端连接测试"><a href="#终端连接测试" class="headerlink" title="终端连接测试"></a>终端连接测试</h4><p>此时连接到Onion-5G+的终端设备，可以从主路由器获取192.168.1.0/24地址段的IP地址了</p>
+<h4 id="失败总结"><a href="#失败总结" class="headerlink" title="失败总结"></a>失败总结</h4><p>无法将wifi虚拟适配器直接桥接到WWAN接口，如果这样设置，会导致导致WWAN虚拟适配器变为Bridge interface类型，这样WWAN接口无法从主路由器获取IP地址，因此整个路由器也不能连接到网络了。</p>
+<hr>
+<h3 id="3-使用relayd桥接客户端模式"><a href="#3-使用relayd桥接客户端模式" class="headerlink" title="3. 使用relayd桥接客户端模式"></a>3. 使用relayd桥接客户端模式</h3><h4 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h4><ul>
+<li>relayd</li>
+<li>luci-proto-relay<h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4></li>
+<li>创建一个新的网络192.168.2.0/24, 用来正常访问路由器，<span style="color:red">否则在完成relay桥接模式后无法访问从路由器</span>，所以创建一个LAN2用来保证可以正常访问路由器</li>
+<li>ssh管理切换到LAN2</li>
+<li>无法通过WAN，WWAN接口的IP地址段访问luci网页管理端，只能通过LAN地址段访问luci网页管理端。</li>
+</ul>
+<h4 id="连接无线网络-1"><a href="#连接无线网络-1" class="headerlink" title="连接无线网络"></a>连接无线网络</h4><ul>
+<li>配置位置：Network → WiFi → 选择5G/2.4G网卡 → Scan</li>
+<li>出现无线网络列表之后，选择要中继的SSID，本文要中继的SSID是Onion-5G，然后输入无线网路密码</li>
+<li>Network选择创建一个新的虚拟适配器WWAN</li>
+<li>保存之后，过一会在Network → Interface 会看到一个WWAN的虚拟适配器，并从Onion-5G获取到了IP地址，假设这里是192.168.1.7/24</li>
+</ul>
+<h4 id="防火墙设置-1"><a href="#防火墙设置-1" class="headerlink" title="防火墙设置"></a>防火墙设置</h4><ul>
+<li>配置位置：Network → Interface</li>
+<li>选择刚才生成的wwan虚拟适配器，然后转到Firewall Settings，<span style="color:red">确认分配到防火墙区域为lan，不是wan</span></li>
+<li>保存生效</li>
+</ul>
+<h4 id="关闭LAN接口-DHCP功能"><a href="#关闭LAN接口-DHCP功能" class="headerlink" title="关闭LAN接口 DHCP功能"></a>关闭LAN接口 DHCP功能</h4><p>关闭lLAN接口的DHCP功能，保证客户端可以从主路由器获取IP地址</p>
+<h4 id="桥接适配器创建"><a href="#桥接适配器创建" class="headerlink" title="桥接适配器创建"></a>桥接适配器创建</h4><ul>
+<li>配置位置：Network → Interface → Add new interface</li>
+<li>Protocol：Relay Bridge</li>
+<li>Relay between Network：lan wwan</li>
+<li>保存设置</li>
+</ul>
+<h4 id="无线配置-1"><a href="#无线配置-1" class="headerlink" title="无线配置"></a>无线配置</h4><ul>
+<li>配置位置：Network → WiFi → 选择5G/2.4G网卡 → Add</li>
+<li>ESSID：Onion-5G<ul>
+<li>疑问：此处可以设置为Onion-5G吗？SSID相同会有什么干扰吗？</li>
+</ul>
+</li>
+<li>Mode：Access Point</li>
+<li>Network： LAN</li>
+</ul>
+<h4 id="终端连接测试-1"><a href="#终端连接测试-1" class="headerlink" title="终端连接测试"></a>终端连接测试</h4><p>此时连接到Onion-5G的终端设备，可以从主路由器获取192.168.1.0/24地址段的IP地址了，可以实现设备无缝漫游了</p>
+<h4 id="配置文件示例"><a href="#配置文件示例" class="headerlink" title="配置文件示例"></a>配置文件示例</h4><p>使用luci网页配置可能有问题，可以直接修改配置文件并重启网络</p>
+<ul>
+<li><p>/etc/config/network</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">config interface &apos;lan&apos;</span><br><span class="line">	option ifname &apos;eth0&apos;</span><br><span class="line">	option type &apos;bridge&apos;</span><br><span class="line">	option proto &apos;static&apos;</span><br><span class="line">	option netmask &apos;255.255.255.0&apos;</span><br><span class="line">	option ipaddr &apos;192.168.2.1&apos; </span><br><span class="line"></span><br><span class="line">config interface &apos;stabridge&apos; </span><br><span class="line">	option proto &apos;relay&apos;</span><br><span class="line">	option network &apos;lan wwan&apos;</span><br><span class="line"></span><br><span class="line">config interface &apos;wwan&apos;</span><br><span class="line">	option proto &apos;dhcp&apos;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>/etc/config/dhcp</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">option interface        lan</span><br><span class="line">	option start         100</span><br><span class="line">	option limit        150</span><br><span class="line">	option leasetime        12h</span><br><span class="line">	option ignore 1          #这一行添加，关掉lan的dhcp功能</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>/etc/config/firewall</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">config zone</span><br><span class="line">	option name &apos;lan&apos;</span><br><span class="line">	option input &apos;ACCEPT&apos;</span><br><span class="line">	option output &apos;ACCEPT&apos;</span><br><span class="line">	option forward &apos;ACCEPT&apos;       #修改前为REJECT</span><br><span class="line">	option network &apos;lan wwan&apos;     #添加了wwan</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="测试后记"><a href="#测试后记" class="headerlink" title="测试后记"></a>测试后记</h4><p>试用了一天之后，发现通过relayd方式分别连接到主从路由器的设备之间ping延时很高，因此不得不放弃这种方式。</p>
+<hr>
+<h3 id="4-局域网之间路由模式"><a href="#4-局域网之间路由模式" class="headerlink" title="4. 局域网之间路由模式"></a>4. 局域网之间路由模式</h3><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>OpenWRT固件和Netgear官方固件都拥有自定义路由表的接口，两个路由器之间通过无线进行连接，分别在两个路由器上配置相互局域网转发的路由表。</p>
+<h4 id="防火墙设置-2"><a href="#防火墙设置-2" class="headerlink" title="防火墙设置"></a>防火墙设置</h4><ul>
+<li>创建wlan区域，为Netgear固件路由器所在区域</li>
+<li>允许wlan转到lan，同时lan也可以转发到wlan，其中lan为OpenWRT固件所在区域。</li>
+<li>只允许IPv4转发，禁止IPv6转发</li>
+</ul>
+<h4 id="路由表"><a href="#路由表" class="headerlink" title="路由表"></a>路由表</h4><h5 id="OpenWRT静态路由设置"><a href="#OpenWRT静态路由设置" class="headerlink" title="OpenWRT静态路由设置"></a>OpenWRT静态路由设置</h5><ul>
+<li>配置位置：Network → WiFi → 选择5G/2.4G网卡 → Scan</li>
+<li>出现无线网络列表之后，选择要中继的SSID，本文要中继的SSID是Onion-2.4G，然后输入无线网路密码</li>
+<li>Network选择创建一个新的虚拟适配器WLAN，防火墙区域为wlan</li>
+<li>保存之后，过一会在Network → Interface 会看到一个WLAN的虚拟适配器，并从Onion-2.4G获取到了IP地址，假设这里是192.168.1.2/24</li>
+</ul>
+<p>SSH连接到路由器后查看路由表，如下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">default         192.168.1.1     0.0.0.0         UG    0      0        0 eth1</span><br><span class="line">10.30.0.0       *               255.255.224.0   U     0      0        0 eth1</span><br><span class="line">10.30.0.254     *               255.255.255.255 UH    0      0        0 eth1</span><br><span class="line">192.168.1.0     *               255.255.255.0   U     0      0        0 wlan0</span><br><span class="line">192.168.1.1     *               255.255.255.255 UH    0      0        0 wlan0</span><br><span class="line">192.168.2.0     *               255.255.255.0   U     0      0        0 br-lan</span><br></pre></td></tr></table></figure></p>
+<p>从上述路由表可以看出，这时候所有本地的流量也被转发到192.168.1.1，不需要转发所有的流量，因为需要避免wlan0成为默认路由的出口，修改虚拟适配器WLAN的选项，修改文件/etc/conf/network<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config interface &apos;wlan&apos;       </span><br><span class="line">        option proto &apos;dhcp&apos;  </span><br><span class="line">        option defaultroute &apos;0&apos;</span><br></pre></td></tr></table></figure></p>
+<p>手动修改回正确的默认路由，这样路由器每次重启之后，或者连接到Onion-2.4G后，不会把Onion-2.4G的网络当作默认路由了。</p>
+<h5 id="Netgear静态路由设置"><a href="#Netgear静态路由设置" class="headerlink" title="Netgear静态路由设置"></a>Netgear静态路由设置</h5><p>添加到192.168.2.0/24的路由表条目，网关地址为192.168.2.1，即为OpenWRT的IP的地址。</p>
+<h4 id="问题总结"><a href="#问题总结" class="headerlink" title="问题总结"></a>问题总结</h4><ul>
+<li>速度不稳定，ping延时有时候会很高</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/openwrt/" rel="tag"># openwrt</a>
+          
+            <a href="/tags/router/" rel="tag"># router</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/29/CentOS 7.x ocserv + freeradius验证 + ssl/" rel="next" title="CentOS 7.x ocserv + freeradius验证 + SSL">
+                <i class="fa fa-chevron-left"></i> CentOS 7.x ocserv + freeradius验证 + SSL
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/14/NetGear 刷 OpenWrt/" rel="prev" title="NetGear 刷OpenWRT">
+                NetGear 刷OpenWRT <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-前言"><span class="nav-number">1.</span> <span class="nav-text">1. 前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#起因"><span class="nav-number">1.1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WDS"><span class="nav-number">1.2.</span> <span class="nav-text">WDS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OpenWRT"><span class="nav-number">1.3.</span> <span class="nav-text">OpenWRT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-路由客户端模式"><span class="nav-number">2.</span> <span class="nav-text">2.  路由客户端模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#连接无线网络"><span class="nav-number">2.1.</span> <span class="nav-text">连接无线网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#防火墙设置"><span class="nav-number">2.2.</span> <span class="nav-text">防火墙设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv6中继设置"><span class="nav-number">2.3.</span> <span class="nav-text">IPv6中继设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LAN配置"><span class="nav-number">2.4.</span> <span class="nav-text">LAN配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无线配置"><span class="nav-number">2.5.</span> <span class="nav-text">无线配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#终端连接测试"><span class="nav-number">2.6.</span> <span class="nav-text">终端连接测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#失败总结"><span class="nav-number">2.7.</span> <span class="nav-text">失败总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用relayd桥接客户端模式"><span class="nav-number">3.</span> <span class="nav-text">3. 使用relayd桥接客户端模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#软件安装"><span class="nav-number">3.1.</span> <span class="nav-text">软件安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注意事项"><span class="nav-number">3.2.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接无线网络-1"><span class="nav-number">3.3.</span> <span class="nav-text">连接无线网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#防火墙设置-1"><span class="nav-number">3.4.</span> <span class="nav-text">防火墙设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关闭LAN接口-DHCP功能"><span class="nav-number">3.5.</span> <span class="nav-text">关闭LAN接口 DHCP功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#桥接适配器创建"><span class="nav-number">3.6.</span> <span class="nav-text">桥接适配器创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无线配置-1"><span class="nav-number">3.7.</span> <span class="nav-text">无线配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#终端连接测试-1"><span class="nav-number">3.8.</span> <span class="nav-text">终端连接测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件示例"><span class="nav-number">3.9.</span> <span class="nav-text">配置文件示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试后记"><span class="nav-number">3.10.</span> <span class="nav-text">测试后记</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-局域网之间路由模式"><span class="nav-number">4.</span> <span class="nav-text">4. 局域网之间路由模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#思路"><span class="nav-number">4.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#防火墙设置-2"><span class="nav-number">4.2.</span> <span class="nav-text">防火墙设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由表"><span class="nav-number">4.3.</span> <span class="nav-text">路由表</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#OpenWRT静态路由设置"><span class="nav-number">4.3.1.</span> <span class="nav-text">OpenWRT静态路由设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Netgear静态路由设置"><span class="nav-number">4.3.2.</span> <span class="nav-text">Netgear静态路由设置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#问题总结"><span class="nav-number">4.4.</span> <span class="nav-text">问题总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

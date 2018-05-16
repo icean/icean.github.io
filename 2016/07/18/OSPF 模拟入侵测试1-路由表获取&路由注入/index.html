@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="OSPF 模拟入侵测试1-路由表获取&amp;路由注入">
+<meta name="keywords" content="network,ospf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OSPF 模拟入侵测试1-路由表获取&amp;路由注入">
+<meta property="og:url" content="http://blog.kompaz.win/2016/07/18/OSPF 模拟入侵测试1-路由表获取&路由注入/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="OSPF 模拟入侵测试1-路由表获取&amp;路由注入">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/1-1.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/3-2.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/3-3.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/3-4.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.702Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OSPF 模拟入侵测试1-路由表获取&amp;路由注入">
+<meta name="twitter:description" content="OSPF 模拟入侵测试1-路由表获取&amp;路由注入">
+<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/07/18/OSPF 模拟入侵测试1-路由表获取&路由注入/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OSPF 模拟入侵测试1-路由表获取&路由注入 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/07/18/OSPF 模拟入侵测试1-路由表获取&路由注入/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OSPF 模拟入侵测试1-路由表获取&路由注入
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-07-18 14:33:46" itemprop="dateCreated datePublished" datetime="2016-07-18T14:33:46+08:00">2016-07-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">OSPF 模拟入侵测试1-路由表获取&路由注入</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-实验环境"><a href="#1-实验环境" class="headerlink" title="1. 实验环境"></a>1. 实验环境</h3><h4 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h4><p>使用GNS3搭建实验拓扑，实验拓扑如图1-1所示，其中R1、R2为OSPF网络，Vigilante为入侵主机，模拟路由器，PC1和PC2辅助测试入侵效果，Gateway模拟外网。</p>
+<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 实验拓扑</strong></center>
+
+<h4 id="IP地址表"><a href="#IP地址表" class="headerlink" title="IP地址表"></a>IP地址表</h4><table>
+<thead>
+<tr>
+<th>设备</th>
+<th>端口</th>
+<th>IPv4地址</th>
+<th>IPv6地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway</td>
+<td>f0/0</td>
+<td>10.10.10.253/24</td>
+<td>2001:10:10:10::253/64</td>
+</tr>
+<tr>
+<td></td>
+<td>lo0</td>
+<td>1.1.1.1/32</td>
+<td>2001:1:1:1::1/64</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>f1/0</td>
+<td>10.10.10.254/24</td>
+<td>2001:10:10:10::254/64</td>
+</tr>
+<tr>
+<td></td>
+<td>f0/0</td>
+<td>20.20.20.1/24</td>
+<td>2001:20:20:20::1/64</td>
+</tr>
+<tr>
+<td>R1</td>
+<td>f1/0</td>
+<td>30.30.30.254/24</td>
+<td>2001:30:30:30::254/64</td>
+</tr>
+<tr>
+<td></td>
+<td>f0/0</td>
+<td>20.20.20.2/24</td>
+<td>2001:20:20:20::2/64</td>
+</tr>
+<tr>
+<td>Vigilante</td>
+<td>e2</td>
+<td>30.30.30.30/24</td>
+<td>eui-64</td>
+</tr>
+<tr>
+<td>PC1</td>
+<td>e0</td>
+<td>30.30.30.100/24</td>
+<td>eui-64</td>
+</tr>
+<tr>
+<td>PC2</td>
+<td>e0</td>
+<td>30.30.30.200/24</td>
+<td>eui-64</td>
+</tr>
+</tbody>
+</table>
+<h4 id="路由器配置"><a href="#路由器配置" class="headerlink" title="路由器配置"></a>路由器配置</h4><p>Gateway配置如下</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ipv6 unicast-routing</span><br><span class="line">ipv6 cef</span><br><span class="line"></span><br><span class="line">int f0/0</span><br><span class="line">ipv6 enable</span><br><span class="line">ip address 10.10.10.253 255.255.255.0</span><br><span class="line">ipv6 address 2001:10:10:10::253/64</span><br><span class="line">no sh</span><br><span class="line"></span><br><span class="line">int lo 0</span><br><span class="line">ipv6 enable</span><br><span class="line">ip address 1.1.1.1 255.255.255.0</span><br><span class="line">ipv6 address 2001:1:1:1::1/64</span><br><span class="line"></span><br><span class="line">ip route 0.0.0.0 0.0.0.0 10.10.10.254</span><br><span class="line">ipv6 route ::/0 fastEthernet0/0 2001:10:10:10::254</span><br></pre></td></tr></table></figure>
+<p>R1配置如下</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ipv6 unicast-routing</span><br><span class="line">ipv6 cef</span><br><span class="line"></span><br><span class="line">int f1/0</span><br><span class="line">no sh</span><br><span class="line">ip addr 30.30.30.254 255.255.255.0</span><br><span class="line">ipv6 enable</span><br><span class="line">ipv6 addr 2001:30:30:30::254/64</span><br><span class="line">ipv6 ospf 106 area 0</span><br><span class="line"></span><br><span class="line">int f0/0</span><br><span class="line">no sh</span><br><span class="line">ip addr 20.20.20.2 255.255.255.0</span><br><span class="line">ipv6 enable</span><br><span class="line">ipv6 addr 2001:20:20:20::2/64</span><br><span class="line">ipv6 ospf 106 area 0</span><br><span class="line"></span><br><span class="line">router ospf 104</span><br><span class="line">router-id 1.1.1.4</span><br><span class="line">network 30.30.30.0 0.0.0.255 a 0</span><br><span class="line">network 20.20.20.0 0.0.0.255 a 0</span><br><span class="line"></span><br><span class="line">ipv6 router ospf 106</span><br><span class="line">router-id 1.1.1.6</span><br></pre></td></tr></table></figure>
+<p>R2配置如下</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">ipv6 unicast-routing</span><br><span class="line">ipv6 cef</span><br><span class="line"></span><br><span class="line">int f1/0</span><br><span class="line">no sh</span><br><span class="line">ip addr 10.10.10.254 255.255.255.0</span><br><span class="line">ipv6 enable</span><br><span class="line">ipv6 addr 2001:10:10:10::254/64</span><br><span class="line">ipv6 ospf 106 area 0</span><br><span class="line"></span><br><span class="line">int f0/0</span><br><span class="line">no sh</span><br><span class="line">ip addr 20.20.20.1 255.255.255.0</span><br><span class="line">ipv6 enable</span><br><span class="line">ipv6 addr 2001:20:20:20::1/64</span><br><span class="line">ipv6 ospf 106 area 0</span><br><span class="line"></span><br><span class="line">ip route 0.0.0.0 0.0.0.0 10.10.10.254</span><br><span class="line">ipv6 route ::/0 fastEthernet1/0 2001:10:10:10::253</span><br><span class="line"></span><br><span class="line">router ospf 104</span><br><span class="line">router-id 2.2.2.4</span><br><span class="line">network 10.10.10.0 0.0.0.255 a 0</span><br><span class="line">network 20.20.20.0 0.0.0.255 a 0</span><br><span class="line">default-information originate</span><br><span class="line"></span><br><span class="line">ipv6 router ospf 106</span><br><span class="line">router-id 2.2.2.6</span><br><span class="line">default-information originate</span><br></pre></td></tr></table></figure>
+<h4 id="VirtualBox虚拟机接入"><a href="#VirtualBox虚拟机接入" class="headerlink" title="VirtualBox虚拟机接入"></a>VirtualBox虚拟机接入</h4><p>一台VirtualBox虚拟机需要接入到拓扑，虚拟机系统为CentOS6，有三块网卡，</p>
+<ul>
+<li>eth0为用于连接Internet，模式为桥接模式或者NAT网络。</li>
+<li>eth1为host-only模式，用于本地宿主机通过xshell登录。</li>
+<li>eth2为UDPtunnel，连接到GNS3拓扑中。</li>
+</ul>
+<h4 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h4><ul>
+<li>ospf或者ospfv3没有开启链路或者区域验证</li>
+<li>路由器R1没有在f1/0上开启passive端口，则终端可以抓去到明文的ospf或者ospfv3的hello包。</li>
+</ul>
+<hr>
+<h3 id="2-CentOS安装quagga"><a href="#2-CentOS安装quagga" class="headerlink" title="2. CentOS安装quagga"></a>2. CentOS安装quagga</h3><h4 id="quagga安装"><a href="#quagga安装" class="headerlink" title="quagga安装"></a>quagga安装</h4><p>xshell登录CentOS7虚拟机，yum安装quagga</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install quagga -y</span><br></pre></td></tr></table></figure>
+<p>在CentOS7，SELinux默认会阻止quagga将配置文件写到/usr/sbin/zebra。这个SELinux策略会干扰我们接下来要介绍的安装过程，所以我们要禁用此策略。对于这一点，无论是<a href="http://xmodulo.com/how-to-disable-selinux.html" target="_blank" rel="noopener">关闭SELinux</a>（这里不推荐），还是如下启用“zebra<em>write</em>config”都可以。如果你使用的是CentOS6的请跳过此步骤。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setsebool -P zebra_write_config 1</span><br></pre></td></tr></table></figure>
+<p>如果没有做这个修改，在我们尝试在Quagga命令行中保存配置的时候看到如下错误。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Can&apos;t open configuration file /etc/quagga/zebra.conf.OS1Uu5.</span><br></pre></td></tr></table></figure>
+<p>安装完Quagga后，需要配置必要的对等IP地址，并更新OSPF设置。Quagga自带了一个命令行称为vtysh。vtysh里面用到的Quagga命令与主要的路由器厂商如思科和Juniper是相似的。</p>
+<h4 id="配置zebra"><a href="#配置zebra" class="headerlink" title="配置zebra"></a>配置zebra</h4><p>我们首先创建Zebra配置文件，并启用Zebra守护进程。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp /usr/share/doc/quagga-XXXXX/zebra.conf.sample /etc/quagga/zebra.conf</span><br><span class="line">service zebra start</span><br><span class="line">chkconfig zebra on</span><br></pre></td></tr></table></figure>
+<p>启动vtysh命令行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vtysh</span><br></pre></td></tr></table></figure>
+<p>为Zebra配置日志文件。输入下面的命令进入vtysh的全局配置模式<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname# configure terminal</span><br></pre></td></tr></table></figure></p>
+<p>指定日志文件位置，接着退出模式</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config)# log file /var/log/quagga/quagga.log</span><br></pre></td></tr></table></figure>
+<p>永久保存配置</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config)#do write</span><br></pre></td></tr></table></figure>
+<p>接下来，确定可用的接口并按需配置它们的IP地址。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hostname(config)# do show interface </span><br><span class="line">hostname(config)#interface eth2</span><br><span class="line">hostname(config)#ip address 30.30.30.252/24</span><br><span class="line">hostname(config)#no shutdown</span><br></pre></td></tr></table></figure>
+<h4 id="配置OSPF"><a href="#配置OSPF" class="headerlink" title="配置OSPF"></a>配置OSPF</h4><p>首先创建OSPF配置文件，并启动OSPF守护进</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp /usr/share/doc/quagga-XXXXX/ospfd.conf.sample /etc/quagga/ospfd.conf</span><br><span class="line">service ospfd start</span><br><span class="line">chkconfig ospfd on</span><br></pre></td></tr></table></figure>
+<p>iptables允许OSPF协议通过，否则无法交换OSPF数据包，邻居关系无法建立！OSPF协议号是89</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p 89 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>输入路由配置模式</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vtysh</span><br><span class="line">hostname# configure terminal</span><br><span class="line">hostname(config)# router ospf</span><br></pre></td></tr></table></figure>
+<p>可选配置路由id</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# router-id 3.3.3.4</span><br></pre></td></tr></table></figure>
+<p>添加在OSPF中的网络</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# network  30.30.30.0/24 area 0</span><br></pre></td></tr></table></figure>
+<p>永久保存配置</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# do write</span><br></pre></td></tr></table></figure>
+<p>查看邻居关系，若结果有邻居关系且为full，说明建立了邻居关系</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vigilante# show ip ospf  neighbor  </span><br><span class="line"> Neighbor ID Pri State           Dead Time Address         Interface            RXmtL RqstL DBsmL</span><br><span class="line">1.1.1.4           1 Full/DR           36.907s 30.30.30.254    eth2:30.30.30.1          0     0     0</span><br></pre></td></tr></table></figure>
+<p>查看路由表信息，这时候可以查看整个网络中完整路由表</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Vigilante</span># <span class="selector-tag">sh</span> <span class="selector-tag">ip</span> <span class="selector-tag">route</span>  </span><br><span class="line"><span class="selector-tag">Codes</span>: <span class="selector-tag">K</span> <span class="selector-tag">-</span> <span class="selector-tag">kernel</span> <span class="selector-tag">route</span>, <span class="selector-tag">C</span> <span class="selector-tag">-</span> <span class="selector-tag">connected</span>, <span class="selector-tag">S</span> <span class="selector-tag">-</span> <span class="selector-tag">static</span>, <span class="selector-tag">R</span> <span class="selector-tag">-</span> <span class="selector-tag">RIP</span>, <span class="selector-tag">O</span> <span class="selector-tag">-</span> <span class="selector-tag">OSPF</span>,</span><br><span class="line">       <span class="selector-tag">I</span> <span class="selector-tag">-</span> <span class="selector-tag">ISIS</span>, <span class="selector-tag">B</span> <span class="selector-tag">-</span> <span class="selector-tag">BGP</span>, &gt; <span class="selector-tag">-</span> <span class="selector-tag">selected</span> <span class="selector-tag">route</span>, * <span class="selector-tag">-</span> <span class="selector-tag">FIB</span> <span class="selector-tag">route</span></span><br><span class="line"></span><br><span class="line">K&gt;* 0.0.0.0/0 via 30.30.30.254, eth2</span><br><span class="line">C&gt;* 10.0.2.0/24 is directly connected, eth0</span><br><span class="line">O&gt;* 10.10.10.0/24 [110/12] via 30.30.30.254, eth2, 00:10:25</span><br><span class="line">O&gt;* 20.20.20.0/24 [110/11] via 30.30.30.254, eth2, 00:10:25</span><br><span class="line">O   30.30.30.0/24 [110/10] is directly connected, eth2, 00:11:11</span><br><span class="line">C&gt;* 30.30.30.0/24 is directly connected, eth2</span><br><span class="line">C&gt;* 127.0.0.0/8 is directly connected, lo</span><br><span class="line">K&gt;* 169.254.0.0/16 is directly connected, eth2</span><br><span class="line">C&gt;* 192.168.86.0/24 is directly connected, eth1</span><br></pre></td></tr></table></figure>
+<h4 id="配置OSPFv3"><a href="#配置OSPFv3" class="headerlink" title="配置OSPFv3"></a>配置OSPFv3</h4><p>首先创建OSPF配置文件，并启动OSPF守护进</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp /usr/share/doc/quagga-XXXXX/ospf6d.conf.sample /etc/quagga/ospf6d.conf</span><br><span class="line">service ospf6d start</span><br><span class="line">chkconfig ospf6d on</span><br></pre></td></tr></table></figure>
+<p>ip6tables允许OSPF协议通过，否则无法交换OSPFv3数据包，邻居关系无法建立！OSPFv3协议号是89</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip6tables -A INPUT -p 89 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>输入路由配置模式</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vtysh</span><br><span class="line">hostname# configure terminal</span><br><span class="line">hostname(config)# router ospf6</span><br></pre></td></tr></table></figure>
+<p>可选配置路由id</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# router-id 3.3.3.6</span><br></pre></td></tr></table></figure>
+<p>添加在OSPFv3中的网络，area必须为x.x.x.x这种格式，否则会报错。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# interface eth2 area 0.0.0.0</span><br></pre></td></tr></table></figure>
+<p>永久保存配置</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname(config-router)# do write</span><br></pre></td></tr></table></figure>
+<p>查看邻居关系，若结果有邻居关系且为full，说明建立了邻居关系</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vigilante# show ipv6  ospf6  neighbor  </span><br><span class="line">Neighbor ID     Pri    DeadTime  State/IfState         Duration I/F[State]</span><br><span class="line">1.1.1.6                1    00:00:37   Full/DR              00:09:23 eth2[DROther]</span><br></pre></td></tr></table></figure>
+<p>查看路由表</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Vigilante</span># <span class="selector-tag">show</span> <span class="selector-tag">ipv6</span>  <span class="selector-tag">route</span>  </span><br><span class="line"><span class="selector-tag">Codes</span>: <span class="selector-tag">K</span> <span class="selector-tag">-</span> <span class="selector-tag">kernel</span> <span class="selector-tag">route</span>, <span class="selector-tag">C</span> <span class="selector-tag">-</span> <span class="selector-tag">connected</span>, <span class="selector-tag">S</span> <span class="selector-tag">-</span> <span class="selector-tag">static</span>, <span class="selector-tag">R</span> <span class="selector-tag">-</span> <span class="selector-tag">RIPng</span>, <span class="selector-tag">O</span> <span class="selector-tag">-</span> <span class="selector-tag">OSPFv3</span>,</span><br><span class="line">       <span class="selector-tag">I</span> <span class="selector-tag">-</span> <span class="selector-tag">ISIS</span>, <span class="selector-tag">B</span> <span class="selector-tag">-</span> <span class="selector-tag">BGP</span>, * <span class="selector-tag">-</span> <span class="selector-tag">FIB</span> <span class="selector-tag">route</span>.</span><br><span class="line"></span><br><span class="line">C&gt;* ::1/128 is directly connected, lo</span><br><span class="line">O&gt;* 2001:10:10:10::/64 [110/3] via fe80::c801:1fff:fea4:1c, eth2, 00:11:53</span><br><span class="line">O&gt;* 2001:20:20:20::/64 [110/2] via fe80::c801:1fff:fea4:1c, eth2, 00:11:53</span><br><span class="line">O   2001:30:30:30::/64 [110/1] is directly connected, eth2, 00:11:53</span><br><span class="line">C&gt;* 2001:30:30:30::/64 is directly connected, eth2</span><br><span class="line">C * fe80::/64 is directly connected, eth2</span><br><span class="line">C * fe80::/64 is directly connected, eth1</span><br><span class="line">C&gt;* fe80::/64 is directly connected, eth0</span><br><span class="line">C&gt;* fec0::/64 is directly connected, eth1</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-入侵测试"><a href="#3-入侵测试" class="headerlink" title="3. 入侵测试"></a>3. 入侵测试</h3><h4 id="IPv4注入默认路由"><a href="#IPv4注入默认路由" class="headerlink" title="IPv4注入默认路由"></a>IPv4注入默认路由</h4><p>在Vigilante上，添加错误默认路由，并同时注入到ospf中，则所有的ospf路由器都会学习到该错误默认路由。则终端无法转发数据到默认网关。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip route 0.0.0.0 0.0.0.0 eth1</span><br><span class="line">router ospf</span><br><span class="line">default-information originate always</span><br></pre></td></tr></table></figure>
+<p>中间路由器的OSPF默认路由变化如下图所示</p>
+<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/3-2.jpg" alt="3-1"></center><center style="color:purple"><strong>图3-2 正确默认路由</strong></center>
+
+<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/3-3.jpg" alt="3-1"></center><center style="color:purple"><strong>图3-2 被注入错误默认路由</strong></center>
+
+<h4 id="IPv4注入主机路由"><a href="#IPv4注入主机路由" class="headerlink" title="IPv4注入主机路由"></a>IPv4注入主机路由</h4><p>添加错误主机路由器，例如屏蔽某些主机的流量，若屏蔽PC1（30.30.30.100），加入如下路由条目，然后重分布，由于最长匹配原则，所以会转发入侵路由器，如下图3-3路由表所示，30.30.30.100路由条目。根据最长匹配原则，数据包会转发到Vigilante上，然后Vigilante将该数据包转发到null0.</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip route 30.30.30.100 255.255.255.255 null0</span><br><span class="line">router ospf</span><br><span class="line">redistribute  static</span><br></pre></td></tr></table></figure>
+<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_hacking/3-4.jpg" alt="3-1"></center><center style="color:purple"><strong>图3-4 R1注入后路由表</strong></center>
+
+
+<h4 id="IPv6注入路由"><a href="#IPv6注入路由" class="headerlink" title="IPv6注入路由"></a>IPv6注入路由</h4><p>类似IPv4，也是添加静态路由，然后重分布到OSPFv3中。</p>
+<hr>
+<h3 id="4-其他"><a href="#4-其他" class="headerlink" title="4. 其他"></a>4. 其他</h3><h4 id="排错"><a href="#排错" class="headerlink" title="排错"></a>排错</h4><ul>
+<li>注意iptables，ip6tables开启相应的协议，例如ospf为89.</li>
+<li>若网卡有IPv4或者IPv6地址，则可以不用在路由器模式再配置IP地址。</li>
+<li>可以修改/etc/quagga中的配置文件，修改ospf或者ospf6等的配置，然后重启服务。</li>
+<li>ospf6每次都需要重新执行router-id x.x.x.x以及 interface port area x.x.x.x，才能建立邻居关系</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/ospf/" rel="tag"># ospf</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/17/基础DNS学习/" rel="next" title="基础DNS学习">
+                <i class="fa fa-chevron-left"></i> 基础DNS学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/18/OSPF 模拟入侵测试4-劫持DNS服务器IP/" rel="prev" title="OSPF 模拟入侵测试4-劫持DNS服务器IP">
+                OSPF 模拟入侵测试4-劫持DNS服务器IP <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-实验环境"><span class="nav-number">1.</span> <span class="nav-text">1. 实验环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验拓扑"><span class="nav-number">1.1.</span> <span class="nav-text">实验拓扑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP地址表"><span class="nav-number">1.2.</span> <span class="nav-text">IP地址表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由器配置"><span class="nav-number">1.3.</span> <span class="nav-text">路由器配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VirtualBox虚拟机接入"><span class="nav-number">1.4.</span> <span class="nav-text">VirtualBox虚拟机接入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#前提"><span class="nav-number">1.5.</span> <span class="nav-text">前提</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-CentOS安装quagga"><span class="nav-number">2.</span> <span class="nav-text">2. CentOS安装quagga</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#quagga安装"><span class="nav-number">2.1.</span> <span class="nav-text">quagga安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置zebra"><span class="nav-number">2.2.</span> <span class="nav-text">配置zebra</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置OSPF"><span class="nav-number">2.3.</span> <span class="nav-text">配置OSPF</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置OSPFv3"><span class="nav-number">2.4.</span> <span class="nav-text">配置OSPFv3</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-入侵测试"><span class="nav-number">3.</span> <span class="nav-text">3. 入侵测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv4注入默认路由"><span class="nav-number">3.1.</span> <span class="nav-text">IPv4注入默认路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv4注入主机路由"><span class="nav-number">3.2.</span> <span class="nav-text">IPv4注入主机路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv6注入路由"><span class="nav-number">3.3.</span> <span class="nav-text">IPv6注入路由</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-其他"><span class="nav-number">4.</span> <span class="nav-text">4. 其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#排错"><span class="nav-number">4.1.</span> <span class="nav-text">排错</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

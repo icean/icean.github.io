@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="X大 OSPFv3 入侵测试">
+<meta name="keywords" content="network,ospf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="X大 OSPFv3 入侵测试">
+<meta property="og:url" content="http://blog.kompaz.win/2016/07/03/X大_OSPFv3_入侵测试/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="X大 OSPFv3 入侵测试">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/1-1.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/2-1.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/2-2.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-1.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-2.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-3.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-4.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.997Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="X大 OSPFv3 入侵测试">
+<meta name="twitter:description" content="X大 OSPFv3 入侵测试">
+<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/07/03/X大_OSPFv3_入侵测试/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>X大 OSPFv3 入侵测试 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/07/03/X大_OSPFv3_入侵测试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">X大 OSPFv3 入侵测试
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-07-03 08:36:46" itemprop="dateCreated datePublished" datetime="2016-07-03T08:36:46+08:00">2016-07-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">X大 OSPFv3 入侵测试</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1.准备工作"></a>1.准备工作</h3><h4 id="抓取OSPFv3-hello数据包"><a href="#抓取OSPFv3-hello数据包" class="headerlink" title="抓取OSPFv3 hello数据包"></a>抓取OSPFv3 hello数据包</h4><p>计算机连接校园网，IPv4使用的是NAT模式，IPv6使用的是穿透模式。用WireShark抓去网卡的数据包，使用过滤器ospf，发现抓取到了OSPFv3的hello数据包，说明网络网络人员没有配置passive端口，在不必要的链路上禁止路由器发送hello数据包，点击其中的一个数据包，其结果如图1-1所示，竟然发现hello数据包为纯明文的。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/1-1.jpg" alt=""></center><br><center style="color:purple"><strong>图1-1</strong></center>
+
+<p>从图1-1中可以看出路由器的router-id为2.2.2.29，区域ID为4，hello间隔为10，dead间隔为40。鉴于是明文的hello数据包，可以把主机伪装为路由器，来获取整个校园网OSPFv3协议的路由表。</p>
+<h4 id="所需软件"><a href="#所需软件" class="headerlink" title="所需软件"></a>所需软件</h4><ul>
+<li>VirtualBox，运行模拟路由器的虚拟机，虚拟机使用的系统为Junipor，镜像下载地址请点击<a href="http://pan.baidu.com/s/1hrz9nTi" target="_blank" rel="noopener">这里</a></li>
+<li>Named Pipe TCP Proxy，将虚拟机串口端命令行转化为TCP控制数据流，下载请点击<a href="http://pan.baidu.com/s/1o7tXKSE" target="_blank" rel="noopener">这里</a>。</li>
+<li>Xshell，连接虚拟机串口转化的TCP控制数据流</li>
+</ul>
+<h4 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h4><p>熟悉OSPF协议以及路由器配置流程</p>
+<hr>
+<h3 id="2-虚拟机配置"><a href="#2-虚拟机配置" class="headerlink" title="2. 虚拟机配置"></a>2. 虚拟机配置</h3><h4 id="导入虚拟机"><a href="#导入虚拟机" class="headerlink" title="导入虚拟机"></a>导入虚拟机</h4><p>计算机上安装VirtualBox之后，点击下载的Junipor镜像，即可导入Junipor虚拟机。</p>
+<h4 id="配置网卡"><a href="#配置网卡" class="headerlink" title="配置网卡"></a>配置网卡</h4><p>最多可以启动四张网卡，可以视为虚拟机Junipor路由器的四个接口，在本文中默认只启用了网卡一，网卡一使用桥接模式，桥接到可以抓取到OSPFv3 hello包的物理网卡。这样Junipor虚拟路由器也可以获取OSPFv3 hello数据包。网卡设置如图2-1所示。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/2-1.jpg" alt=""></center><br><center style="color:purple"><strong>图2-1</strong></center>
+
+<h4 id="配置串口"><a href="#配置串口" class="headerlink" title="配置串口"></a>配置串口</h4><p>虚拟机Junipor路由器无法通过ssh或者telnet直接连接，只能通过串口来进行交互和配置，因此需要配置串口，串口编号默认即可，端口模式选“主机管道”，路由和地址的格式为\.\pip\xxxxx\xxxxxxxxxx，其串口设置如图2-2所示。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/2-2.jpg" alt=""></center><br><center style="color:purple"><strong>图2-2</strong></center>
+
+<hr>
+<h3 id="3-连接到虚拟机"><a href="#3-连接到虚拟机" class="headerlink" title="3. 连接到虚拟机"></a>3. 连接到虚拟机</h3><h4 id="安装-Named-Pipe-TCP-Proxy"><a href="#安装-Named-Pipe-TCP-Proxy" class="headerlink" title="安装 Named Pipe TCP Proxy"></a>安装 Named Pipe TCP Proxy</h4><p>到Named Pipe TCP Proxy 下载，并安装，在其安装目录找启动文件</p>
+<h4 id="添加管道配置"><a href="#添加管道配置" class="headerlink" title="添加管道配置"></a>添加管道配置</h4><p>到Named Pipe TCP Proxy目录下，运行piped.exe，管道地址与第二章中设置的路由和地址格式中相同，端口为自定义一个高端口号，例如8000以后的。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-1.jpg" alt=""></center><br><center style="color:purple"><strong>图3-1</strong></center>
+
+<p>添加成功后，如图3-2所示，这样可以从本地使用shell应用telnet到该端口号，图3-2中telnet地址应为127.0.0.1:8001</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-2.jpg" alt=""></center><br><center style="color:purple"><strong>图3-2</strong></center>
+
+<h4 id="telnet到Junipor虚拟机路由器"><a href="#telnet到Junipor虚拟机路由器" class="headerlink" title="telnet到Junipor虚拟机路由器"></a>telnet到Junipor虚拟机路由器</h4><p>启动Junipor路由器，启动成功后，使用xshell，配置如图3-3所示。连接成功后，如图3-4所示。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-3.jpg" alt=""></center>
+
+<center style="color:purple"><strong>图3-3</strong></center><br><center><img src="http://qingdao.icean.cc:11234/Imgbed/UCAS_OSPFv3_hacking/3-4.jpg" alt=""></center>
+
+<center style="color:purple"><strong>图3-4</strong></center>
+
+<hr>
+<h3 id="4-Junipor基础配置"><a href="#4-Junipor基础配置" class="headerlink" title="4. Junipor基础配置"></a>4. Junipor基础配置</h3><p>第一设置时，输入cli进入运行模式</p>
+<pre><code>root@% cli
+root&gt;
+</code></pre><p>输入configure进入配置模式</p>
+<pre><code>root&gt;configure
+root#
+</code></pre><p>设置登录密码,至少字母加数字<br>​<br>    root#edit system<br>    root#set host-name host<br>    root#set domain-name example.com<br>    root#set root-authentication plain-text-password</p>
+<p>设置环回接口IPv4地址，用作OSPFv3协议中的router-id。</p>
+<pre><code>root#set interfaces lo0 unit 0 family inet address 9.9.9.9/24
+</code></pre><p>设置端口em0（eth0）的IPv6 eui-64地址，IPv6通告前缀可以到主机上查询，根据实际情况替换以下命令中的IPv6地址通告前缀，可以在运行模式下查看路由表来确认是否已经运行正常。</p>
+<pre><code>root#set interfaces em0 unit 0 family inet6 address 2001:cc0:2020:4008::/64 eui-64 
+</code></pre><p>启用OSPFv3协议，并把em0接口通告进入OSPFv3，区域ID根据前文抓取的hello数据包可以获知为4</p>
+<pre><code>root#set protocols ospf3 area 0.0.0.4 interface em0 
+</code></pre><p>根据抓取的hello明文数据包，来获悉学校路由器OSPFv3的hello time和dead time，若分别是10s和40s，则不用手动设置，若不为上述数值，则需要手动修改，修改命令如下</p>
+<pre><code>root#set protocols ospf3 area 0.0.0.4 interface em0 hello-interval x
+root#set protocols ospf3 area 0.0.0.4 interface em0 dead-interval x
+</code></pre><p>最后输入commit提交保存历史输入的命令</p>
+<pre><code>root#commit
+</code></pre><p>配置完毕后，可以在运行模式下，执行如下命令，来查看OSPFv3的状态，以及路由表</p>
+<pre><code>root&gt;show ospf3 neighbor
+root&gt;show route
+</code></pre><hr>
+<h3 id="5-获取拓扑路由表"><a href="#5-获取拓扑路由表" class="headerlink" title="5. 获取拓扑路由表"></a>5. 获取拓扑路由表</h3><p>执行完上述所有操作之后，在运行模式下，可以通过show route来查看整个学校拓扑的IPv6路由表，这时候可以路由条目并通告到OSPFv3中，整个拓扑中的路由器都会学习到该路由，由此可能造成对正常网络的影响。完整的IPv6路由表如下所示。</p>
+<pre><code>::/0   *[OSPF3/150] 00:01:56, metric 20, tag 0
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1::/64
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1003::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1004::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1005::/64 
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1006::/64
+   *[OSPF3/150] 00:01:56, metric 20, tag 0
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1007::/64
+   *[OSPF3/150] 00:01:56, metric 20, tag 0
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1008::/64
+   *[OSPF3/150] 00:01:56, metric 20, tag 0
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1010::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1032::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1033::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:1041::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2000::/64
+   *[OSPF3/150] 00:01:56, metric 20, tag 0
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2010::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2011::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2012::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2013::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2014::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2015::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2016::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2017::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2018::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2020::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2021::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2022::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:2030::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:3001::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:3002::/64 
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:3003::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4001::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4002::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4004::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4005::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4006::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4007::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4008::/64
+   *[Direct/0] 00:02:14
+&gt; via em1.0
+2001:cc0:2020:4008:a00:27ff:fe9b:28c7/128
+   *[Local/0] 00:02:14
+  Local via em1.0
+2001:cc0:2020:4009::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4010::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4012::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4013::/64
+   *[OSPF3/150] 00:01:56, metric 20, tag 0
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4014::/64
+   *[OSPF3/150] 00:01:56, metric 1, tag 0
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:1::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:2::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:3::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:4::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:5::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:6::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:7::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:8::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:9::/80   
+   *[OSPF3/10] 00:01:56, metric 2
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:10::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:11::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:12::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:13::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:14::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:15::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:16::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:17::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:20::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:21::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:22::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:23::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:24::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:25::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:26::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:27::/80
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4015:28::/80
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4016::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4017::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4018::/64
+   *[OSPF3/10] 00:01:56, metric 2
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4020::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4021::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4022::/64 
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4023::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4024::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4025::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4026::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4027::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4028::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4029::/64
+   *[OSPF3/10] 00:01:56, metric 5
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4030::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4049::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:4050::/64
+   *[OSPF3/10] 00:01:56, metric 3
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:5001::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:5002::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+2001:cc0:2020:5005::/64
+   *[OSPF3/10] 00:01:56, metric 4
+&gt; to fe80::7625:8aff:fe0e:b250 via em1.0
+</code></pre><p>查看OSPFv3邻居如下所示</p>
+<pre><code>root@R3&gt; show ospf3 neighbor 
+ID          Interface   State Pri   Dead
+2.2.2.29    em1.0       Full1       37
+  Neighbor-address fe80::7625:8aff:fe0e:b250
+</code></pre><hr>
+<h3 id="6-改进措施"><a href="#6-改进措施" class="headerlink" title="6. 改进措施"></a>6. 改进措施</h3><ul>
+<li>在不必要的链路上，将OSPF端口设置为passive</li>
+<li>OSPF应配置链路认证，防止非法攻击者的入侵。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/ospf/" rel="tag"># ospf</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/01/Vim 学习/" rel="next" title="Vim 学习">
+                <i class="fa fa-chevron-left"></i> Vim 学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/05/OSPF 真实入侵测试/" rel="prev" title="OSPF 真实入侵测试">
+                OSPF 真实入侵测试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-准备工作"><span class="nav-number">1.</span> <span class="nav-text">1.准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#抓取OSPFv3-hello数据包"><span class="nav-number">1.1.</span> <span class="nav-text">抓取OSPFv3 hello数据包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#所需软件"><span class="nav-number">1.2.</span> <span class="nav-text">所需软件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基础知识"><span class="nav-number">1.3.</span> <span class="nav-text">基础知识</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-虚拟机配置"><span class="nav-number">2.</span> <span class="nav-text">2. 虚拟机配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#导入虚拟机"><span class="nav-number">2.1.</span> <span class="nav-text">导入虚拟机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置网卡"><span class="nav-number">2.2.</span> <span class="nav-text">配置网卡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置串口"><span class="nav-number">2.3.</span> <span class="nav-text">配置串口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-连接到虚拟机"><span class="nav-number">3.</span> <span class="nav-text">3. 连接到虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装-Named-Pipe-TCP-Proxy"><span class="nav-number">3.1.</span> <span class="nav-text">安装 Named Pipe TCP Proxy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加管道配置"><span class="nav-number">3.2.</span> <span class="nav-text">添加管道配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#telnet到Junipor虚拟机路由器"><span class="nav-number">3.3.</span> <span class="nav-text">telnet到Junipor虚拟机路由器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Junipor基础配置"><span class="nav-number">4.</span> <span class="nav-text">4. Junipor基础配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-获取拓扑路由表"><span class="nav-number">5.</span> <span class="nav-text">5. 获取拓扑路由表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-改进措施"><span class="nav-number">6.</span> <span class="nav-text">6. 改进措施</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

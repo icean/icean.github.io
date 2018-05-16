@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言尽管已经在玩OpenWRT很久了，但是配置一个新的路由器，把各种软件都折腾好，还是挺耗费时间和精力的。为了方便配置新的设备以及灾难恢复，对相关的配置进行了一次总结。将配置的每个软件以及功能分别写入到一个脚本中的不同函数中。 阅读本文需要对OpenWRT有一定的基础了解！">
+<meta name="keywords" content="openwrt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT 配置脚本总结">
+<meta property="og:url" content="http://blog.kompaz.win/2017/07/05/OpenWRT 配置脚本总结/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="前言尽管已经在玩OpenWRT很久了，但是配置一个新的路由器，把各种软件都折腾好，还是挺耗费时间和精力的。为了方便配置新的设备以及灾难恢复，对相关的配置进行了一次总结。将配置的每个软件以及功能分别写入到一个脚本中的不同函数中。 阅读本文需要对OpenWRT有一定的基础了解！">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.660Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT 配置脚本总结">
+<meta name="twitter:description" content="前言尽管已经在玩OpenWRT很久了，但是配置一个新的路由器，把各种软件都折腾好，还是挺耗费时间和精力的。为了方便配置新的设备以及灾难恢复，对相关的配置进行了一次总结。将配置的每个软件以及功能分别写入到一个脚本中的不同函数中。 阅读本文需要对OpenWRT有一定的基础了解！">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/07/05/OpenWRT 配置脚本总结/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT 配置脚本总结 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/07/05/OpenWRT 配置脚本总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT 配置脚本总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-07-05 16:29:00" itemprop="dateCreated datePublished" datetime="2017-07-05T16:29:00+08:00">2017-07-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>尽管已经在玩OpenWRT很久了，但是配置一个新的路由器，把各种软件都折腾好，还是挺耗费时间和精力的。为了方便配置新的设备以及灾难恢复，对相关的配置进行了一次总结。将配置的每个软件以及功能分别写入到一个脚本中的不同函数中。</p>
+<p>阅读本文需要对OpenWRT有一定的基础了解！</p>
+<a id="more"></a>
+<hr>
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>在测试脚本的过程中，使用了OpenWRT虚拟机，如何安装OpenWRT虚拟机请参考官方Wiki <a href="https://wiki.openwrt.org/doc/howto/virtualbox" target="_blank" rel="noopener">OpenWrt in VirtualBox</a>、<a href="https://wiki.openwrt.org/doc/howto/vmware" target="_blank" rel="noopener">OpenWrt on VMware</a>。默认情况下，OpenWRT会将<strong>eth0</strong>当作<strong>LAN</strong>，<strong>eth1</strong>当作<strong>WAN</strong>。</p>
+<p><strong>eth0（LAN）</strong>可以桥接到宿主机的某个环回接口，然后手动配置其IP地址，该IP地址在路由器LAN子网IP地址范围内。<strong>注意，不要填写默认网关！</strong>，会有什么问题请自行思考，文章末尾会揭示。</p>
+<p><strong>eth1（WAN）</strong>使用NAT网络或者桥接到物理机的某个网卡访问互联网。</p>
+<hr>
+<h3 id="配置脚本"><a href="#配置脚本" class="headerlink" title="配置脚本"></a>配置脚本</h3><h4 id="HTTP下载链接配置"><a href="#HTTP下载链接配置" class="headerlink" title="HTTP下载链接配置"></a>HTTP下载链接配置</h4><p>在配置过程中，会下载一些脚本以及安装包，因此需要把这些文件上传到某个服务器。当前HTTP下载的地址为<a href="http://10.30.7.235" target="_blank" rel="noopener">http://10.30.7.235</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HTTP_URL=<span class="string">"http://10.30.7.235"</span></span><br></pre></td></tr></table></figure>
+<h4 id="USB"><a href="#USB" class="headerlink" title="USB"></a>USB</h4><p>安装USB相关的工具，安装完毕使用fdisk对外接磁盘进行分区操作，然后在网页管理端<code>System -&gt; Mount Points</code>进行挂载。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">usb</span></span>()&#123;</span><br><span class="line">opkg install block-mount</span><br><span class="line">opkg install kmod-usb-storage</span><br><span class="line">opkg install kmod-usb-storage-extras</span><br><span class="line">opkg install kmod-fs-ext4</span><br><span class="line">opkg install fdisk</span><br><span class="line">opkg install e2fsprogs</span><br><span class="line"></span><br><span class="line">block detect &gt; /etc/config/fstab</span><br><span class="line">/etc/init.d/fstab <span class="built_in">enable</span></span><br><span class="line">block mount</span><br><span class="line"></span><br><span class="line"><span class="comment">####  mount block on web</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"!!!!!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Please use fdisk to format the usb and mount the block on \"System -&gt; Mount Points\""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Transmission"><a href="#Transmission" class="headerlink" title="Transmission"></a>Transmission</h4><p>安装Transmission，安装后启动一次transmission-daemon，生成配置文件，然后修改配置文件<code>&quot;rpc-whitelist-enabled&quot;: true</code>为<code>&quot;rpc-whitelist-enabled&quot;: false</code>。然后在命令行上手动启动transmission-daemon，自动启动似乎有些问题。</p>
+<p>Transmission内存占用率比较高，为了防止在工作时间影响路由器性能，可以添加定时任务，指定时间段启动Transmission。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">transmission</span></span>()&#123;</span><br><span class="line">opkg install transmission-daemon    </span><br><span class="line">opkg install transmission-cli 		     </span><br><span class="line">opkg install transmission-web</span><br><span class="line">opkg install transmission-remote</span><br><span class="line">opkg install luci-app-transmission</span><br><span class="line"></span><br><span class="line"><span class="comment">###generate configuration and kill the process</span></span><br><span class="line">/etc/init.d/transmission start</span><br><span class="line">/etc/init.d/transmission <span class="built_in">enable</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> &amp;&amp; transmission-daemon</span><br><span class="line">sleep 2</span><br><span class="line">killall transmission-daemon</span><br><span class="line"></span><br><span class="line"><span class="comment">### modify the configuration in /root/.config/transmission-daemon/settings.json</span></span><br><span class="line">sed -i <span class="string">'s/"rpc-whitelist-enabled": true/"rpc-whitelist-enabled": false/g'</span> /root/.config/transmission-daemon/settings.json</span><br><span class="line"></span><br><span class="line"><span class="comment">### crontab</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/crontabs/root</span><br><span class="line"></span><br><span class="line"><span class="comment">## transmission</span></span><br><span class="line">0 8 * * * /etc/init.d/transmission stop &amp;&amp; killall transmission-daemon</span><br><span class="line">0 21 * * * /etc/init.d/transmission start &amp;&amp; <span class="built_in">cd</span> &amp;&amp; transmission-daemon</span><br><span class="line"></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"!!!!!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Please start the transmission-daemon later by input the command"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Samba"><a href="#Samba" class="headerlink" title="Samba"></a>Samba</h4><p>配置Samba服务，注意删除网页管理端 <code>Services -&gt; Network Shares -&gt; Edit Template</code>，删除或者注释掉选项<code>invalid users = root</code>。这里只有root用户配置，若再添加其他用户，请参考 <a href="http://blog.kompaz.win/2016/11/14/NetGear%20%E5%88%B7%20OpenWrt/">NetGear 刷OpenWRT</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">samba</span></span>()&#123;</span><br><span class="line">opkg install samba36-server</span><br><span class="line">opkg install luci-app-samba</span><br><span class="line"></span><br><span class="line"><span class="comment">### set samba root password</span></span><br><span class="line">smbpasswd -a root</span><br><span class="line"></span><br><span class="line"><span class="comment">### !!!! set configuration on the web: Services -&gt; Network Shares</span></span><br><span class="line"><span class="comment">### !!!! delete or disable the option : invalid users = root</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"!!!!!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"set configuration on the web: Services -&gt; Network Shares"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"delete or disable the option :  Services -&gt; Network Shares"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"after above is done, input anything to continue"</span></span><br><span class="line"><span class="built_in">read</span> <span class="built_in">wait</span></span><br><span class="line"></span><br><span class="line"><span class="comment">### edit the /etc/config/samba</span></span><br><span class="line">WORKGROUP_DEF=<span class="string">"Garlic"</span></span><br><span class="line">GLOBAL_SMB_NAME_DEF=<span class="string">"Garlic"</span></span><br><span class="line">GLOBAL_SMB_DES_DEF=<span class="string">"Garlic"</span></span><br><span class="line">SMB_NAME_DEF=<span class="string">"Garlic"</span></span><br><span class="line">SMB_PATH_DEF=<span class="string">"/mnt/download"</span></span><br><span class="line">SMB_USER_DEF=<span class="string">"root"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the workgroup of samba:[<span class="variable">$WORKGROUP_DEF</span>]"</span> WORKGROUP</span><br><span class="line">WORKGROUP=<span class="variable">$&#123;WORKGROUP:-"Garlic"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the global name of samba:[<span class="variable">$GLOBAL_SMB_NAME_DEF</span>]"</span> GLOBAL_SMB_NAME</span><br><span class="line">GLOBAL_SMB_NAME=<span class="variable">$&#123;GLOBAL_SMB_NAME:-"Garlic"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the description of samba:[<span class="variable">$GLOBAL_SMB_DES_DEF</span>]"</span> GLOBAL_SMB_DES</span><br><span class="line">GLOBAL_SMB_DES=<span class="variable">$&#123;GLOBAL_SMB_DES:-"Garlic"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the name of samba:[<span class="variable">$SMB_NAME_DEF</span>]"</span> SMB_NAME</span><br><span class="line">SMB_NAME=<span class="variable">$&#123;SMB_NAME:-"Garlic"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the path of samba:[<span class="variable">$SMB_PATH_DEF</span>]"</span> SMB_PATH</span><br><span class="line">SMB_PATH=<span class="variable">$&#123;SMB_PATH:-"/mnt/download"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the users of samba:[<span class="variable">$SMB_USER_DEF</span>]"</span> SMB_USER</span><br><span class="line">SMB_USER=<span class="variable">$&#123;SMB_USER:-"root"&#125;</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt; EOF &gt; /etc/config/samba</span><br><span class="line">config samba</span><br><span class="line">	option workgroup <span class="string">'$WORKGROUP'</span></span><br><span class="line">	option homes <span class="string">'1'</span></span><br><span class="line">	option name <span class="string">'$GLOBAL_SMB_NAME'</span></span><br><span class="line">	option description <span class="string">'$GLOBAL_SMB_DES'</span></span><br><span class="line"></span><br><span class="line">config sambashare</span><br><span class="line">	option name <span class="string">'$SMB_NAME'</span></span><br><span class="line">	option path <span class="string">'$SMB_PATH'</span></span><br><span class="line">	option read_only <span class="string">'no'</span></span><br><span class="line">	option guest_ok <span class="string">'no'</span></span><br><span class="line">	option create_mask <span class="string">'0755'</span></span><br><span class="line">	option dir_mask <span class="string">'0755'</span></span><br><span class="line">	option users <span class="string">'$SMB_USER'</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### samba start and statup</span></span><br><span class="line">/etc/init.d/samba restart</span><br><span class="line">/etc/init.d/samba <span class="built_in">enable</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Extra-Tools"><a href="#Extra-Tools" class="headerlink" title="Extra Tools"></a>Extra Tools</h4><p>一些常用工具</p>
+<ul>
+<li><code>ip-full</code> 是更易用的网络诊断工具</li>
+<li><code>install kmod-nf-nathelper-extra</code> 与路由器接入的客户端连接PPTP VPN相关</li>
+<li><code>vim</code> 不必多说</li>
+<li><code>htop</code> 是更好用的系统诊断工具</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">extra_tools</span></span>()&#123;</span><br><span class="line">opkg install ip-full</span><br><span class="line">opkg install kmod-nf-nathelper-extra</span><br><span class="line">opkg install vim</span><br><span class="line">opkg install htop</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Across-GFW"><a href="#Across-GFW" class="headerlink" title="Across GFW"></a>Across GFW</h4><p>这里分为两步，首先安装相关的软件包，因为ipset需要重启生效，所以安装后路由器首先要重启</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">across_GFW_S1</span></span>()&#123;</span><br><span class="line">opkg install iptables-mod-nat-extra</span><br><span class="line">opkg install iptables-mod-tproxy</span><br><span class="line">opkg install ipset </span><br><span class="line">opkg remove dnsmasq</span><br><span class="line">opkg install dnsmasq-full</span><br><span class="line">opkg install coreutils-base64 curl ca-certificates</span><br><span class="line"><span class="comment">### !!!! reboot and the ipset take affect</span></span><br><span class="line">reboot</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第二步需要配置的涉及到shadowsocks、ipset、iptables、dnsmasq等。其中shadowsocks服务器相关信息，请自行修改。</p>
+<ul>
+<li>添加dnsmasq的配置文件，该配置文件利用<code>gfwlist2dnsmasq.sh</code>脚本，每天定时更新</li>
+<li>修改shadowsocks配置文件以及启动文件</li>
+<li>添加ipset以及iptables的配置，并添加到开机启动中</li>
+</ul>
+<p><strong>请自行修改shadowsocks安装包名称！</strong>，文本为<code>shadowsocks-libev_2.4.8-2_x86.ipk</code>，因为使用OpenWRT虚拟机是x86架构的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">across_GFW_S2</span></span>()&#123;</span><br><span class="line">SS_SERVER_DEF=<span class="string">"145.176.203.51"</span></span><br><span class="line">SS_PORT_DEF=<span class="string">"3081"</span></span><br><span class="line">SS_PASSWD_DEF=<span class="string">"RootxxOpwrt"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the IP of shadowsocks server:[<span class="variable">$SS_SERVER_DEF</span>]"</span> SS_SERVER</span><br><span class="line">SS_SERVER=<span class="variable">$&#123;SS_SERVER:-"145.176.203.51"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the port of shadowsocks server:[<span class="variable">$SS_PORT_DEF</span>]"</span> SS_PORT</span><br><span class="line">SS_PORT=<span class="variable">$&#123;SS_PORT:-"3081"&#125;</span> </span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the password of the port:[<span class="variable">$SS_PASSWD_DEF</span>]"</span> SS_PASSWD</span><br><span class="line">SS_PASSWD=<span class="variable">$&#123;SS_PASSWD:-"RootxxOpwrt"&#125;</span> </span><br><span class="line"></span><br><span class="line"><span class="comment">### edit the /etc/dnsmasq.conf</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"conf-dir=/etc/dnsmasq.d"</span>&gt;&gt;/etc/dnsmasq.conf</span><br><span class="line">mkdir /etc/dnsmasq.d</span><br><span class="line"></span><br><span class="line"><span class="comment">### get gfw2dnsmasq and generate dnsmasq configuration</span></span><br><span class="line">mkdir -p /root/Scripts</span><br><span class="line"><span class="built_in">cd</span> /root/Scripts</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/gfwlist2dnsmasq.sh</span><br><span class="line">chmod u+x *.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /root/Scripts/ \</span><br><span class="line">&amp;&amp; sh gfwlist2dnsmasq.sh -p 5353 -s redir -o redir-`date <span class="string">"+%Y-%m-%d"</span>`.conf \</span><br><span class="line">&amp;&amp; rm -rf /etc/dnsmasq.d/redir-* \</span><br><span class="line">&amp;&amp; mv redir-`date <span class="string">"+%Y-%m-%d"</span>`.conf /etc/dnsmasq.d/ \</span><br><span class="line">&amp;&amp; /etc/init.d/dnsmasq restart</span><br><span class="line"></span><br><span class="line"><span class="comment">### crontab</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/crontabs/root</span><br><span class="line"></span><br><span class="line"><span class="comment">## gfwlist</span></span><br><span class="line">0 1 * * * <span class="built_in">cd</span> /root/Scripts/ \\</span><br><span class="line">&amp;&amp; sh gfwlist2dnsmasq.sh -p 5353 -s redir -o redir-\`date <span class="string">"+%Y-%m-%d"</span>\`.conf \\</span><br><span class="line">&amp;&amp; rm -rf /etc/dnsmasq.d/redir-* \\</span><br><span class="line">&amp;&amp; mv redir-\`date <span class="string">"+%Y-%m-%d"</span>\`.conf /etc/dnsmasq.d/ \\</span><br><span class="line">&amp;&amp; /etc/init.d/dnsmasq restart</span><br><span class="line"></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### install shadowsocks</span></span><br><span class="line"><span class="comment">### /etc/shadowsocks.json</span></span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/opkg/shadowsocks-libev_2.4.8-2_x86.ipk</span><br><span class="line">opkg install shadowsocks-libev_2.4.8-2_x86.ipk</span><br><span class="line"></span><br><span class="line">mv /etc/shadowsocks.json  /etc/shadowsocks.json.bak</span><br><span class="line">cat &lt;&lt; EOF &gt; /etc/shadowsocks.json</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"server"</span>: <span class="string">"<span class="variable">$SS_SERVER</span>"</span>,</span><br><span class="line">    <span class="string">"server_port"</span>: <span class="variable">$SS_PORT</span>,</span><br><span class="line">    <span class="string">"local_port"</span>: 1080,</span><br><span class="line">    <span class="string">"password"</span>: <span class="string">"<span class="variable">$SS_PASSWD</span>"</span>,</span><br><span class="line">    <span class="string">"timeout"</span>: 60,</span><br><span class="line">    <span class="string">"method"</span>: <span class="string">"aes-256-cfb"</span></span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### /etc/init.d/shadowsocks </span></span><br><span class="line">cp /etc/init.d/shadowsocks /etc/init.d/shadowsocks.bak</span><br><span class="line">cat &lt;&lt; EOF &gt; /etc/init.d/shadowsocks</span><br><span class="line"><span class="comment">#!/bin/sh /etc/rc.common</span></span><br><span class="line"></span><br><span class="line">START=95</span><br><span class="line"></span><br><span class="line">SERVICE_USE_PID=1</span><br><span class="line">SERVICE_WRITE_PID=1</span><br><span class="line">SERVICE_DAEMONIZE=1</span><br><span class="line">SERVICE_PID_FILE=/var/run/shadowsocks.pid</span><br><span class="line">CONFIG=/etc/shadowsocks.json</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span></span>() &#123;</span><br><span class="line">        <span class="comment">#service_start /usr/bin/ss-local -c \$CONFIG -b 0.0.0.0</span></span><br><span class="line">        service_start /usr/bin/ss-redir -c \<span class="variable">$CONFIG</span> -b 0.0.0.0 -u -f \<span class="variable">$SERVICE_PID_FILE</span></span><br><span class="line">        service_start /usr/bin/ss-tunnel -c \<span class="variable">$CONFIG</span> -b 0.0.0.0 -l 5353 -L 8.8.8.8:53 -u</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">stop</span></span>() &#123;</span><br><span class="line">        <span class="comment">#service_stop /usr/bin/ss-local</span></span><br><span class="line">        service_stop /usr/bin/ss-redir</span><br><span class="line">        service_stop /usr/bin/ss-tunnel</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### enable and start</span></span><br><span class="line">killall ss-local ss-tunnel ss-redir</span><br><span class="line">/etc/init.d/shadowsocks <span class="built_in">enable</span></span><br><span class="line">/etc/init.d/shadowsocks start</span><br><span class="line"></span><br><span class="line"><span class="comment">### ipset and redirect the dnsmasq domain list</span></span><br><span class="line">ipset -N redir iphash</span><br><span class="line">iptables -t nat -N shadowsocks</span><br><span class="line">iptables -t mangle -N shadowsocks</span><br><span class="line">iptables -t nat -A shadowsocks -d <span class="variable">$SS_SERVER</span> -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 0.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 10.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 127.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 169.254.0.0/16 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 172.16.0.0/12 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 192.168.0.0/16 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 224.0.0.0/4 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 240.0.0.0/4 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -p tcp -m <span class="built_in">set</span> --match-set redir dst -j REDIRECT --to-ports 1080</span><br><span class="line">iptables -t mangle -A shadowsocks -p udp -m <span class="built_in">set</span> --match-set redir dst ! --dport 53 -j TPROXY --on-port 1080 --tproxy-mark 0x01/0x01</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -j shadowsocks</span><br><span class="line">iptables -t mangle -A PREROUTING -j shadowsocks</span><br><span class="line"></span><br><span class="line"><span class="comment">###ip route &amp;&amp; ip rule</span></span><br><span class="line">ip route add <span class="built_in">local</span> default dev lo table 100</span><br><span class="line">ip rule add fwmark 0x01/0x01 lookup 100</span><br><span class="line"></span><br><span class="line"><span class="comment">### startup</span></span><br><span class="line">sed -i <span class="string">'$d'</span> /etc/rc.local</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">## shadowsocks</span></span><br><span class="line">ipset -N redir iphash</span><br><span class="line">iptables -t nat -N shadowsocks</span><br><span class="line">iptables -t mangle -N shadowsocks</span><br><span class="line">iptables -t nat -A shadowsocks -d <span class="variable">$SS_SERVER</span> -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 0.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 10.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 127.0.0.0/8 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 169.254.0.0/16 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 172.16.0.0/12 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 192.168.0.0/16 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 224.0.0.0/4 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -d 240.0.0.0/4 -j RETURN</span><br><span class="line">iptables -t nat -A shadowsocks -p tcp -m <span class="built_in">set</span> --match-set redir dst -j REDIRECT --to-ports 1080</span><br><span class="line">iptables -t mangle -A shadowsocks -p udp -m <span class="built_in">set</span> --match-set redir dst ! --dport 53 -j TPROXY --on-port 1080 --tproxy-mark 0x01/0x01</span><br><span class="line">iptables -t nat -A PREROUTING -p tcp -j shadowsocks</span><br><span class="line">iptables -t mangle -A PREROUTING -j shadowsocks</span><br><span class="line">ip route add <span class="built_in">local</span> default dev lo table 100</span><br><span class="line">ip rule add fwmark 0x01/0x01 lookup 100</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Logs"><a href="#Logs" class="headerlink" title="Logs"></a>Logs</h4><p>OpenWRT本机不保存日志的，可以选择配置日志服务器等方式，不过本文的方式比较简单，直接把logread的结果保存到外接磁盘中。并使用<code>log.sh</code>脚本对日志结果进行筛选。将日志保存的命令添加到开机启动中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">logs</span></span>()&#123;</span><br><span class="line">LOG_PATH_DEF=<span class="string">"/mnt/download/Logs"</span></span><br><span class="line">MAX_FILE_SIZE_DEF=<span class="string">"10485760"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the path of logs:[<span class="variable">$LOG_PATH_DEF</span>]"</span> LOG_PATH</span><br><span class="line">LOG_PATH=<span class="variable">$&#123;LOG_PATH:-"/mnt/download/Logs"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the max size of log file:[<span class="variable">$MAX_FILE_SIZE_DEF</span>]"</span> MAX_FILE_SIZE</span><br><span class="line">MAX_FILE_SIZE=<span class="variable">$&#123;MAX_FILE_SIZE:-"/mnt/download/Logs"&#125;</span></span><br><span class="line"></span><br><span class="line">mkdir -p <span class="variable">$MAX_FILE_SIZE</span></span><br><span class="line"><span class="built_in">cd</span> /root/Scripts</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/log.sh</span><br><span class="line">chmod u+x *.sh</span><br><span class="line">sed -i <span class="string">"s#/mnt/download/Logs/#<span class="variable">$LOG_PATH</span>#g"</span> log.sh</span><br><span class="line">sed -i <span class="string">"s#10485760#<span class="variable">$MAX_FILE_SIZE</span>#g"</span> log.sh</span><br><span class="line"></span><br><span class="line">logread &gt;&gt; <span class="variable">$LOG_PATH</span>/sys.log</span><br><span class="line">logread -f &gt;&gt; <span class="variable">$LOG_PATH</span>/sys.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="comment">### startup</span></span><br><span class="line">sed -i <span class="string">'$d'</span> /etc/rc.local</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">## log</span></span><br><span class="line">logread &gt;&gt; <span class="variable">$LOG_PATH</span>/sys.log</span><br><span class="line">logread -f &gt;&gt; <span class="variable">$LOG_PATH</span>/sys.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### crontab</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/crontabs/root</span><br><span class="line"></span><br><span class="line"><span class="comment">## log</span></span><br><span class="line">0 */1 * * * sh /root/Scripts/log.sh</span><br><span class="line"></span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="IPv6"><a href="#IPv6" class="headerlink" title="IPv6"></a>IPv6</h4><p>IPv6的配置方式有两种，两种方式孰优孰劣，在之前的文章 <a href="http://blog.kompaz.win/2017/02/22/OpenWRT%20IPv6%20%E9%85%8D%E7%BD%AE/">OpenWRT IPv6 三种配置方式</a> 中已经讨论过。下文为relay模式。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">ipv6_relay</span></span>()&#123;</span><br><span class="line"><span class="comment">### ipv6 relay</span></span><br><span class="line"></span><br><span class="line">sed -i <span class="string">'/ula_prefix/d'</span> /etc/config/network</span><br><span class="line">sed -i <span class="string">"s/option dhcpv6 'server'/option dhcpv6 'relay'/g"</span> /etc/config/dhcp</span><br><span class="line">sed -i <span class="string">"s/option ra 'server'/option ra 'relay'/g"</span> /etc/config/dhcp</span><br><span class="line">sed -i <span class="string">"/option ra/a\ \ \ \ \ \ \ \ \option ndp 'relay'"</span> /etc/config/dhcp</span><br><span class="line"></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/config/dhcp</span><br><span class="line"></span><br><span class="line">config dhcp <span class="string">'wan6'</span></span><br><span class="line">	option interfere <span class="string">'wan'</span></span><br><span class="line">	option ra <span class="string">'relay'</span></span><br><span class="line">	option dhcpv6 <span class="string">'relay'</span></span><br><span class="line">	option ndp <span class="string">'relay'</span></span><br><span class="line">	option master <span class="string">'1'</span></span><br><span class="line">EOF</span><br><span class="line">	</span><br><span class="line">/etc/init.d/odhcpd restart</span><br><span class="line"></span><br><span class="line"><span class="comment">## startup</span></span><br><span class="line">sed -i <span class="string">'$d'</span> /etc/rc.local</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">## odhcpd</span></span><br><span class="line">sleep 5</span><br><span class="line">/etc/init.d/odhcpd restart</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下文为穿透模式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">ipv6_bridge</span></span>()&#123;</span><br><span class="line">/etc/init.d/odhcpd <span class="built_in">disable</span></span><br><span class="line">/etc/init.d/odhcpd stop</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">'/ula_prefix/d'</span> /etc/config/network</span><br><span class="line">WAN_INTERFACE=`uci get network.wan.ifname`</span><br><span class="line">opkg install ebtables</span><br><span class="line">ebtables -t broute -A BROUTING -p ! ipv6 -j DROP -i <span class="variable">$WAN_INTERFACE</span></span><br><span class="line">brctl addif br-lan <span class="variable">$WAN_INTERFACE</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## startup</span></span><br><span class="line">sed -i <span class="string">'$d'</span> /etc/rc.local</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">### ipv6 bridge</span></span><br><span class="line">ebtables -t broute -A BROUTING -p ! ipv6 -j DROP -i <span class="variable">$WAN_INTERFACE</span></span><br><span class="line">brctl addif br-lan <span class="variable">$WAN_INTERFACE</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Tinc"><a href="#Tinc" class="headerlink" title="Tinc"></a>Tinc</h4><p>tinc涉及的配置比较多，总结下主要步骤为，更多配置细节请参考 <a href="http://blog.kompaz.win/2017/03/30/OpenWRT%20tinc/">OpenWRT Tinc配置</a></p>
+<ul>
+<li>安装软件，修改配置文件<code>/etc/config/tinc</code></li>
+<li>初始化运行，生成公私钥对文件</li>
+<li>添加tinc虚拟机网卡、启动以及停止的脚本</li>
+<li>添加连接对象的公钥文件</li>
+<li>添加防火墙配置并重启启动tinc服务</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">tinc</span></span>()&#123;</span><br><span class="line">TINC_NAME_DEF=<span class="string">"netgear"</span></span><br><span class="line">TINC_INTERFACE_DEF=<span class="string">"tun0"</span></span><br><span class="line">TINC_PORT_DEF=<span class="string">"6565"</span></span><br><span class="line">TINC_SUBNET_DEF=<span class="string">"192.168.3.0/24"</span></span><br><span class="line">TINC_INTERFACE_IP_DEF=<span class="string">"172.16.1.3"</span></span><br><span class="line">WAN6_IP_DEF=<span class="string">"2001:cc0:2020:3020:2ac6:8eff:fe21:8497"</span></span><br><span class="line">WAN_IP=`uci get network.wan6.ipaddr`</span><br><span class="line"></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the name of tinc vpn:[<span class="variable">$TINC_NAME_DEF</span>]"</span> TINC_NAME</span><br><span class="line">TINC_NAME=<span class="variable">$&#123;TINC_NAME:-"netgear"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the interface of tinc vpn:[<span class="variable">$TINC_INTERFACE_DEF</span>]"</span> TINC_INTERFACE</span><br><span class="line">TINC_INTERFACE=<span class="variable">$&#123;TINC_INTERFACE:-"tun0"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the port of tinc vpn:[<span class="variable">$TINC_PORT_DEF</span>]"</span> TINC_PORT</span><br><span class="line">TINC_PORT=<span class="variable">$&#123;TINC_PORT:-"6565"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the subnet that will be advertised of tinc vpn:[<span class="variable">$TINC_SUBNET_DEF</span>]"</span> TINC_SUBNET</span><br><span class="line">TINC_SUBNET=<span class="variable">$&#123;TINC_SUBNET:-"192.168.3.0/24"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the ip of interface of tinc vpn:[<span class="variable">$TINC_INTERFACE_IP_DEF</span>]"</span> TINC_INTERFACE_IP</span><br><span class="line">TINC_INTERFACE_IP=<span class="variable">$&#123;TINC_INTERFACE_IP:-"172.16.1.3"&#125;</span></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input the wan ip:[<span class="variable">$WAN6_IP_DEF</span>]"</span> WAN6_IP</span><br><span class="line">WAN6_IP=<span class="variable">$&#123;WAN6_IP:-"172.16.1.3"&#125;</span></span><br><span class="line"></span><br><span class="line">opkg install tinc</span><br><span class="line"><span class="built_in">cd</span> /etc/config/</span><br><span class="line">mv tinc tinc.bak</span><br><span class="line"></span><br><span class="line"><span class="comment">### !!!!! add the list ConnectTo $TINC_CONNECT_TO</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; tinc</span><br><span class="line">config tinc-net tinc</span><br><span class="line">        option enabled 1</span><br><span class="line"></span><br><span class="line">        <span class="comment">## Daemon Configuration (cmd arguments)</span></span><br><span class="line">        option generate_keys 1</span><br><span class="line">        option key_size 2048</span><br><span class="line">        option logfile /tmp/<span class="built_in">log</span>/tinc.tinc.log</span><br><span class="line">        option debug 0</span><br><span class="line"></span><br><span class="line">        <span class="comment">## Server Configuration (tinc.conf)</span></span><br><span class="line">        option AddressFamily any</span><br><span class="line"></span><br><span class="line">        <span class="comment">#list ConnectTo host1</span></span><br><span class="line">	<span class="comment">#list ConnectTo host2</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">#option DirectOnly 0</span></span><br><span class="line">        option GraphDumpFile /tmp/<span class="built_in">log</span>/tinc.tinc.dot</span><br><span class="line">        option Interface <span class="variable">$TINC_INTERFACE</span></span><br><span class="line">        option Name <span class="variable">$TINC_NAME</span></span><br><span class="line">        option PrivateKeyFile /etc/tinc/tinc/rsa_key.priv</span><br><span class="line"></span><br><span class="line">config tinc-host <span class="variable">$TINC_NAME</span></span><br><span class="line">        option enabled 1</span><br><span class="line">        option net tinc</span><br><span class="line">        option Port <span class="variable">$TINC_PORT</span></span><br><span class="line">        option Subnet <span class="variable">$TINC_SUBNET</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"!!!!!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Please edit the /etc/config/tinc and edit the list \"list ConnectTo host2\""</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Please input anything to continue"</span></span><br><span class="line"><span class="built_in">read</span> <span class="built_in">wait</span></span><br><span class="line"></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/config/network</span><br><span class="line"></span><br><span class="line">config interface <span class="string">'tinc'</span></span><br><span class="line">        option ifname <span class="string">'$TINC_INTERFACE'</span>   </span><br><span class="line">        option defaultroute <span class="string">'0'</span></span><br><span class="line">        option peerdns <span class="string">'0'</span>   </span><br><span class="line">        option proto <span class="string">'none'</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### start and generate tinc/rsa_key.priv tinc/hosts/$TINC_NAME</span></span><br><span class="line">/etc/init.d/tinc start</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /etc/tinc/tinc</span><br><span class="line"></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; tinc-down</span><br><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ip link <span class="built_in">set</span> \<span class="variable">$INTERFACE</span> down</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### !!!!! edit the route items</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; tinc-up</span><br><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ip=<span class="string">'$TINC_INTERFACE_IP'</span></span><br><span class="line">ip link <span class="built_in">set</span> \<span class="variable">$INTERFACE</span> up</span><br><span class="line">ip addr add \<span class="variable">$ip</span>/24 dev \<span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.1.0/24 dev \<span class="variable">$INTERFACE</span></span><br><span class="line">ip route add 192.168.2.0/24 dev \<span class="variable">$INTERFACE</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"!!!!!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Please edit the /etc/tinc/tinc/tinc-up and edit the list \"ip route\""</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Please input anything to continue"</span></span><br><span class="line"><span class="built_in">read</span> <span class="built_in">wait</span></span><br><span class="line"></span><br><span class="line">chmod u+x tinc-*</span><br><span class="line"></span><br><span class="line"><span class="comment">### edit /etc/tinc/tinc/hosts/$TINC_NAME</span></span><br><span class="line">sed -i <span class="string">"1i Port = <span class="variable">$TINC_PORT</span>"</span> hosts/<span class="variable">$TINC_NAME</span></span><br><span class="line">sed -i <span class="string">"1i Subnet = <span class="variable">$TINC_INTERFACE_IP</span>/32"</span> hosts/<span class="variable">$TINC_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="comment">### add route items</span></span><br><span class="line">sed -i <span class="string">"1i Subnet = <span class="variable">$TINC_SUBNET</span>"</span> hosts/<span class="variable">$TINC_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="comment">### add WAN ip</span></span><br><span class="line">sed -i <span class="string">"1i Address = <span class="variable">$WAN6_IP</span>"</span> hosts/<span class="variable">$TINC_NAME</span></span><br><span class="line">sed -i <span class="string">"1i Address = <span class="variable">$WAN_IP</span>"</span> hosts/<span class="variable">$TINC_NAME</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"!!!!!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"add the ConnectTo host's public key to the folder hosts"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"create new firewall zone tinc"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"add interface tun0 to the firewall zone of tinc"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"add the firewall items about tinc port "</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Please input anything to continue"</span></span><br><span class="line"><span class="built_in">read</span> <span class="built_in">wait</span></span><br><span class="line"><span class="comment">### !!!! add the ConnectTo host's public key to the folder hosts</span></span><br><span class="line"><span class="comment">### !!!! create new firewall zone tinc </span></span><br><span class="line"><span class="comment">### !!!! add interface tun0 to the firewall zone of tinc</span></span><br><span class="line"><span class="comment">### !!!! add the firewall items about tinc port </span></span><br><span class="line"></span><br><span class="line"><span class="comment">### enable and restart tinc</span></span><br><span class="line">/etc/init.d/tinc <span class="built_in">enable</span></span><br><span class="line">/etc/init.d/tinc restart</span><br><span class="line"></span><br><span class="line"><span class="comment">### startup</span></span><br><span class="line">sed -i <span class="string">'$d'</span> /etc/rc.local</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">## tinc</span></span><br><span class="line">/etc/init.d/tinc restart</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h4><p>安装python，一般选择安装外接磁盘</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">python_install</span></span>()&#123;</span><br><span class="line">DEST_DEF=<span class="string">"/mnt/download/packages"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">read</span> -p <span class="string">"Please input dest of opkg :[<span class="variable">$DEST_DEF</span>]"</span> DEST</span><br><span class="line">DEST=<span class="variable">$&#123;DEST:-"/mnt/download/packages"&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"dest usb <span class="variable">$DEST</span>"</span> &gt;&gt; /etc/opkg.conf</span><br><span class="line">mkdir -p <span class="variable">$DEST</span></span><br><span class="line">opkg --dest usb install python</span><br><span class="line">ln -s <span class="variable">$DEST</span>/usr/bin/python /usr/bin/python</span><br><span class="line">ln -s <span class="variable">$DEST</span>/usr/lib/libpython2.7.so.1.0 /usr/lib/libpython2.7.so.1.0</span><br><span class="line"></span><br><span class="line"><span class="comment">### !!! copy site-packages, $DEST/usr/lib/python2.7/site-packages</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$DEST</span>/usr/lib/python2.7/site-packages</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/site-packages/site-packages.tar.gz</span><br><span class="line">tar xvzf site-packages.tar.gz</span><br><span class="line">rm -rf site-packages.tar.gz</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="IPv6-hosts"><a href="#IPv6-hosts" class="headerlink" title="IPv6 hosts"></a>IPv6 hosts</h4><p>定期更新路由器的IPv6 hosts，若无IPv6网络环境，请跳过</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">hosts_update</span></span>()&#123;</span><br><span class="line">mkdir -p /root/Scripts/hosts</span><br><span class="line"><span class="built_in">cd</span> /root/Scripts</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/gethosts.sh</span><br><span class="line">chmod u+x *.sh</span><br><span class="line">./gethosts.sh</span><br><span class="line"></span><br><span class="line"><span class="comment">### crontab</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/crontabs/root</span><br><span class="line"></span><br><span class="line"><span class="comment">## hosts update</span></span><br><span class="line">0 1 */7 * * sh /root/Scripts/gethosts.sh</span><br><span class="line">0 0 1 */12 * rm -rf /root/Scripts/hosts/hosts.*</span><br><span class="line"></span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Network-Authentication"><a href="#Network-Authentication" class="headerlink" title="Network Authentication"></a>Network Authentication</h4><p>ICT、UCAS的网络验证脚本，自动检测网络连接然后调用python脚本验证网络</p>
+<p>ICT</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">ict_network</span></span>()&#123;</span><br><span class="line">mkdir -p /root/Scripts/ict</span><br><span class="line"><span class="built_in">cd</span> /root/Scripts/ict</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/ict/auth.py</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/ict/monitoring.sh</span><br><span class="line">chmod u+x *.sh</span><br><span class="line"></span><br><span class="line"><span class="comment">### startup</span></span><br><span class="line">sed -i <span class="string">'$d'</span> /etc/rc.local</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">## ict network authentication</span></span><br><span class="line">sh /root/Scripts/ict/monitoring.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### crontab</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/crontabs/root</span><br><span class="line"></span><br><span class="line"><span class="comment">## connect to Internet</span></span><br><span class="line">0,10,20,30,40,50 * * * * sh /root/Scripts/ict/monitoring.sh</span><br><span class="line">0 0 1 */1 * <span class="built_in">echo</span> <span class="string">""</span> &gt; /root/Scripts/ict/network.log</span><br><span class="line"></span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>UCAS</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">ucas_network</span></span>()&#123;</span><br><span class="line">mkdir -p /root/Scripts/ucas</span><br><span class="line"><span class="built_in">cd</span> /root/Scripts/ucas</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/ucas/account.txt</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/ucas/Login.py</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/ucas/Login-full.py</span><br><span class="line">wget <span class="variable">$HTTP_URL</span>/Scripts/ucas/monitoring.sh</span><br><span class="line">chmod u+x *.sh *.py</span><br><span class="line"></span><br><span class="line"><span class="comment">### startup</span></span><br><span class="line">sed -i <span class="string">'$d'</span> /etc/rc.local</span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/rc.local</span><br><span class="line"></span><br><span class="line"><span class="comment">## ucas network authentication</span></span><br><span class="line">sh /root/Scripts/ucas/monitoring.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span> 0</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment">### crontab</span></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/crontabs/root</span><br><span class="line"></span><br><span class="line"><span class="comment">## connect to Internet</span></span><br><span class="line">0,10,20,30,40,50 * * * * sh /root/Scripts/ucas/monitoring.sh</span><br><span class="line">0 0 1 */1 * <span class="built_in">echo</span> <span class="string">""</span> &gt; /root/Scripts/ucas/network.log</span><br><span class="line"></span><br><span class="line">EOF</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="汇总调用脚本"><a href="#汇总调用脚本" class="headerlink" title="汇总调用脚本"></a>汇总调用脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">step_done</span></span>()&#123;</span><br><span class="line">cat /root/step | <span class="keyword">while</span> <span class="built_in">read</span> line</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="comment">#echo $line</span></span><br><span class="line">    <span class="keyword">if</span> [[ <span class="variable">$line</span> == <span class="variable">$1</span> ]];<span class="keyword">then</span></span><br><span class="line">        <span class="built_in">return</span> 1</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"!!! opkg updating !!!"</span></span><br><span class="line"><span class="comment">#rm -rf /root/step</span></span><br><span class="line">touch /root/step</span><br><span class="line">opkg update</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> `seq 20`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"============================================================================"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"|                    OpenWRT Software Install Wizard                       |"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"|  usb          :  1      transmission  :   2        samba        :   3    |"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"|  extra_tools  :  4      across_GFW_S1 :   5.1      across_GFW_S2:   5.2  |"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"|  logs         :  6      ipv6_relay    :   7.1      ipv6_bridge  :   7.2  |"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"|  tinc         :  8      python_install:   9        hosts_update :   10   |"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"|  ucas_network :  11.1   ict_network   :   11.2     QUIT         :   0    |"</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"============================================================================"</span></span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">"Input your choice:\c "</span></span><br><span class="line">    <span class="built_in">read</span> opt</span><br><span class="line">    <span class="keyword">case</span> <span class="variable">$opt</span> <span class="keyword">in</span></span><br><span class="line">        <span class="string">"1"</span>)</span><br><span class="line">            step_done <span class="string">"1"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                usb</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"1"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"2"</span>)</span><br><span class="line">            step_done <span class="string">"2"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                transmission</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"2"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"3"</span>)</span><br><span class="line">            step_done <span class="string">"3"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                samba</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"3"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"4"</span>)</span><br><span class="line">            step_done <span class="string">"4"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                extra_tools</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"4"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">		<span class="string">"5.1"</span>)</span><br><span class="line">            step_done <span class="string">"5.1"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                across_GFW_S1</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"5.1"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"5.2"</span>)</span><br><span class="line">            step_done <span class="string">"5.2"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                across_GFW_S2</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"5.2"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"6"</span>)</span><br><span class="line">            step_done <span class="string">"6"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                logs</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"6"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"7.1"</span>)</span><br><span class="line">            step_done <span class="string">"7.1"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                ipv6_relay</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"7.1"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"7.2"</span>)</span><br><span class="line">            step_done <span class="string">"7.2"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                ipv6_bridge</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"7.2"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"8"</span>)</span><br><span class="line">            step_done <span class="string">"8"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                tinc</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"8"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"9"</span>)</span><br><span class="line">            step_done <span class="string">"9"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                python_install</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"9"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"10"</span>)</span><br><span class="line">            step_done <span class="string">"10"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                host_update</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"10"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"11.1"</span>)</span><br><span class="line">            step_done <span class="string">"11.1"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                ucas_network</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"11.1"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">        <span class="string">"11.2"</span>)</span><br><span class="line">            step_done <span class="string">"11.2"</span></span><br><span class="line">            re=$?</span><br><span class="line">            <span class="keyword">if</span> [[ <span class="string">"<span class="variable">$re</span>"</span> = <span class="string">"1"</span> ]];<span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"You have run the step!"</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                ict_network</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"11.2"</span> &gt;&gt; /root/step</span><br><span class="line">            <span class="keyword">fi</span></span><br><span class="line">            ;;</span><br><span class="line">		<span class="string">"0"</span>)</span><br><span class="line">			i=20</span><br><span class="line">			;;</span><br><span class="line">        *)</span><br><span class="line">            <span class="built_in">echo</span> <span class="string">"Invalid Option!"</span></span><br><span class="line">            ;;</span><br><span class="line">    <span class="keyword">esac</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><ul>
+<li><p>为什么要手动设置桥接到OpenWRT虚拟机LAN口的换回接口的IP地址？如果添加网关，会修改宿主机的默认路由，这样影响了宿主机的访问因特网的路由。</p>
+</li>
+<li><p>完整的脚本以及软件包链接如下</p>
+<ul>
+<li><a href="http://blog.kompaz.win/files/install_x86.sh">x86</a></li>
+<li><a href="http://blog.kompaz.win/files/install_ar71xx.sh">ar71xx</a></li>
+<li><a href="http://pan.baidu.com/s/1jHNi14y" target="_blank" rel="noopener">软件以及脚本</a></li>
+</ul>
+</li>
+<li><p>htop无法启动 错误提示为<code>Error opening terminal: xterm.</code></p>
+<ul>
+<li><p>因为先在USB上安装python，导致<strong>libncurses</strong>安装在usb设备上，进而导致<strong>terminfo</strong>也被安装在usb设备上，因此在根木下的<code>/usr/share/</code>下无<strong>terminfo</strong>相关的文件</p>
+</li>
+<li><p>解决方法：强制卸载<code>libncurses</code>、<code>terminfo</code>，然后指定目的重新安装即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">opkg remove terminfo --force-depends</span><br><span class="line">opkg remove libncurses --force-depends</span><br><span class="line">opkg --dest root install terminfo</span><br><span class="line">opkg --dest root libncurses terminfo</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/7/6 11:36</td>
+<td>文件创建</td>
+</tr>
+<tr>
+<td>修改</td>
+<td>2017/11/7 10:02</td>
+<td>添加UDP转发条目</td>
+</tr>
+<tr>
+<td>htop无法启动问题</td>
+<td>2018/1/10 20:17</td>
+<td>htop无法启动问题</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://wiki.openwrt.org/doc/howto/virtualbox" target="_blank" rel="noopener">https://wiki.openwrt.org/doc/howto/virtualbox</a></li>
+<li><a href="http://see.sl088.com/wiki/%E7%BB%99Openwrt%E5%AE%89%E8%A3%85%E5%AE%8C%E6%95%B4Lua" target="_blank" rel="noopener">http://see.sl088.com/wiki/%E7%BB%99Openwrt%E5%AE%89%E8%A3%85%E5%AE%8C%E6%95%B4Lua</a></li>
+<li><a href="https://lengzzz.com/note/archive-20140623" target="_blank" rel="noopener">https://lengzzz.com/note/archive-20140623</a></li>
+<li><a href="http://www.cnblogs.com/caoyongan/p/3995657.html" target="_blank" rel="noopener">http://www.cnblogs.com/caoyongan/p/3995657.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/openwrt/" rel="tag"># openwrt</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/28/CentOS7 minimal阅读调试K8S代码/" rel="next" title="CentOS7 minimal阅读调试K8S代码">
+                <i class="fa fa-chevron-left"></i> CentOS7 minimal阅读调试K8S代码
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/05/（转）玩转Linux防火墙命令iptables/" rel="prev" title="玩转Linux防火墙命令iptables[转]">
+                玩转Linux防火墙命令iptables[转] <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#环境搭建"><span class="nav-number">2.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置脚本"><span class="nav-number">3.</span> <span class="nav-text">配置脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP下载链接配置"><span class="nav-number">3.1.</span> <span class="nav-text">HTTP下载链接配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#USB"><span class="nav-number">3.2.</span> <span class="nav-text">USB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transmission"><span class="nav-number">3.3.</span> <span class="nav-text">Transmission</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Samba"><span class="nav-number">3.4.</span> <span class="nav-text">Samba</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Extra-Tools"><span class="nav-number">3.5.</span> <span class="nav-text">Extra Tools</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Across-GFW"><span class="nav-number">3.6.</span> <span class="nav-text">Across GFW</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Logs"><span class="nav-number">3.7.</span> <span class="nav-text">Logs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv6"><span class="nav-number">3.8.</span> <span class="nav-text">IPv6</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tinc"><span class="nav-number">3.9.</span> <span class="nav-text">Tinc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Python"><span class="nav-number">3.10.</span> <span class="nav-text">Python</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IPv6-hosts"><span class="nav-number">3.11.</span> <span class="nav-text">IPv6 hosts</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Network-Authentication"><span class="nav-number">3.12.</span> <span class="nav-text">Network Authentication</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#汇总调用脚本"><span class="nav-number">3.13.</span> <span class="nav-text">汇总调用脚本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">5.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

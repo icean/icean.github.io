@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. OVS介绍OVS是一种产品级、多层虚拟机交换机，采用开源许可Apache 2.0许可证。其被设计为通过编程拓展，可以实现大规模网络的自动化部署，并且支持标准的接口管理以及协议（例如 NetFlow、sFlow、IPFIX、RSPAN、CLI、LACP、802.1ag）。此外，它旨在提供跨多物理服务器的分布式部署，类似于VMware的vNetwork分布式vswitch或者思科的Nexus 1">
+<meta name="keywords" content="network,openstack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenVSwitch基本使用">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/19/OpenVSwitch基本使用/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. OVS介绍OVS是一种产品级、多层虚拟机交换机，采用开源许可Apache 2.0许可证。其被设计为通过编程拓展，可以实现大规模网络的自动化部署，并且支持标准的接口管理以及协议（例如 NetFlow、sFlow、IPFIX、RSPAN、CLI、LACP、802.1ag）。此外，它旨在提供跨多物理服务器的分布式部署，类似于VMware的vNetwork分布式vswitch或者思科的Nexus 1">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/ovs/1-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/ovs/2-1.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/ovs/2-2.png">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.529Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenVSwitch基本使用">
+<meta name="twitter:description" content="1. OVS介绍OVS是一种产品级、多层虚拟机交换机，采用开源许可Apache 2.0许可证。其被设计为通过编程拓展，可以实现大规模网络的自动化部署，并且支持标准的接口管理以及协议（例如 NetFlow、sFlow、IPFIX、RSPAN、CLI、LACP、802.1ag）。此外，它旨在提供跨多物理服务器的分布式部署，类似于VMware的vNetwork分布式vswitch或者思科的Nexus 1">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/ovs/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/19/OpenVSwitch基本使用/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenVSwitch基本使用 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/19/OpenVSwitch基本使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenVSwitch基本使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-19 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-19T16:29:00+08:00">2017-03-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-OVS介绍"><a href="#1-OVS介绍" class="headerlink" title="1. OVS介绍"></a>1. OVS介绍</h3><p>OVS是一种产品级、多层虚拟机交换机，采用开源许可<a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank" rel="noopener">Apache 2.0</a>许可证。其被设计为通过编程拓展，可以实现大规模网络的自动化部署，并且支持标准的接口管理以及协议（例如 NetFlow、sFlow、IPFIX、RSPAN、CLI、LACP、802.1ag）。此外，它旨在提供跨多物理服务器的分布式部署，类似于VMware的vNetwork分布式vswitch或者思科的Nexus 1000V。在<a href="http://openvswitch.org/features" target="_blank" rel="noopener">这里</a>查看完整的功能列表。</p>
+<center><img src="http://blog.kompaz.win/images/ovs/1-1.jpg" width="400px"></center><center style="color:purple"><strong>图1-1 OVS</strong></center>
+
+<a id="more"></a>
+<hr>
+<h3 id="2-基本概念"><a href="#2-基本概念" class="headerlink" title="2. 基本概念"></a>2. 基本概念</h3><h4 id="Packet"><a href="#Packet" class="headerlink" title="Packet"></a>Packet</h4><p>网络转发的最小数据单元，每个包都来自某个端口，最终会被发往一个或多个目标端口</p>
+<h4 id="Bridge"><a href="#Bridge" class="headerlink" title="Bridge"></a>Bridge</h4><p>OpenvSwitch的网桥对应物理交换机，其功能是根据流规则，把从一个端口接收到的数据包转发到另一个或者多个端口</p>
+<p>网桥的fail-mode设置</p>
+<ul>
+<li><strong>standalone</strong>： 该模式下，没有运行controller的情况下，OVS会自动调整为普通交换机模式，像物理交换机一样，此时可能会有环路产生的问题。如果有controller的情况，OVS会自动变成 openflow交换机</li>
+</ul>
+<ul>
+<li><strong>secure</strong>： 该模式下，无论有没有controller，OVS都会作为openflow交换机运行， 也就是所有网桥上的端口，等待controller或者用户添加flow到OVS来进行通信。</li>
+</ul>
+<h4 id="Port"><a href="#Port" class="headerlink" title="Port"></a>Port</h4><p>端口是收发数据包的单元。每个端口都属于一个特定的网桥。端口收到的数据包会经过流规则的处理，发往其他端口；也会把其他端口来的数据包发送出去。主要有端口类型有：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normal</td>
+<td>可以把操作系统的网络适配器绑定到OVS的某个网桥，OVS会生成一个普通端口处理这块网卡的收发数据包</td>
+</tr>
+<tr>
+<td>Internal</td>
+<td>端口类型为Internal时，OVS创建虚拟网络适配器，端口接收到所有数据包都交给该网络适配器，发出的数据包交给OVS。OVS创建一个新网桥时，默认会创建一个与该网桥同名的Internal端口</td>
+</tr>
+<tr>
+<td>Patch</td>
+<td>当存在多个OVS网桥时候，可以使用Patch端口连接两个网桥，Patch端口成对出现，分别位于两个网桥</td>
+</tr>
+<tr>
+<td>Tunnel</td>
+<td>Tunnel端口是一种虚拟端口，支持使用gre或vxlan等隧道技术与位于网络上其他位置的远程端口通讯</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Interface"><a href="#Interface" class="headerlink" title="Interface"></a>Interface</h4><p>接口是OVS与外部交换数据包的组件，一个接口为操作系统的某个网络适配器，该网络适配器可能是OVS的虚拟机网络适配器，可能为挂载在OVS上的物理网络适配器或者虚拟机网络适配器（TUN/TAP）</p>
+<h4 id="FlowTable"><a href="#FlowTable" class="headerlink" title="FlowTable"></a>FlowTable</h4><p>定义了端口之间数据交换的规则</p>
+<hr>
+<h3 id="3-流表（FlowTable）"><a href="#3-流表（FlowTable）" class="headerlink" title="3. 流表（FlowTable）"></a>3. 流表（FlowTable）</h3><h4 id="流表定义"><a href="#流表定义" class="headerlink" title="流表定义"></a>流表定义</h4><p>流表是交换机进行转发策略控制的核心数据结构，交换机芯片通过查找流表表项来决策进入交换机网络流量采取合适的行为。流表中包括一些流表项，每个表项包含若干个域 :<code>包头域</code>、活动<code>计数器</code>、0个或多个<code>动作</code></p>
+<center><img src="http://blog.kompaz.win/images/ovs/2-1.png" width="400px"></center><center style="color:purple"><strong>图2-1 FlowTable</strong></center>
+
+<ul>
+<li><strong>包头域</strong>：执行规则的条件，主要是数据包各层协议的指定，当数据包满足该条件时进行匹配</li>
+<li><strong>计数器</strong>：用来统计流量的信息，例如TTL、错误、发包数等</li>
+<li><strong>动作</strong>：定义了对匹配规则的数据包的处理方式，例如转发、修改以及丢弃等</li>
+</ul>
+<h4 id="流表匹配顺序"><a href="#流表匹配顺序" class="headerlink" title="流表匹配顺序"></a>流表匹配顺序</h4><center><img src="http://blog.kompaz.win/images/ovs/2-2.png" width="400px"></center><center style="color:purple"><strong>图2-2 流表匹配顺序</strong></center>
+
+<ul>
+<li>按照从小到达顺序</li>
+<li>同一表内，按照优先级顺序匹配</li>
+</ul>
+<p>下面规则的具体解释，有待完善</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ovs-ofctl dump-flows br-tun</span></span><br><span class="line">NXST_FLOW reply (xid=0x4):</span><br><span class="line"> <span class="comment">#表0，从端口1接收到的数据包转发到表2处理</span></span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.025s, table=0, n_packets=0, n_bytes=0, idle_age=56, priority=1,in_port=1 actions=resubmit(,2)</span><br><span class="line"> <span class="comment">#表0，不匹配的数据包丢弃</span></span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.025s, table=0, n_packets=0, n_bytes=0, idle_age=56, priority=0 actions=drop</span><br><span class="line"> <span class="comment">#表2，单播包转发到表20</span></span><br><span class="line">cookie=0x83ae295140ecd035, duration=56.024s, table=2, n_packets=0, n_bytes=0, idle_age=56, priority=0,dl_dst=00:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,20)</span><br><span class="line"> <span class="comment">#表2，多播包转发到表22</span></span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.024s, table=2, n_packets=0, n_bytes=0, idle_age=56, priority=0,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,22)</span><br><span class="line"> </span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.024s, table=3, n_packets=0, n_bytes=0, idle_age=56, priority=0 actions=drop</span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.023s, table=4, n_packets=0, n_bytes=0, idle_age=56, priority=0 actions=drop</span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.023s, table=4, n_packets=0, n_bytes=0, idle_age=475, priority=1,tun_id=0x50 actions=mod_vlan_vid:1,resubmit(,10)</span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.023s, table=6, n_packets=0, n_bytes=0, idle_age=56, priority=0 actions=drop</span><br><span class="line">  <span class="comment">#表10，进行规则学习，学习到的规则由表20使用</span></span><br><span class="line"> cookie=0x83ae295140ecd035, duration=56.023s, table=10, n_packets=0, n_bytes=0, idle_age=56, priority=1 actions=learn(table=20,hard_timeout=300,priority=1,cookie=0x83ae295140ecd035,NXM_OF_VLAN_TCI[0..11],NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],load:0-&gt;NXM_OF_VLAN_TCI[],load:NXM_NX_TUN_ID[]-&gt;NXM_NX_TUN_ID[],output:NXM_OF_IN_PORT[]),output:1</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="4-命令指南"><a href="#4-命令指南" class="headerlink" title="4. 命令指南"></a>4. 命令指南</h3><h4 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h4><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ovs-dpctl</td>
+<td>datapath控制器,可以创建删除DP,控制DP中的FlowTables,最常使用<code>show</code>命令</td>
+</tr>
+<tr>
+<td>ovs-ofctl</td>
+<td>流表控制器，控制bridge上的流表，查看端口统计信息等</td>
+</tr>
+<tr>
+<td>ovsdb-tool</td>
+<td>专门管理ovsdb的client</td>
+</tr>
+<tr>
+<td>ovs-vsctl</td>
+<td>最常用的命令，例如查看、添加以及删除网桥、端口</td>
+</tr>
+<tr>
+<td>ovs-appctl</td>
+<td>可以直接与openvswitch daemon进行交互</td>
+</tr>
+</tbody>
+</table>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><ul>
+<li>ovs-dpctl <code>show -s</code></li>
+<li>ovs-ofctl <code>show, dump-ports, dump-flows, add-flow, mod-flows, del-flows</code></li>
+<li>ovsdb-tools <code>show-log -m</code></li>
+<li>ovs-vsctl<ul>
+<li><code>show</code> 显示数据库内容</li>
+<li>关于桥的操作 <code>add-br, list-br, del-br, br-exists</code>.</li>
+<li>关于port的操作 <code>list-ports, add-port, del-port, add-bond, port-to-br</code>.</li>
+<li>关于interface的操作 <code>list-ifaces, iface-to-br</code></li>
+<li><code>ovs-vsctl list/set/get/add/remove/clear/destroy table record column [value]</code>, 常见的表有bridge, controller,interface,mirror,netflow,open_vswitch,port,qos,queue,ssl,sflow.</li>
+</ul>
+</li>
+<li>ovs-appctl <code>list-commands, fdb/show, qos/show</code></li>
+</ul>
+<h4 id="添加Patch端口"><a href="#添加Patch端口" class="headerlink" title="添加Patch端口"></a>添加Patch端口</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port br-int patch-tun -- <span class="built_in">set</span> interface patch-tun <span class="built_in">type</span>=patch options:peer=patch-int</span><br><span class="line">ovs-vsctl add-port br-tun patch-int -- <span class="built_in">set</span> interface patch-int <span class="built_in">type</span>=patch options:peer=patch-tun</span><br></pre></td></tr></table></figure>
+<h4 id="添加VLAN端口"><a href="#添加VLAN端口" class="headerlink" title="添加VLAN端口"></a>添加VLAN端口</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port br-int <span class="built_in">test</span>-port tag=1 -- <span class="built_in">set</span> Interface <span class="built_in">test</span>-port <span class="built_in">type</span>=internal</span><br></pre></td></tr></table></figure>
+<h4 id="添加VXLAN"><a href="#添加VXLAN" class="headerlink" title="添加VXLAN"></a>添加VXLAN</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port br-tun vxlan-ac121f0e -- <span class="built_in">set</span> interface vxlan-ac121f0e <span class="built_in">type</span>=vxlan option:df_default=<span class="string">"true"</span> option:in_key=flow option:local_ip=172.18.31.14 option:out_key=flow option:remote_ip=<span class="string">"172.18.31.17"</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置Fail-mode"><a href="#设置Fail-mode" class="headerlink" title="设置Fail-mode"></a>设置Fail-mode</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl <span class="built_in">set</span>-fail-mode ovs-switch standalone</span><br><span class="line">ovs-vsctl <span class="built_in">set</span>-fail-mode ovs-switch secure</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="5-镜像端口设置"><a href="#5-镜像端口设置" class="headerlink" title="5. 镜像端口设置"></a>5. 镜像端口设置</h3><h4 id="特定端口镜像设置"><a href="#特定端口镜像设置" class="headerlink" title="特定端口镜像设置"></a>特定端口镜像设置</h4><p>设置镜像端口的主要作用就是利用tcpdump进行抓包</p>
+<p>首先要添加虚拟网络适配器<code>dumm0</code>并启用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip link add name dumm0 <span class="built_in">type</span> dummy</span><br><span class="line">ip link <span class="built_in">set</span> dev dumm0 up</span><br></pre></td></tr></table></figure>
+<p>抓取网桥<code>test-bridge</code>的端口<code>test-port</code>的数据包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port <span class="built_in">test</span>-bridge dumm0</span><br><span class="line">ovs-vsctl -- <span class="built_in">set</span> Bridge <span class="built_in">test</span>-bridge mirrors=@m \</span><br><span class="line">-- --id=@dumm0 get Port dumm0  \</span><br><span class="line">-- --id=@<span class="built_in">test</span>-port get Port <span class="built_in">test</span>-port \</span><br><span class="line">-- --id=@m create Mirror name=ovsMirror \</span><br><span class="line">select-dst-port=@<span class="built_in">test</span>-port \</span><br><span class="line">select-src-port=@<span class="built_in">test</span>-port \</span><br><span class="line">output-port=@dumm0 select_all=1</span><br></pre></td></tr></table></figure>
+<p>查看镜像端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ovs-vsctl list Mirror </span></span><br><span class="line">_uuid               : b073490c-5a64-4d80-93ca-534f29c09027  </span><br><span class="line">external_ids        : &#123;&#125;  </span><br><span class="line">name                : ovsMirror  </span><br><span class="line">output_port         : 6b80f606-516c-4304-91a3-0217b02e408b  </span><br><span class="line">output_vlan         : []  </span><br><span class="line">select_all          : <span class="literal">false</span>  </span><br><span class="line">select_dst_port     : [b3ef508f-cdca-4a42-921e-9a96fffff98b]  </span><br><span class="line">select_src_port     : [b3ef508f-cdca-4a42-921e-9a96fffff98b]  </span><br><span class="line">select_vlan         : []  </span><br><span class="line">statistics          : &#123;tx_bytes=24430, tx_packets=380&#125;</span><br></pre></td></tr></table></figure>
+<p>删除镜像端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl clear bridge <span class="built_in">test</span>-bridge mirrors</span><br></pre></td></tr></table></figure>
+<h4 id="整个网桥镜像设置"><a href="#整个网桥镜像设置" class="headerlink" title="整个网桥镜像设置"></a>整个网桥镜像设置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl -- --id=@m create mirror name=ovsMirror \</span><br><span class="line">  -- add bridge <span class="built_in">test</span>-bridge mirrors @m \</span><br><span class="line">  -- --id=@dumm0 get port dumm0 \</span><br><span class="line">  -- <span class="built_in">set</span> mirror mymirror select_all=<span class="literal">true</span> output-port=@dumm0</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="6-参考"><a href="#6-参考" class="headerlink" title="6. 参考"></a>6. 参考</h3><ul>
+<li><a href="http://www.rendoumi.com/chun-shou-dong-she-zhi-open-vswitchde-mirror-port/" target="_blank" rel="noopener">http://www.rendoumi.com/chun-shou-dong-she-zhi-open-vswitchde-mirror-port/</a></li>
+<li><a href="http://openvswitch.org/" target="_blank" rel="noopener">http://openvswitch.org/</a></li>
+<li><a href="http://www.rendoumi.com/open-vswitchzhong-de-patch-portshi-shi-yao-yi-ji-zen-yao-yong/" target="_blank" rel="noopener">http://www.rendoumi.com/open-vswitchzhong-de-patch-portshi-shi-yao-yi-ji-zen-yao-yong/</a></li>
+<li><a href="http://fishcried.com/2016-02-09/openvswitch-ops-guide/" target="_blank" rel="noopener">http://fishcried.com/2016-02-09/openvswitch-ops-guide/</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/openstack/" rel="tag"># openstack</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/12/OpenStack Neutron介绍/" rel="next" title="OpenStack Neutron介绍">
+                <i class="fa fa-chevron-left"></i> OpenStack Neutron介绍
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/20/PPTP over IKEv2/" rel="prev" title="PPTP over IKEv2 配置">
+                PPTP over IKEv2 配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-OVS介绍"><span class="nav-number">1.</span> <span class="nav-text">1. OVS介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-基本概念"><span class="nav-number">2.</span> <span class="nav-text">2. 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Packet"><span class="nav-number">2.1.</span> <span class="nav-text">Packet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bridge"><span class="nav-number">2.2.</span> <span class="nav-text">Bridge</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Port"><span class="nav-number">2.3.</span> <span class="nav-text">Port</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Interface"><span class="nav-number">2.4.</span> <span class="nav-text">Interface</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlowTable"><span class="nav-number">2.5.</span> <span class="nav-text">FlowTable</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-流表（FlowTable）"><span class="nav-number">3.</span> <span class="nav-text">3. 流表（FlowTable）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#流表定义"><span class="nav-number">3.1.</span> <span class="nav-text">流表定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流表匹配顺序"><span class="nav-number">3.2.</span> <span class="nav-text">流表匹配顺序</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-命令指南"><span class="nav-number">4.</span> <span class="nav-text">4. 命令指南</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#组件"><span class="nav-number">4.1.</span> <span class="nav-text">组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">4.2.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加Patch端口"><span class="nav-number">4.3.</span> <span class="nav-text">添加Patch端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加VLAN端口"><span class="nav-number">4.4.</span> <span class="nav-text">添加VLAN端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加VXLAN"><span class="nav-number">4.5.</span> <span class="nav-text">添加VXLAN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置Fail-mode"><span class="nav-number">4.6.</span> <span class="nav-text">设置Fail-mode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-镜像端口设置"><span class="nav-number">5.</span> <span class="nav-text">5. 镜像端口设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特定端口镜像设置"><span class="nav-number">5.1.</span> <span class="nav-text">特定端口镜像设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#整个网桥镜像设置"><span class="nav-number">5.2.</span> <span class="nav-text">整个网桥镜像设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-参考"><span class="nav-number">6.</span> <span class="nav-text">6. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

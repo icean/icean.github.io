@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. 背景介绍实验室的网络拓扑大致如图1-1  红色为服务器区，IP地址段为172.18.0.0/16 绿色的办公区，IP地址段为10.30.0.0/19 黄色区域用为终端服务器区，同时接入服务器区网络和办公区网络  访问策略为  办公区不能直接访问服务器区，办公区终端需以远程桌面的方式登录终端服务器区Windows服务器，然后在远程桌面中访问服务器区，远程桌面登录凭据为非Administrato">
+<meta name="keywords" content="IKEv2,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Strongswan Linux host-to-host 配置">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/02/Strongswan Linux host-to-host/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. 背景介绍实验室的网络拓扑大致如图1-1  红色为服务器区，IP地址段为172.18.0.0/16 绿色的办公区，IP地址段为10.30.0.0/19 黄色区域用为终端服务器区，同时接入服务器区网络和办公区网络  访问策略为  办公区不能直接访问服务器区，办公区终端需以远程桌面的方式登录终端服务器区Windows服务器，然后在远程桌面中访问服务器区，远程桌面登录凭据为非Administrato">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/1-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/2-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.794Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Strongswan Linux host-to-host 配置">
+<meta name="twitter:description" content="1. 背景介绍实验室的网络拓扑大致如图1-1  红色为服务器区，IP地址段为172.18.0.0/16 绿色的办公区，IP地址段为10.30.0.0/19 黄色区域用为终端服务器区，同时接入服务器区网络和办公区网络  访问策略为  办公区不能直接访问服务器区，办公区终端需以远程桌面的方式登录终端服务器区Windows服务器，然后在远程桌面中访问服务器区，远程桌面登录凭据为非Administrato">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/02/Strongswan Linux host-to-host/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Strongswan Linux host-to-host 配置 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/02/Strongswan Linux host-to-host/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Strongswan Linux host-to-host 配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-02 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-02T16:29:00+08:00">2017-03-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-背景介绍"><a href="#1-背景介绍" class="headerlink" title="1. 背景介绍"></a>1. 背景介绍</h3><p>实验室的网络拓扑大致如图1-1</p>
+<ul>
+<li>红色为<span style="color:red"><strong>服务器区</strong></span>，IP地址段为<code>172.18.0.0/16</code></li>
+<li>绿色的<span style="color:green"><strong>办公区</strong></span>，IP地址段为<code>10.30.0.0/19</code></li>
+<li>黄色区域用为<span style="color:orange"><strong>终端服务器区</strong></span>，同时接入<span style="color:red"><strong>服务器区</strong></span>网络和<span style="color:green"><strong>办公区</strong></span>网络</li>
+</ul>
+<p>访问策略为</p>
+<ul>
+<li><span style="color:green"><strong>办公区</strong></span>不能直接访问<span style="color:red"><strong>服务器区</strong></span>，<span style="color:green"><strong>办公区</strong></span>终端需以远程桌面的方式登录<span style="color:orange"><strong>终端服务器区</strong></span>Windows服务器，然后在远程桌面中访问<span style="color:red"><strong>服务器区</strong></span>，远程桌面登录凭据为非Administrator账户，登录平局需要申请。</li>
+<li><span style="color:orange"><strong>终端服务器区</strong></span>的Windows服务器不配置任何网络转发服务</li>
+<li><span style="color:orange"><strong>终端服务器区</strong></span>的防火墙控制<span style="color:red"><strong>服务器区</strong></span>对外部网络的访问，默认情况下，防火墙不转发任何<span style="color:red"><strong>服务器区</strong></span>的请求</li>
+<li><span style="color:red"><strong>服务器区</strong></span>的某些服务器需要访问外部网络，在<span style="color:orange"><strong>终端服务器区</strong></span>的防火墙上配置服务器白名单，以NAT的方式转发服务器的流量，鉴于是NAT方式访问外部网络，所以<span style="color:green"><strong>办公区</strong></span>仍然无法访问这些<span style="color:red"><strong>服务器区</strong></span>中的服务器</li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/strongswan_linux_host_to_host/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 实验室网络拓扑</strong></center>
+
+<p>在<span style="color:green"><strong>办公区</strong></span>连接Windows远程桌面，在远程桌面中访问<span style="color:red"><strong>服务器区</strong></span>是为了保障服务安全，因为远程桌面的体验确实不尽人意，因此在<span style="color:green"><strong>办公区</strong></span>可以直接访问<span style="color:red"><strong>服务器区</strong></span>的服务器，可以提高用户体验！</p>
+<a id="more"></a>
+<hr>
+<h3 id="2-理论基础"><a href="#2-理论基础" class="headerlink" title="2. 理论基础"></a>2. 理论基础</h3><ul>
+<li><span style="color:orange"><strong>终端服务器区</strong></span>的防火墙允许<span style="color:red"><strong>服务器区</strong></span>的服务器访问外部网络，也允许其访问<span style="color:green"><strong>办公区</strong></span>，也没有访问端口限制</li>
+<li>在<span style="color:green"><strong>办公区</strong></span>和<span style="color:red"><strong>服务器区</strong></span>之间的两台主机之间搭建一条VPN链路，逻辑上，使得<span style="color:red"><strong>服务器区</strong></span>的服务器和<span style="color:green"><strong>办公区</strong></span>同在一个局域网IP地址段，如图2-1所示，绿色虚线为VPN链路</li>
+<li><span style="color:green"><strong>办公区</strong></span>可以直接访问<span style="color:red"><strong>服务器区</strong></span>连接VPN链路的服务器，通过访问该服务器，也可以间接地访问其他<span style="color:red"><strong>服务器区</strong></span>的服务器</li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/strongswan_linux_host_to_host/2-1.jpg" alt="2-1"></center><center style="color:purple"><strong>图2-1 实验室网络拓扑</strong></center>
+
+<hr>
+<h3 id="3-实现步骤"><a href="#3-实现步骤" class="headerlink" title="3. 实现步骤"></a>3. 实现步骤</h3><h4 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h4><p>假设<span style="color:red"><strong>服务器区</strong></span>的服务器为Carol，<span style="color:green"><strong>办公区</strong></span>的服务器为Moon</p>
+<table>
+<thead>
+<tr>
+<th>服务器</th>
+<th>所在区域</th>
+<th>IP地址</th>
+<th>操作系统</th>
+<th>VPN角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Moon</td>
+<td>办公区</td>
+<td>10.30.8.8</td>
+<td>CentOS 6</td>
+<td>服务器</td>
+</tr>
+<tr>
+<td>Carol</td>
+<td>服务器区</td>
+<td>172.18.31.13</td>
+<td>CentOS 7</td>
+<td>客户端</td>
+</tr>
+</tbody>
+</table>
+<h4 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h4><p>在Moon和Carol之间搭建IKEv2 VPN，因此需要在Moon和Carol上均编译安装Strongswan，其中Moon（服务器）的Strongswan需要编译farp插件，farp插件可以让Carol获取<code>10.30.0.0/19</code>地址段的虚拟IP，这样Carol相当于<span style="color:green"><strong>办公区</strong></span>的完全网络成员了，如图3-1所示。Carol（客户端）不需要编译安装farp插件，具体如何编译安装以及配置Strongswan，具体参见</p>
+<ul>
+<li><a href="http://blog.kompaz.win/2017/01/26/CentOS%206.x7.x%20Strongswan%205.5.1%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85+Freeradius%E9%AA%8C%E8%AF%81/">CentOS 6.x/7.x Strongswan 5.5.1编译安装 + Freeradius验证</a></li>
+<li><a href="http://blog.kompaz.win/2017/01/26/IKEv2%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9D%99%E6%80%81NAT%20+%20Freeradius%E9%AA%8C%E8%AF%81%20+%20%E6%B5%81%E9%87%8F%E5%88%86%E7%A6%BB%E5%AE%9E%E9%AA%8C/">IKEv2服务器静态NAT + Freeradius验证 + 流量分离实验</a></li>
+</ul>
+<p>Moon同样需要安装并配置Freeradius用于VPN验证，具体参见</p>
+<ul>
+<li><a href="http://blog.kompaz.win/2017/01/18/CentOS%206.x%20Freeradius%203.0.12%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/">CentOS 6.x Freeradius 3.0.12编译安装</a></li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg" alt="3-1"></center><center style="color:purple"><strong>图3-1 逻辑拓扑</strong></center>
+
+<h4 id="Moon-服务器-配置"><a href="#Moon-服务器-配置" class="headerlink" title="Moon(服务器)配置"></a>Moon(服务器)配置</h4><h5 id="IKEv2-VPN基础配置"><a href="#IKEv2-VPN基础配置" class="headerlink" title="IKEv2 VPN基础配置"></a>IKEv2 VPN基础配置</h5><ul>
+<li>生成自签名CA证书</li>
+<li>利用自签名CA签发服务器证书</li>
+<li>配置Freeradius服务验证</li>
+<li>开放防火墙UDP的500、4500端口</li>
+<li>开启Linux转发</li>
+</ul>
+<h5 id="ipsec-conf配置"><a href="#ipsec-conf配置" class="headerlink" title="ipsec.conf配置"></a>ipsec.conf配置</h5><p><strong>ipsec.conf</strong>配置如下所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">config setup</span><br><span class="line">     strictcrlpolicy = no   #不验证CA是否为自签名</span><br><span class="line">     uniqueids = no</span><br><span class="line"></span><br><span class="line">conn %default             #默认设置</span><br><span class="line">    ikelifetime=60m</span><br><span class="line">    keylife=20m</span><br><span class="line">    rekeymargin=3m</span><br><span class="line">    keyingtries=1</span><br><span class="line">    keyexchange=ikev2</span><br><span class="line"></span><br><span class="line">conn rw-eap</span><br><span class="line">    left=10.30.8.8               #服务器地址</span><br><span class="line">    leftid=&quot;C=CN, O=ACS, CN=10.30.8.8&quot;    </span><br><span class="line">                                 #验证ID，用于标识这个连接，接入客户端根据这个ID匹配该连接，该ID也是服务器证书信息</span><br><span class="line">    leftsubnet=10.30.0.0/19      #只访问10.30.0.0这段地址，其他流量仍然走默认网关</span><br><span class="line">    leftcert=server.cert.pem     #服务器证书</span><br><span class="line">    leftauth=pubkey</span><br><span class="line">    leftfirewall=no  </span><br><span class="line">    rightauth=eap-radius         #验证方式</span><br><span class="line">    rightsendcert=never</span><br><span class="line">    right=%any                   #客户端匹配任何地址</span><br><span class="line">    auto=add</span><br><span class="line"></span><br><span class="line">conn carol</span><br><span class="line">    also=rw-eap</span><br><span class="line">    rightid=carol@10.30.8.8      #客户端验证ID以及域</span><br><span class="line">    rightsourceip=10.30.30.13    #客户端配分的IP地址，固定了连接方便，DHCP每次IP地址可能不一样，也可以使用%dhcp字段</span><br></pre></td></tr></table></figure>
+<h5 id="Freeradius验证条目添加"><a href="#Freeradius验证条目添加" class="headerlink" title="Freeradius验证条目添加"></a>Freeradius验证条目添加</h5><p>Freeradius插入验证条目，其中<a href="mailto:`carol@10.30.8.8" target="_blank" rel="noopener">`carol@10.30.8.8</a><code>为用户@域验证，</code>Cleartext-Password<code>为属性，这里为密码，</code>:=<code>为属性赋值，</code>rootroot`具体的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">carol@10.30.8.8	Cleartext-Password	:=	rootroot</span><br></pre></td></tr></table></figure>
+<h5 id="服务启动"><a href="#服务启动" class="headerlink" title="服务启动"></a>服务启动</h5><p>配置完毕后，启动ipsec服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipsec start</span><br></pre></td></tr></table></figure>
+<h4 id="Carol-客户端-配置"><a href="#Carol-客户端-配置" class="headerlink" title="Carol(客户端)配置"></a>Carol(客户端)配置</h4><h5 id="CA证书安装"><a href="#CA证书安装" class="headerlink" title="CA证书安装"></a>CA证书安装</h5><p>因为Moon（服务器）的服务器证书是自签名CA签发的，所以客户端要手动信任这个自签名CA，将服务器CA证书拷贝到<code>/usr/local/etc/ipsec.d/cacerts/</code>目录下，启动ipsec服务后会自动加载该CA证书</p>
+<h5 id="ipsec-conf"><a href="#ipsec-conf" class="headerlink" title="ipsec.conf"></a>ipsec.conf</h5><p>客户端<strong>ipsec.conf</strong>的配置文件如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">config setup</span><br><span class="line">     strictcrlpolicy=no</span><br><span class="line">     uniqueids = no</span><br><span class="line"></span><br><span class="line">conn %default</span><br><span class="line">    ikelifetime=60m</span><br><span class="line">    keylife=20m</span><br><span class="line">    rekeymargin=3m</span><br><span class="line">    keyingtries=1</span><br><span class="line">    keyexchange=ikev2</span><br><span class="line"></span><br><span class="line">conn home</span><br><span class="line">    left=%defaultroute           #因为客户端为nat网络，所以使用defaultroute字段</span><br><span class="line">    leftsourceip=%config         #服务器使用farp插件，所以用%config字段</span><br><span class="line">    leftid=carol@10.30.8.8       #客户端验证ID，与Freeradius中的验证条目用户名一致</span><br><span class="line">    leftauth=eap </span><br><span class="line">    right=10.30.8.8              #服务器IP地址</span><br><span class="line">    rightid=&quot;C=CN, O=ACS, CN=10.30.8.8&quot;  </span><br><span class="line">    rightsubnet=10.30.0.0/19     #可以访问服务器端的IP地址段</span><br><span class="line">    rightauth=pubkey</span><br><span class="line">    auto=add</span><br></pre></td></tr></table></figure>
+<h5 id="ipsec-secret"><a href="#ipsec-secret" class="headerlink" title="ipsec.secret"></a>ipsec.secret</h5><p>这里存放客户端所使用用户名和密码，用于登录时进行验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">carol@10.30.8.8 : EAP &quot;rootroot&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="服务启动-1"><a href="#服务启动-1" class="headerlink" title="服务启动"></a>服务启动</h5><p>启动ipsec服务器，然后启动home连接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ipsec start</span><br><span class="line">ipsec up home</span><br></pre></td></tr></table></figure>
+<p>最后出现如下提示信息，说明连接成功，客户端的虚拟IP地址为10.30.30.13，为<span style="color:green"><strong>办公区</strong></span>的IP地址范围</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">……</span><br><span class="line">authentication of &apos;C=CN, O=ACS, CN=10.30.8.8&apos; with EAP successful</span><br><span class="line">IKE_SA home[1] established between 172.18.31.13[carol@10.30.8.8]...10.30.8.8[C=CN, O=ACS, CN=10.30.8.8]</span><br><span class="line">scheduling reauthentication in 3311s</span><br><span class="line">maximum IKE_SA lifetime 3491s</span><br><span class="line">installing new virtual IP 10.30.30.13</span><br><span class="line">CHILD_SA home&#123;1&#125; established with SPIs c88917d1_i c895cb68_o and TS 10.30.30.13/32 === 10.30.0.0/19</span><br><span class="line">connection &apos;home&apos; established successfully</span><br></pre></td></tr></table></figure>
+<h4 id="路由信息查看"><a href="#路由信息查看" class="headerlink" title="路由信息查看"></a>路由信息查看</h4><p>连接成功建立后，在Carol上使用ifconfig命令并不能看任何VPN虚拟适配器的信息，但是可以看到路由信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ip route list table 220</span></span><br><span class="line">10.30.0.0/19 via 172.18.31.254 dev ens2f0  proto static  src 10.30.30.13</span><br></pre></td></tr></table></figure>
+<h4 id="办公区连接"><a href="#办公区连接" class="headerlink" title="办公区连接"></a>办公区连接</h4><ul>
+<li><span style="color:green"><strong>办公区</strong></span>的任何终端上，可以通过IP地址<code>10.30.30.13</code>SSH登录位于<span style="color:red"><strong>服务器区</strong></span>的Carol</li>
+<li>若想登录<span style="color:red"><strong>服务器区</strong></span>其他服务器，可以先SSH登录Carol，再SSH登录其他服务器</li>
+</ul>
+<h3 id="4-实验总结"><a href="#4-实验总结" class="headerlink" title="4. 实验总结"></a>4. 实验总结</h3><p>重要的前提条件</p>
+<ul>
+<li><span style="color:orange"><strong>终端服务器区</strong></span>的防火墙只针对<span style="color:red"><strong>服务器区</strong></span>的服务器以IP地址形式进行过滤，而没有具体到服务以及端口</li>
+<li><span style="color:red"><strong>服务器区</strong></span>之间都属于一个大局域网，没有做任何VLAN以及访问控制</li>
+</ul>
+<p>配置过程中碰到的一些问题</p>
+<ul>
+<li>最开始不知道怎么在CentOS上以客户端的形式连接IKEv2 VPN，经过调研，Strongswan可以作为服务端，同时也可以完美地作为客户端</li>
+<li>知道以Strongswan作为客户端之后，不知道怎么启动客户端进行连接服务器，经过调研，获悉在ipsec服务启动后，使用命令<code>ipsec up xxx</code>启动连接，xxx为在ipsec.conf中配置连接的名称。<code>ipsec down xxx</code>为关闭连接命令</li>
+<li>Freeradius问题，因为验证的用户名为<a href="mailto:`carol@10.30.8.8" target="_blank" rel="noopener">`carol@10.30.8.8</a><code>，其中</code>carol<code>为用户名，</code>10.30.8.8<code>为域（realm），但是在Freeradius配置域失败，索性就在用户名中直接填入</code><a href="mailto:carol@10.30.8.8" target="_blank" rel="noopener">carol@10.30.8.8</a><code>，没想到这样可以验证成功，具体查看Freeradius的验证过程，使用</code>radius -X<code>查看输出的debug信息。另外一个思路是在</code>ipsec.conf<code>以及</code>ipsec.secret`中去掉域信息，可以验证成功，但是IKEv2的SA建立会有问题</li>
+<li>NAT问题，因为客户端是NAT网络，carol的<strong>ipsec.conf</strong>的<code>left</code>字段填写错误，查看过官方文档后，正确的字段为<code>left= %defaultroute</code></li>
+<li>farp插件问题，carol的<strong>ipsec.conf</strong>的<code>leftsourceip</code>字段填写错误，仔细查看官方文档之后，正确的字段为<code>leftsourceip=%config</code></li>
+<li>Moon的<strong>ipsec.conf</strong>的<code>leftid</code>字段问题，该字段填写IP地址等，例如<code>10.30.8.8</code>，客户端的rightid也填写<code>10.30.8.8</code>，Moon端日志提示无法找到IKEv2 peer，如果把leftid改为服务器证书信息，例如<code>leftid=&quot;C=CN, O=ACS, CN=10.30.8.8&quot;</code>  ，则可以</li>
+<li>查看Strongswan的日志信息很重要，同时仔细参考官方给出的配置样例</li>
+</ul>
+<h3 id="5-参考"><a href="#5-参考" class="headerlink" title="5. 参考"></a>5. 参考</h3><ul>
+<li><a href="https://www.strongswan.org/testing/testresults4/ikev2/double-nat/index.html" target="_blank" rel="noopener">https://www.strongswan.org/testing/testresults4/ikev2/double-nat/index.html</a></li>
+<li><a href="https://www.strongswan.org/testing/testresults4/ikev2/farp/index.html" target="_blank" rel="noopener">https://www.strongswan.org/testing/testresults4/ikev2/farp/index.html</a></li>
+<li><a href="https://www.strongswan.org/testing/testresults4/ikev2/rw-eap-peap-radius/index.html" target="_blank" rel="noopener">https://www.strongswan.org/testing/testresults4/ikev2/rw-eap-peap-radius/index.html</a></li>
+<li><a href="https://wiki.strongswan.org/projects/strongswan/wiki/ConnSection" target="_blank" rel="noopener">https://wiki.strongswan.org/projects/strongswan/wiki/ConnSection</a></li>
+<li><a href="http://www.cisco.com/c/en/us/support/docs/network-management/remote-access/117257-config-ios-vpn-strongswan-00.html" target="_blank" rel="noopener">http://www.cisco.com/c/en/us/support/docs/network-management/remote-access/117257-config-ios-vpn-strongswan-00.html</a></li>
+<li><a href="https://wiki.strongswan.org/projects/strongswan/wiki/IntroductiontostrongSwan" target="_blank" rel="noopener">https://wiki.strongswan.org/projects/strongswan/wiki/IntroductiontostrongSwan</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/IKEv2/" rel="tag"># IKEv2</a>
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/01/Windows自动获取壁纸/" rel="next" title="Windows自动获取壁纸">
+                <i class="fa fa-chevron-left"></i> Windows自动获取壁纸
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/08/Tmux 配置使用/" rel="prev" title="Tmux配置使用">
+                Tmux配置使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-背景介绍"><span class="nav-number">1.</span> <span class="nav-text">1. 背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-理论基础"><span class="nav-number">2.</span> <span class="nav-text">2. 理论基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现步骤"><span class="nav-number">3.</span> <span class="nav-text">3. 实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验环境"><span class="nav-number">3.1.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#软件安装"><span class="nav-number">3.2.</span> <span class="nav-text">软件安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Moon-服务器-配置"><span class="nav-number">3.3.</span> <span class="nav-text">Moon(服务器)配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#IKEv2-VPN基础配置"><span class="nav-number">3.3.1.</span> <span class="nav-text">IKEv2 VPN基础配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ipsec-conf配置"><span class="nav-number">3.3.2.</span> <span class="nav-text">ipsec.conf配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Freeradius验证条目添加"><span class="nav-number">3.3.3.</span> <span class="nav-text">Freeradius验证条目添加</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#服务启动"><span class="nav-number">3.3.4.</span> <span class="nav-text">服务启动</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Carol-客户端-配置"><span class="nav-number">3.4.</span> <span class="nav-text">Carol(客户端)配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CA证书安装"><span class="nav-number">3.4.1.</span> <span class="nav-text">CA证书安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ipsec-conf"><span class="nav-number">3.4.2.</span> <span class="nav-text">ipsec.conf</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ipsec-secret"><span class="nav-number">3.4.3.</span> <span class="nav-text">ipsec.secret</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#服务启动-1"><span class="nav-number">3.4.4.</span> <span class="nav-text">服务启动</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由信息查看"><span class="nav-number">3.5.</span> <span class="nav-text">路由信息查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#办公区连接"><span class="nav-number">3.6.</span> <span class="nav-text">办公区连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-实验总结"><span class="nav-number">4.</span> <span class="nav-text">4. 实验总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-参考"><span class="nav-number">5.</span> <span class="nav-text">5. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

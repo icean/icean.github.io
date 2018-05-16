@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Wireshark TCP抓包总结">
+<meta name="keywords" content="network">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wireshark TCP抓包总结">
+<meta property="og:url" content="http://blog.kompaz.win/2015/12/23/Wireshark TCP抓包总结/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="Wireshark TCP抓包总结">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-1.png">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.2.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-3.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-4.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-5.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.927Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Wireshark TCP抓包总结">
+<meta name="twitter:description" content="Wireshark TCP抓包总结">
+<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2015/12/23/Wireshark TCP抓包总结/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Wireshark TCP抓包总结 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2015/12/23/Wireshark TCP抓包总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Wireshark TCP抓包总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2015-12-23 09:21:25" itemprop="dateCreated datePublished" datetime="2015-12-23T09:21:25+08:00">2015-12-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/学习/" itemprop="url" rel="index"><span itemprop="name">学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">Wireshark TCP抓包总结</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-TCP"><a href="#1-TCP" class="headerlink" title="1.TCP"></a>1.TCP</h3><h4 id="连接状态标记字段"><a href="#连接状态标记字段" class="headerlink" title="连接状态标记字段"></a>连接状态标记字段</h4><ul>
+<li>SYN表示建立连接</li>
+<li>FIN表示关闭连接</li>
+<li>ACK表示响应</li>
+<li>PSH表示有DATA数据传输</li>
+<li>RST表示连接重置</li>
+</ul>
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span></p>
+<ol>
+<li>ACK是可能与SYN，FIN等同时使用的，比如SYN和ACK可能同时为1，它表示的就是建立连接之后的响应。</li>
+<li>如果只是单个的一个SYN，它表示的只是建立连接。</li>
+<li>TCP的几次握手就是通过这样的ACK表现出来的。</li>
+<li>但SYN与FIN是不会同时为1的，因为前者表示的是建立连接，而后者表示的是断开连接。</li>
+<li>RST一般是在FIN之后才会出现为1的情况，表示的是连接重置。</li>
+<li>一般地，当出现FIN包或RST包时，可以认为客户端与服务器端断开了连接；而当出现SYN和SYN＋ACK包时，可以认为客户端与服务器建立了一个连接。</li>
+<li>PSH为1的情况，一般只出现在 DATA内容不为0的包中，也就是说PSH为1表示的是有真正的TCP数据包内容被传递。</li>
+<li>TCP的连接建立和连接关闭，都是通过请求－响应的模式完成的。</li>
+</ol>
+</blockquote>
+<h4 id="所有标记字段"><a href="#所有标记字段" class="headerlink" title="所有标记字段"></a>所有标记字段</h4><ul>
+<li>SYN(synchronous)建立联机</li>
+<li>ACK(acknowledgement)确认</li>
+<li>PSH(push)传送</li>
+<li>FIN(finish)结束</li>
+<li>RST(reset) 重置</li>
+<li>URG(urgent)紧急</li>
+<li>Sequence number顺序号码</li>
+<li>Acknowledge number()确认号码</li>
+</ul>
+<h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><ul>
+<li>第一次握手：主机A发送位码为syn＝1，随机产生seq number=1234567的数据包到服务器，主机B由SYN=1知道，A要求建立联机；</li>
+<li>第二次握手：主机B收到请求后要确认联机信息，向A发送ack number=(主机A的seq+1)，syn=1，ack=1，随机产生seq=7654321的包；</li>
+<li>第三次握手：主机A收到后检查ack number是否正确，即第一次发送的seq number+1，以及位码ack是否为1，若正确，主机A会再发送ack number=(主机B的seq+1)，ack=1，主机B收到后确认seq值与ack=1则连接建立成功。</li>
+</ul>
+<h4 id="TCP常见错误状态"><a href="#TCP常见错误状态" class="headerlink" title="TCP常见错误状态"></a>TCP常见错误状态</h4><ul>
+<li>TCP previous segment lost（TCP先前的分片丢失）</li>
+<li>TCP acked lost segment（TCP应答丢失）</li>
+<li>TCP window update（TCP窗口更新）</li>
+<li>TCP dup ack（TCP重复应答）</li>
+<li>TCP keep alive（TCP保持活动）</li>
+<li>TCP retransmission（TCP重传）</li>
+<li>TCP ACKed unseen segument （TCP看不见确认应答）</li>
+<li>TCP port numbers reused（TCP端口重复使用）</li>
+<li>TCP retransmission（TCP重传）</li>
+<li>TCP fast retransmission (TCP快速重传)</li>
+<li>TCP Previoussegment lost（发送方数据段丢失）</li>
+<li>TCP spurious retransmission(TCP伪重传)</li>
+</ul>
+<hr>
+<h3 id="2-wireshark过滤器"><a href="#2-wireshark过滤器" class="headerlink" title="2.wireshark过滤器"></a>2.wireshark过滤器</h3><h4 id="捕捉过滤器-CaptureFilters"><a href="#捕捉过滤器-CaptureFilters" class="headerlink" title="捕捉过滤器(CaptureFilters)"></a>捕捉过滤器(CaptureFilters)</h4><p>用于决定将什么样的信息记录在捕捉结果中。</p>
+<pre><code>语法： Protocol Direction    Host(s)    Value Logical Operations Other expression   
+例子： tcp dst 10.1.1.1 80 and tcp dst 10.2.2.2 3128
+</code></pre><blockquote>
+<p><span style="color:green"><strong>示例：</strong></span><br>(host 10.4.1.12 or src net 10.6.0.0/16) and tcp dst port range 200-10000 and dst net 10.0.0.0/8<br>捕捉IP为10.4.1.12或者源IP位于网络10.6.0.0/16，目的IP的TCP端口号在200至10000之间，并且目的IP位于网络 10.0.0.0/8内的所有封包。</p>
+</blockquote>
+<ul>
+<li><p>Protocol（协议）:<br>  可能值: ether, fddi, ip, arp, rarp, decnet, lat, sca, moprc, mopdl, tcp and udp.<br>  如果没指明协议类型，则默认为捕捉所有支持的协议。</p>
+</li>
+<li><p>Direction（方向）:<br>  可能值: src, dst, src and dst, src or dst<br>  如果没指明方向，则默认使用 “src or dst” 作为关键字。<br>  “host 10.2.2.2″与”src or dst host 10.2.2.2”等价。</p>
+</li>
+<li><p>Host(s):<br>  可能值：net, port, host, portrange.<br>  默认使用”host”关键字，”src 10.1.1.1”与”src host 10.1.1.1”等价。</p>
+</li>
+<li><p>Logical Operations（逻辑运算）:<br>  可能值：not, and, or.<br>  否(not”)具有最高的优先级。或(“or”)和与(“and”)具有相同的优先级，运算时从左至右进行。<br>  “not tcp port 3128 and tcp port 23″与”(not tcp port 3128) and tcp port 23″等价。<br>  “not tcp port 3128 and tcp port 23″与”not (tcp port 3128 and tcp port 23)”不等价。   </p>
+</li>
+</ul>
+<h4 id="显示过滤器-DisplayFilters"><a href="#显示过滤器-DisplayFilters" class="headerlink" title="显示过滤器(DisplayFilters)"></a>显示过滤器(DisplayFilters)</h4><p>用于在捕捉结果中进行详细查找。</p>
+<pre><code>语法：Protocol String1 String2 Comparison operator Value Logical Operations Other expression
+例子：http request method == &quot;POST&quot; or icmp.type
+</code></pre><blockquote>
+<p><span style="color:red"><strong>提示：</strong></span><br>wireshark过滤支持比较运算符、逻辑运算符，内容过滤时还能使用位运算。<br>如果过滤器的语法是正确的，表达式的背景呈绿色。如果呈红色，说明表达式有误。</p>
+</blockquote>
+<ul>
+<li>依据协议过滤时:<br>  可直接通过协议来进行过滤，也能依据协议的属性值进行过滤。</li>
+<li>按协议进行过滤:<br>  snmp || dns || icmp    显示SNMP或DNS或ICMP封包。</li>
+<li><p>按协议的属性值进行过滤:<br>  ip.addr == 10.1.1.1<br>  ip.src != 10.1.2.3 or ip.dst != 10.4.5.6<br>  ip.src == 10.230.0.0/16    显示来自10.230网段的封包。<br>  tcp.port == 25 显示来源或目的TCP端口号为25的封包。<br>  tcp.dstport == 25 显示目的TCP端口号为25的封包。<br>  http.request.method== “POST” 显示post请求方式的http封包。<br>  http.host == “tracker.1ting.com” 显示请求的域名为tracker.1ting.com的http封包。<br>  tcp.flags.syn == 0×02 显示包含TCP SYN标志的封包。</p>
+</li>
+<li><p>深度字符串匹配</p>
+<p>  <code>contains: Does the protocol, field or slice contain a value</code>  </p>
+</li>
+</ul>
+<blockquote>
+<p><span style="color:green"><strong>示例：</strong></span><br><code>tcp contains &quot;http&quot;</code> 显示payload中包含”http”字符串的tcp封。<br><code>http.request.uri contains &quot;online&quot;</code> 显示请求的uri包含”online”的http封包。</p>
+</blockquote>
+<ul>
+<li><p>特定偏移处值的过滤</p>
+<blockquote>
+<p><span style="color:green"><strong>示例：</strong></span><br>tcp[20:3] == 47:45:54<br>16进制形式，tcp头部一般是20字节，所以这个是对payload的前三个字节进行过滤<br>http.host[0:4] == “trac”</p>
+</blockquote>
+</li>
+<li><p>过滤中函数的使用（upper、lower）</p>
+<p>  upper(string-field) - converts a string field to uppercase<br>  lower(string-field) - converts a string field to lowercase</p>
+</li>
+</ul>
+<blockquote>
+<p><span style="color:green"><strong>示例：</strong></span><br>upper(http.request.uri) contains “ONLINE”</p>
+</blockquote>
+<hr>
+<h3 id="3-wireshark-TCP数据"><a href="#3-wireshark-TCP数据" class="headerlink" title="3.wireshark TCP数据"></a>3.wireshark TCP数据</h3><h4 id="数据流追踪"><a href="#数据流追踪" class="headerlink" title="数据流追踪"></a>数据流追踪</h4><p>一下所有的wireshark都是以2.0为例子，点击任意一个TCP协议传输的数据帧，右键选择追踪流，选择TCP或者SSL，则可以追踪这个TCP连接的数据流。如图3-1所示。之后可以观察到这个TCP数据流传输的数据，并可以把数据保存。</p>
+<p><span style="color:purple">图3-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-1.png" alt=""></p>
+<h4 id="端点（Endpoints）"><a href="#端点（Endpoints）" class="headerlink" title="端点（Endpoints）"></a>端点（Endpoints）</h4><p>Statistics（统计） → Endpoints是统计当前抓包文件的重要工具，如图3-2所示，可以查看TCP/IP以及UDP等协议的统计结果，也可以根据统计结果进行过滤。</p>
+<p><span style="color:purple">图3-2</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.jpg" alt=""></p>
+<h4 id="序号-时间（Stevens）"><a href="#序号-时间（Stevens）" class="headerlink" title="序号-时间（Stevens）"></a>序号-时间（Stevens）</h4><p>Statistics（统计） → TCP流图形 → 时间序列（Stevens），可以查看当前文件中某一个TCP时间序列图形，使用PgUP/PgDN切换TCP数据流，使用D键切换目的地址和源地址。如图3-2.2所示。   </p>
+<p>也可在切换到其他数据统计，例如图3-2.2红色圈出部分。</p>
+<p><span style="color:purple">图3-2.2</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.2.jpg" alt=""></p>
+<h4 id="IO图表"><a href="#IO图表" class="headerlink" title="IO图表"></a>IO图表</h4><p>Statistics（统计） → IO图表可以创建一些自定义统计数据，其界面如图3-3所示，以bytes in flight为例子。首先选择过滤器过滤数据包，</p>
+<p><span style="color:purple">图3-3</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-3.jpg" alt=""></p>
+<ul>
+<li>名称：如图3-3中1所示，可以根据需要，写对应的名字。</li>
+<li>显示过滤器：如图3-3中2所示，可以选取一个过滤器对包进行过滤，图中示例选取的过滤器为一个TCP连接中发发送端的所有数据帧，<code>ip.src==172.25.221.2 &amp;&amp; tcp.port==53400</code>。具体情况根据作图要求填入对应的过滤器。</li>
+<li>样式：根据作图需要，使用不同的样式，图中3以点状为例。</li>
+<li>Y轴：选取Y轴的统计方式，如图3-4所示。</li>
+<li>Y字段: 根据需求，填入对应的字段，本示例中填入的为tcp.analysis.bytes_in_flight，可以填入任意的过滤器，例如tcp，ip，http等等。</li>
+<li>间隔: 根据需求，选择对应到时间间隔，本示例中，选取了缺省的1秒为时间间隔，由于选取的数据包发送时间密度较大，集中在1秒之内，所以出的图像很不明显，将时间间隔调整为0.01秒，图像图3-5所示。</li>
+</ul>
+<p><span style="color:purple">图3-4</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-4.jpg" alt=""></p>
+<p><span style="color:purple">图3-5</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-5.jpg" alt=""></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/01/小米路由器mini 刷 PandoraBox/" rel="next" title="小米路由器mini刷PandoraBox">
+                <i class="fa fa-chevron-left"></i> 小米路由器mini刷PandoraBox
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/19/NetGear刷回原生系统/" rel="prev" title="NetGear刷回固件">
+                NetGear刷回固件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-TCP"><span class="nav-number">1.</span> <span class="nav-text">1.TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#连接状态标记字段"><span class="nav-number">1.1.</span> <span class="nav-text">连接状态标记字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#所有标记字段"><span class="nav-number">1.2.</span> <span class="nav-text">所有标记字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三次握手"><span class="nav-number">1.3.</span> <span class="nav-text">三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP常见错误状态"><span class="nav-number">1.4.</span> <span class="nav-text">TCP常见错误状态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-wireshark过滤器"><span class="nav-number">2.</span> <span class="nav-text">2.wireshark过滤器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#捕捉过滤器-CaptureFilters"><span class="nav-number">2.1.</span> <span class="nav-text">捕捉过滤器(CaptureFilters)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#显示过滤器-DisplayFilters"><span class="nav-number">2.2.</span> <span class="nav-text">显示过滤器(DisplayFilters)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-wireshark-TCP数据"><span class="nav-number">3.</span> <span class="nav-text">3.wireshark TCP数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据流追踪"><span class="nav-number">3.1.</span> <span class="nav-text">数据流追踪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#端点（Endpoints）"><span class="nav-number">3.2.</span> <span class="nav-text">端点（Endpoints）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#序号-时间（Stevens）"><span class="nav-number">3.3.</span> <span class="nav-text">序号-时间（Stevens）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IO图表"><span class="nav-number">3.4.</span> <span class="nav-text">IO图表</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

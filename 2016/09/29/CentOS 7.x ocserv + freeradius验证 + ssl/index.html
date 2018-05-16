@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="CentOS 7.x ocserv + freeradius验证 + SSL">
+<meta name="keywords" content="vpn,linux,ocserv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 7.x ocserv + freeradius验证 + SSL">
+<meta property="og:url" content="http://blog.kompaz.win/2016/09/29/CentOS 7.x ocserv + freeradius验证 + ssl/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="CentOS 7.x ocserv + freeradius验证 + SSL">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://i.imgur.com/aUSEeOG.png">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.189Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CentOS 7.x ocserv + freeradius验证 + SSL">
+<meta name="twitter:description" content="CentOS 7.x ocserv + freeradius验证 + SSL">
+<meta name="twitter:image" content="http://i.imgur.com/aUSEeOG.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/09/29/CentOS 7.x ocserv + freeradius验证 + ssl/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>CentOS 7.x ocserv + freeradius验证 + SSL | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/09/29/CentOS 7.x ocserv + freeradius验证 + ssl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CentOS 7.x ocserv + freeradius验证 + SSL
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-09-29 09:49:19" itemprop="dateCreated datePublished" datetime="2016-09-29T09:49:19+08:00">2016-09-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">CentOS 7.x ocserv + freeradius验证 + SSL</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-ocserv安装"><a href="#1-ocserv安装" class="headerlink" title="1.ocserv安装"></a>1.ocserv安装</h3><h4 id="yum安装相关软件"><a href="#yum安装相关软件" class="headerlink" title="yum安装相关软件"></a>yum安装相关软件</h4><p>在CentOS7中，可以直接使用yum安装ocserv</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release -y</span><br><span class="line">yum install -y ocserv</span><br></pre></td></tr></table></figure>
+<h4 id="自签名证书生成"><a href="#自签名证书生成" class="headerlink" title="自签名证书生成"></a>自签名证书生成</h4><h5 id="创建相关文件夹"><a href="#创建相关文件夹" class="headerlink" title="创建相关文件夹"></a>创建相关文件夹</h5><p>ocserv服务的启动需要证书，这里介绍的是如何使用自签证书。首先创建相关文件夹</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /etc/ocserv/ssl/private          </span><br><span class="line">mkdir -p /etc/ocserv/ssl/ca               </span><br><span class="line">mkdir -p /etc/ocserv/ssl/server           </span><br><span class="line">mkdir -p /etc/ocserv/ssl/user             </span><br><span class="line">mkdir -p /etc/ocserv/ssl/crl</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>private</code> 保存服务器私钥</li>
+<li><code>ca</code>      保存CA证书</li>
+<li><code>server</code>  保存服务器证书</li>
+<li><code>user</code>    保存用户证书</li>
+<li><code>crl</code>     保存用户吊销证书链</li>
+</ul>
+<h5 id="创建自签CA"><a href="#创建自签CA" class="headerlink" title="创建自签CA"></a>创建自签CA</h5><p>创建自签名CA私钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/private</span><br><span class="line">certtool --generate-privkey --outfile ca-key.pem</span><br></pre></td></tr></table></figure>
+<p>创建自签CA模版，其中$1为参数，该参数为本机的域名或者IP，如果以域名登录，例如VPS域名为<code>test.com</code>，则<code>cn=&quot;test.com&quot;</code>，organization字段随意填写，可以和cn一样，然后生成CA模版。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/ca</span><br><span class="line">cat &lt;&lt; EOF &gt; ca.tmpl</span><br><span class="line">  cn = <span class="string">"test.com"</span></span><br><span class="line">  organization = <span class="string">"test.com"</span></span><br><span class="line">  serial = 1</span><br><span class="line">  expiration_days = 3650</span><br><span class="line">  ca</span><br><span class="line">  signing_key</span><br><span class="line">  cert_signing_key</span><br><span class="line">  crl_signing_key</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>创建CA</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/ca</span><br><span class="line">certtool --generate-self-signed --load-privkey ../private/ca-key.pem \</span><br><span class="line">--template ca.tmpl --outfile ca-cert.pem</span><br></pre></td></tr></table></figure>
+<h5 id="创建服务器证书"><a href="#创建服务器证书" class="headerlink" title="创建服务器证书"></a>创建服务器证书</h5><p>创建服务器私钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/private</span><br><span class="line">certtool --generate-privkey --outfile server-key.pem</span><br></pre></td></tr></table></figure>
+<p>创建服务器模板，其中$1为参数，该参数为本机的域名或者IP，如果以域名登录，例如VPS域名为<code>test.com</code>，则<code>cn=&quot;test.com&quot;</code>，organization字段随意填写，可以和cn一样，然后生成服务器证书模板</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/server</span><br><span class="line">cat &lt;&lt; EOF &gt; server.tmpl</span><br><span class="line">  cn = <span class="string">"test.com"</span></span><br><span class="line">  organization  = <span class="string">"test.com"</span></span><br><span class="line">  expiration_days = 3650</span><br><span class="line">  signing_key</span><br><span class="line">  encryption_key </span><br><span class="line">  tls_www_server</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>生成服务器证书</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/server</span><br><span class="line">certtool --generate-certificate --load-privkey ../private/server-key.pem  \</span><br><span class="line">--load-ca-certificate ../ca/ca-cert.pem --load-ca-privkey ../private/ca-key.pem \</span><br><span class="line">--template server.tmpl --outfile server-cert.pem</span><br></pre></td></tr></table></figure>
+<p>自签名服务器证书在此配置完成。</p>
+<h4 id="使用授权证书"><a href="#使用授权证书" class="headerlink" title="使用授权证书"></a>使用授权证书</h4><h5 id="申请证书"><a href="#申请证书" class="headerlink" title="申请证书"></a>申请证书</h5><p>授权证书可以从<a href="https://buy.wosign.com/" target="_blank" rel="noopener">沃通</a>或者<a href="https://startssl.com" target="_blank" rel="noopener">startssl</a>、<a href="https://letsencrypt.org/" target="_blank" rel="noopener">Let’s Encrypt</a>等申请免费的ssl证书。申请证书的大概流程为：</p>
+<ul>
+<li>CSR文件为请求证书的文件，会产生一对公私钥，公钥（pub-key）需要上传给证书颁发结构，私钥（private-key）则要自己保留不能泄露。</li>
+<li>证书颁发结构需要要验证申请人的域名拥有权，证明域名拥有权之后，使用其私钥（signature private-key）申请人上传的pub-lkey进行签名，并把域名等证书信息追加到其中，产生一个证书，例如2_dovzinp3.icean.xxx.crt</li>
+<li>终端用户并不信任这个证书，鉴于这个证书不是权威机构颁发，所以需要证书链，来证明颁发该证书的结构是权威机构认证的。</li>
+<li>证书链为颁发2_dovzinp3.icean.me.crt证书的结构，其上级机构对其公钥进行签名，逐级进行签名，直到顶级CA。</li>
+</ul>
+<h5 id="安装证书"><a href="#安装证书" class="headerlink" title="安装证书"></a>安装证书</h5><p>下载证书的压缩文件包中，解压OtherServer，以startssl为例子，解压出如下图所示。</p>
+<center><img src="http://i.imgur.com/aUSEeOG.png" alt=""></center>
+
+<center style="color:purple"><strong>图1-1 授权证书</strong></center>
+
+<p>假定现在证书的路径仍和自签时候相同，服务器私钥为生成CSR文件所用的私钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mv xxx.key server-key.pem</span><br><span class="line">mv server-key.pem /etc/ocserv/ssl/private</span><br></pre></td></tr></table></figure>
+<p>创建服务器证书，根据证书链的顺序，首先追加服务器证书，然后追加中间证书，最后追加CA证书。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat 2_dovzinp3.icean.me.crt &gt;&gt; server-cert.pem</span><br><span class="line">cat 1_Intermediate.crt &gt;&gt; server-cert.pem</span><br><span class="line">cat root.crt &gt;&gt; server-cert.pem</span><br><span class="line">mv server-cert.pem /etc/ocserv/ssl/server</span><br></pre></td></tr></table></figure>
+<p>ocserv配置</p>
+<h4 id="配置文件修改"><a href="#配置文件修改" class="headerlink" title="配置文件修改"></a>配置文件修改</h4><p>备份原配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv</span><br><span class="line">mv ocserv.conf ocserv.conf.bak</span><br></pre></td></tr></table></figure>
+<p>创建新的配置文件，no-route列表过长，只是部分给出。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt; EOF &gt;/etc/ocserv/ocserv.conf</span><br><span class="line">    <span class="comment">#auth = "plain[/etc/ocserv/passwd]"</span></span><br><span class="line">    <span class="comment">#本地账户密码验证      </span></span><br><span class="line">    <span class="comment">#auth = "certificate</span></span><br><span class="line">    <span class="comment">#证书验证</span></span><br><span class="line">    <span class="comment">#ca-cert /etc/ocserv/ssl/ca/ca-cert.pem</span></span><br><span class="line">    <span class="comment">#CA证书路径</span></span><br><span class="line">    <span class="comment">#crl = /etc/ocserv/ssl/crl/crl.pem</span></span><br><span class="line">    <span class="comment">#吊销证书链</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#auth = "radius[config=/etc/radiusclient/radiusclient.conf,groupconfig=true]"</span></span><br><span class="line">    <span class="comment"># acct = "radius[config=/etc/radiusclient/radiusclient.conf]"</span></span><br><span class="line">    <span class="comment">#审计采用radius</span></span><br><span class="line">    <span class="comment">#stats-report-time = 360</span></span><br><span class="line">    <span class="comment">#发送审计报告时间间隔</span></span><br><span class="line">    </span><br><span class="line">    max-clients = 16</span><br><span class="line">    max-same-clients = 1</span><br><span class="line">    tcp-port = 443</span><br><span class="line">    udp-port = 443</span><br><span class="line">    keepalive = 32400</span><br><span class="line">    dpd = 90</span><br><span class="line">    mobile-dpd = 1800</span><br><span class="line">    try-mtu-discovery = <span class="literal">true</span></span><br><span class="line">    cisco-client-compat = <span class="literal">true</span></span><br><span class="line">    server-cert = /etc/ocserv/ssl/server/server-cert.pem</span><br><span class="line">    <span class="comment">#服务器证书存储路径</span></span><br><span class="line">    server-key = /etc/ocserv/ssl/private/server-key.pem</span><br><span class="line">    <span class="comment">#服务器私钥存储路径</span></span><br><span class="line">    auth-timeout = 40</span><br><span class="line">    pid-file = /var/run/ocserv.pid</span><br><span class="line">    socket-file = /var/run/ocserv-socket</span><br><span class="line">    run-as-user = nobody</span><br><span class="line">    run-as-group = daemon</span><br><span class="line">    device = vpns</span><br><span class="line">    ipv4-network = 192.168.80.0</span><br><span class="line">    ipv4-netmask = 255.255.255.0</span><br><span class="line">    ipv6-network = 2001:cc0:2020:4008:2333::</span><br><span class="line">    ipv6-prefix = 80</span><br><span class="line">    ipv6-dns = 2001:4860:4860::8888</span><br><span class="line">    ipv6-dns = 2001:4860:4860::8844</span><br><span class="line">    dns = 8.8.8.8</span><br><span class="line">    dns = 8.8.4.4</span><br><span class="line">    no-route = 1.0.0.0/255.192.0.0</span><br><span class="line">    no-route = 1.64.0.0/255.224.0.0</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<h5 id="本地账户密码验证"><a href="#本地账户密码验证" class="headerlink" title="本地账户密码验证"></a>本地账户密码验证</h5><p>此时ocserv.conf前面部分应该为如下所示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">auth = <span class="string">"plain[/etc/ocserv/passwd]"</span></span><br><span class="line"><span class="comment">#本地账户密码验证      </span></span><br><span class="line"><span class="comment">#auth = "certificate</span></span><br><span class="line"><span class="comment">#证书验证</span></span><br><span class="line"><span class="comment">#ca-cert /etc/ocserv/ssl/ca/ca-cert.pem </span></span><br><span class="line"><span class="comment">#CA证书路径</span></span><br><span class="line"><span class="comment">#crl = /etc/ocserv/ssl/crl/crl.pem</span></span><br><span class="line"><span class="comment">#吊销证书链</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#auth = "radius[config=/etc/radiusclient/radiusclient.conf,groupconfig=true]"</span></span><br><span class="line"><span class="comment">#acct = "radius[config=/etc/radiusclient/radiusclient.conf]"</span></span><br><span class="line"><span class="comment">#审计采用radius</span></span><br><span class="line"><span class="comment">#stats-report-time = 360</span></span><br><span class="line"><span class="comment">#发送审计报告时间间隔</span></span><br></pre></td></tr></table></figure>
+<p>需要安装httpd-tools工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y httpd-tools</span><br></pre></td></tr></table></figure>
+<p>创建账户密码，新添加用户也需要执行下面命令，不可省略<code>-c</code>，存储帐号密码文件需路径与配置文件中一致。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ocpasswd -c /etc/ocserv/passwd username</span><br></pre></td></tr></table></figure>
+<h5 id="证书验证"><a href="#证书验证" class="headerlink" title="证书验证"></a>证书验证</h5><p>此时ocserv.conf前面部分应该为如下所示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#auth = "plain[/etc/ocserv/passwd]"</span></span><br><span class="line"><span class="comment">#本地账户密码验证      </span></span><br><span class="line">auth = <span class="string">"certificate</span></span><br><span class="line"><span class="string">#证书验证</span></span><br><span class="line"><span class="string">ca-cert /etc/ocserv/ssl/ca/ca-cert.pem </span></span><br><span class="line"><span class="string">#CA证书路径</span></span><br><span class="line"><span class="string">crl = /etc/ocserv/ssl/crl/crl.pem</span></span><br><span class="line"><span class="string">#吊销证书链</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">#auth = "</span>radius[config=/etc/radiusclient/radiusclient.conf,groupconfig=<span class="literal">true</span>]<span class="string">"</span></span><br><span class="line"><span class="string">#acct = "</span>radius[config=/etc/radiusclient/radiusclient.conf]<span class="string">"</span></span><br><span class="line"><span class="string">#审计采用radius</span></span><br><span class="line"><span class="string">#stats-report-time = 360</span></span><br><span class="line"><span class="string">#发送审计报告时间间隔</span></span><br></pre></td></tr></table></figure>
+<p>使用证书登录不需要每次输入登录密码，在客户端导入证书即可，首先生成用户私钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/private</span><br><span class="line">certtool --generate-privkey --outfile user-key.pem</span><br></pre></td></tr></table></figure>
+<p>创建用户模版</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt; EOF &gt; user.tmpl</span><br><span class="line">  cn = <span class="string">"test.com"</span></span><br><span class="line">  unit = <span class="string">"test.com"</span></span><br><span class="line">  expiration_days = 365</span><br><span class="line">  signing_key</span><br><span class="line">  tls_www_client</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>生成用户证书</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">certtool --generate-certificate --load-privkey ../private/user-key.pem \</span><br><span class="line">--load-ca-certificate ca-cert.pem --load-ca-privkey ../private/ca-key.pem \</span><br><span class="line">--template user.tmpl --outfile user-cert.pem</span><br><span class="line"><span class="comment">#将用户证书和密钥打包为p12格式，在此过程中，需要输入名称和密码，在安装证书时，需要输入该密码进行验证。</span></span><br><span class="line">certtool --to-p12 --load-privkey ../private/user-key.pem --pkcs-cipher \ </span><br><span class="line">3des-pkcs12 --load-certificate user-cert.pem --outfile user-cert.p12 --outder</span><br></pre></td></tr></table></figure>
+<p>批量创建用户证书脚本如下所示，其中需要一个user.tmpl文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#定义变量</span></span><br><span class="line">usr=icean</span><br><span class="line">id=ic-iPhone</span><br><span class="line">day=365</span><br><span class="line"></span><br><span class="line"><span class="comment">#最后相关的文件被放置在以id为名称的文件夹中</span></span><br><span class="line">mkdir <span class="variable">$id</span></span><br><span class="line">cp user.tmpl <span class="variable">$id</span>.tmpl</span><br><span class="line">sed -i <span class="string">"s/example-cn/<span class="variable">$id</span>/g"</span> <span class="variable">$id</span>.tmpl</span><br><span class="line">sed -i <span class="string">"s/example-unit/<span class="variable">$usr</span>/g"</span> <span class="variable">$id</span>.tmpl</span><br><span class="line">sed -i <span class="string">"s/1024/<span class="variable">$day</span>/g"</span> <span class="variable">$id</span>.tmpl</span><br><span class="line">certtool --generate-privkey --outfile <span class="variable">$id</span>-key.pem</span><br><span class="line">certtool --generate-certificate --load-privkey <span class="variable">$id</span>-key.pem \</span><br><span class="line">--load-ca-certificate ca-cert.pem --load-ca-privkey ca-key.pem \</span><br><span class="line">--template <span class="variable">$id</span>.tmpl --outfile <span class="variable">$id</span>-cert.pem</span><br><span class="line">certtool --to-p12 --load-privkey <span class="variable">$id</span>-key.pem --pkcs-cipher 3des-pkcs12 \</span><br><span class="line">--load-certificate <span class="variable">$id</span>-cert.pem --outfile <span class="variable">$id</span>-cert.p12 --outder</span><br><span class="line">mv <span class="variable">$id</span>* <span class="variable">$id</span></span><br></pre></td></tr></table></figure>
+<h5 id="吊销证书"><a href="#吊销证书" class="headerlink" title="吊销证书"></a>吊销证书</h5><p>创建空吊销列表密钥文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/ocserv/ssl/crl</span><br><span class="line">touch revoked.pem</span><br></pre></td></tr></table></figure>
+<p>创建吊销证书模板</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt; EOF &gt; crl.tmpl</span><br><span class="line">  crl_next_update = 9999</span><br><span class="line">  crl_number = 1</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>使用certtool创建空的吊销列表，当revoked.pem为空时，执行如下命令生成crl.pem文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">certtool --generate-crl --load-ca-privkey ../private/ca-key.pem \</span><br><span class="line">--load-ca-certificate ../ca/ca-cert.pem --template crl.tmpl --outfile crl.pem</span><br></pre></td></tr></table></figure>
+<p>吊销一个用户，假设吊销用户为user1，首先将其证书追加到revoked.pem，然后生成新的吊销证书链文件crl.pem</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat ../user/user1/user1-cert.pem &gt;&gt; revoked.pem</span><br><span class="line">certtool --generate-crl --load-ca-privkey ../private/ca-key.pem \</span><br><span class="line">--load-ca-certificate ../ca/ca-cert.pem --load-certificate revoked.pem \</span><br><span class="line">--template crl.tmpl --outfile crl.pem</span><br></pre></td></tr></table></figure>
+<p>若想重新启用一个被吊销的用户，则需要删除revoked.pem其中对应的密钥，然后重新生成吊销证书crl.pem,若revoke.pem被清空，则生成的时候不添加<code>--load-certificate</code>参数。吊销或者重新启用被吊销的证书时需要重启ocserv服务。</p>
+<p>完整CA添加/吊销/重新启用脚本请点击<a href="http://pan.baidu.com/s/1o7Z55Om" target="_blank" rel="noopener">这里</a></p>
+<hr>
+<h3 id="2-其他设置"><a href="#2-其他设置" class="headerlink" title="2.其他设置"></a>2.其他设置</h3><h4 id="iptables设置"><a href="#iptables设置" class="headerlink" title="iptables设置"></a>iptables设置</h4><p>在CentOS下，首先禁用Firewall</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service firewalld stop</span><br><span class="line">chkconfig firewalld off</span><br></pre></td></tr></table></figure>
+<p>安装iptables并添加到开机启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install -y iptables-services</span><br><span class="line">service iptables start</span><br><span class="line">chkconfig iptables on</span><br><span class="line">chkconfig ip6ables on</span><br></pre></td></tr></table></figure>
+<p>添加如下条目到iptables和ip6tables，并保存。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT 2 -p tcp --dport 443 -j ACCEPT</span><br><span class="line">iptables -I INPUT 3 -p udp --dport 443 -j ACCEPT</span><br><span class="line">iptables -I FORWARD 1  -j ACCEPT</span><br><span class="line">ip6tables -I FORWARD 1  -j ACCEPT</span><br><span class="line">iptables -t nat -A POSTROUTING -s  192.168.80.0/24 -o eth0 -j MASQUERADE   <span class="comment">#转发ocserv虚拟子网</span></span><br><span class="line">iptables-save &gt; /etc/sysconfig/iptables</span><br><span class="line">ip6tables-save &gt; /etc/sysconfig/ip6tables</span><br></pre></td></tr></table></figure>
+<h4 id="系统转发设置"><a href="#系统转发设置" class="headerlink" title="系统转发设置"></a>系统转发设置</h4><p>开启IPv4和IPv6转发</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'net.ipv4.ip_forward = 1'</span> &gt;&gt; /etc/sysctl.conf</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'net.ipv6.conf.all.forwarding=1'</span> &gt;&gt; /etc/sysctl.conf</span><br><span class="line">sysctl -p /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-freeradius-设置"><a href="#3-freeradius-设置" class="headerlink" title="3.freeradius 设置"></a>3.freeradius 设置</h3><h4 id="ocserv配置文件"><a href="#ocserv配置文件" class="headerlink" title="ocserv配置文件"></a>ocserv配置文件</h4><p>此时ocserv.conf前面部分应该为如下所示</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#auth = "plain[/etc/ocserv/passwd]"</span></span><br><span class="line"><span class="comment">#本地账户密码验证      </span></span><br><span class="line"><span class="comment">#auth = "certificate</span></span><br><span class="line"><span class="comment">#证书验证</span></span><br><span class="line"><span class="comment">#ca-cert /etc/ocserv/ssl/ca/ca-cert.pem </span></span><br><span class="line"><span class="comment">#CA证书路径</span></span><br><span class="line"><span class="comment">#crl = /etc/ocserv/ssl/crl/crl.pem</span></span><br><span class="line"><span class="comment">#吊销证书链</span></span><br><span class="line"></span><br><span class="line">auth = <span class="string">"radius[config=/etc/radiusclient/radiusclient.conf,groupconfig=true]"</span></span><br><span class="line">acct = <span class="string">"radius[config=/etc/radiusclient/radiusclient.conf]"</span></span><br><span class="line"><span class="comment">#审计采用radius</span></span><br><span class="line">stats-report-time = 360</span><br><span class="line"><span class="comment">#发送审计报告时间间隔</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>groupconfig在配置文件的auth选项中去掉，否则freeradius的验证组radgroupreply属性只能添加<strong>‘Auth-Type’,’:=’,’Local’</strong>, <strong>acct字段为向freeradius服务器发送审计日志</strong>，否则ocserv只有在建立VPN连接之初与freeradius服务器进行验证用户的有效性，<strong>stats-report-time</strong>字段定义了向freeradius服务器发送审计日志的时间间隔。</li>
+<li>groupconfig在配置文件的auth选项保留时，这时候需要在radius服务器的数据库插入IP、DNS等信息。 同时max-same-&gt;clients的应用灵敏度也提高了，之前不开启groupconfig时，max-same-clients的反应灵敏度有问题</li>
+<li>不使用udp端口，可以提高下载速度，但是上传速度下降</li>
+<li>经过验证，ocserv不能使用本地freeradius服务器进行验证,密码不匹配。</li>
+</ul>
+<h4 id="freeradius客户端安装"><a href="#freeradius客户端安装" class="headerlink" title="freeradius客户端安装"></a>freeradius客户端安装</h4><p>安装freeradius客户端以及工具</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install freeradius-client freeradius-utils -y</span><br></pre></td></tr></table></figure>
+<h4 id="freeradius客户端配置"><a href="#freeradius客户端配置" class="headerlink" title="freeradius客户端配置"></a>freeradius客户端配置</h4><p>变量设置，serverHostname为freeradius服务器hostname，serverIP为其IP地址，secret为共享的密钥。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">serverHostname=<span class="variable">$1</span></span><br><span class="line">serverIP=<span class="variable">$2</span></span><br><span class="line">secret=<span class="variable">$3</span></span><br></pre></td></tr></table></figure></p>
+<p>向hosts文件中添加freeradius服务器地址解析</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$serverIP</span> <span class="variable">$serverHostname</span>"</span>&gt;&gt; /etc/hosts</span><br></pre></td></tr></table></figure>
+<p>向freeradius server配置文件中追加freeradius服务器hostname</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$serverHostname</span>/<span class="variable">$serverHostname</span> <span class="variable">$secret</span>"</span> &gt;&gt; /etc/radiusclient/servers</span><br></pre></td></tr></table></figure>
+<p>备份配置文件，将验证服务器从localhost改为其他，如果是时本地freeradius服务器，不需要修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/radiusclient</span><br><span class="line">cp radiusclient.conf radiusclient.conf.bak</span><br><span class="line">sed -i <span class="string">'s/localhost/$serverHostname/g'</span> radiusclient.conf</span><br></pre></td></tr></table></figure>
+<p>修改字典原来路径/usr/share/radiusclient为/etc/radiusclient</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">'s/usr\/share/etc/g'</span> radiusclient.conf</span><br></pre></td></tr></table></figure>
+<p>其他修改，具体原因不了解</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">'s/radius_deadtime/#radius_deadtime/g'</span> radiusclient.conf</span><br><span class="line">sed -i <span class="string">'s/bindaddr */#bindaddr */g'</span> radiusclient.conf</span><br></pre></td></tr></table></figure>
+<p>下载字典，并修改字典文件，注释掉所有dictionary中带IPv6的条目，否则会报错<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/radiusclient</span><br><span class="line">wget http://qingdao.icean.cc:11234/dictionary.microsoft</span><br><span class="line">cp /usr/share/radiusclient/dictionary.merit ./</span><br><span class="line">cp dictionary dictionary.bak </span><br><span class="line"></span><br><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/radiusclient/dictionary</span><br><span class="line">  INCLUDE /etc/radiusclient/dictionary.microsoft</span><br><span class="line">  INCLUDE /etc/radiusclient/dictionary.merit </span><br><span class="line">EOF</span><br></pre></td></tr></table></figure></p>
+<h4 id="freeradius服务器配置"><a href="#freeradius服务器配置" class="headerlink" title="freeradius服务器配置"></a>freeradius服务器配置</h4><p>变量设置，clientHostname为配置ocserv服务的hostname，clientIP为其IP地址，secret为共享密钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">clientHostname= <span class="variable">$1</span></span><br><span class="line">clientIP=<span class="variable">$2</span></span><br><span class="line">secret=<span class="variable">$3</span></span><br></pre></td></tr></table></figure>
+<p>添加客户端地址解析到hosts文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$clientIP</span> <span class="variable">$clientHostname</span>"</span>&gt;&gt; /etc/hosts</span><br></pre></td></tr></table></figure>
+<p>添加设置到clients.conf</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt; EOF &gt;&gt; /etc/raddb/clients.conf</span><br><span class="line">client <span class="variable">$clientHostname</span> &#123;</span><br><span class="line">	ipaddr = <span class="variable">$clientIP</span></span><br><span class="line">	secret= <span class="variable">$secret</span></span><br><span class="line">	require_message_authenticator = no</span><br><span class="line">	nas_type = other </span><br><span class="line">&#125; </span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>服务器端mysql插入相应的验证条目，验证类型为本地，服务种类为Frame-User，其中Acct-Interim-Interval为统计流量的时间间隔，Max-Monthly-Traffic为每个月最大流量，这里以MB为准。<strong>在freeradius3中，不能添加更多属性，否则无法验证成功，这个问题有待探究。</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> radgroupreply (groupname,<span class="keyword">attribute</span>,op,<span class="keyword">value</span>) <span class="keyword">values</span> (<span class="string">'ocserv'</span>,<span class="string">'Auth-Type'</span>,<span class="string">':='</span>,<span class="string">'Local'</span>); </span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> radgroupreply (groupname,<span class="keyword">attribute</span>,op,<span class="keyword">VALUE</span>) <span class="keyword">VALUES</span> (<span class="string">'ocserv'</span>,<span class="string">'Acct-Interim-Interval'</span>,<span class="string">':='</span>,<span class="string">'600'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> radgroupreply (groupname,<span class="keyword">attribute</span>,op,<span class="keyword">VALUE</span>) <span class="keyword">VALUES</span> (<span class="string">'ocserv'</span>,<span class="string">'Max-Monthly-Traffic'</span>,<span class="string">':='</span>,<span class="string">'1024'</span>);</span><br></pre></td></tr></table></figure>
+<p>Max-Monthly-Traffic为用户自定义变量，需要在/etc/raddb/dictionary 中添加如下条目。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ATTRIBUTE Max-Monthly-Traffic 3003 <span class="built_in">integer</span></span><br><span class="line">ATTRIBUTE  Monthly-Traffic-Limit  3004    <span class="built_in">integer</span></span><br></pre></td></tr></table></figure>
+<p>账户和密码</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> radcheck (username,<span class="keyword">attribute</span>,op,<span class="keyword">value</span>) <span class="keyword">values</span> (<span class="string">'ociPhone'</span>,<span class="string">'Cleartext-Password'</span>,<span class="string">':='</span>,<span class="string">'test'</span>);</span><br></pre></td></tr></table></figure>
+<p>将账号加入对应的用户组</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> radusergroup (username,groupname) <span class="keyword">values</span> (<span class="string">'ociPhone'</span>,<span class="string">'ocserv'</span>);</span><br></pre></td></tr></table></figure>
+<p>切换到/etc/raddb/mods-enabled/目录下，建立sqlcounter的软链接，启用sqlcounter模块。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/raddb/mods-enabled/</span><br><span class="line">ln -s ../sqlcounter</span><br></pre></td></tr></table></figure>
+<p>添加新的计数器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sqlcounter monthlytrafficcounter &#123;</span><br><span class="line">    sql_module_instance = sql                                                                                                                </span><br><span class="line">    dialect = <span class="variable">$&#123;modules.sql.dialect&#125;</span></span><br><span class="line"></span><br><span class="line">    counter_name = Monthly-Traffic               <span class="comment">#计数器名字，可以任意填写</span></span><br><span class="line">    check_name = Max-Monthly-Traffic          <span class="comment">#限制最大流量</span></span><br><span class="line">    reply_name = Monthly-Traffic-Limit          <span class="comment">#回复给客户端</span></span><br><span class="line"></span><br><span class="line">    key = User-Name</span><br><span class="line">    reset = monthly</span><br><span class="line"></span><br><span class="line">    <span class="variable">$INCLUDE</span> <span class="variable">$&#123;modconfdir&#125;</span>/sql/counter/<span class="variable">$&#123;dialect&#125;</span>/<span class="variable">$&#123;.:instance&#125;</span>.conf</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>切换到/etc/raddb/mods-config/sql/counter/mysql目录下，添加与计数器同名的配置文件，变量如下</p>
+<ul>
+<li>${key}  与计数器中的key属性队形</li>
+<li>%b 为计数的起始时间，若reset为monthly，则为当前时间的月份第一天，其数值为标准UNIX时间</li>
+<li>%e 为计数的结束时间，若reset为monthly，则为当前时间的月份最后一天，其数值为标准UNIX时间</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/raddb/mods-config/sql/counter/mysql</span><br><span class="line">cat &lt;&lt; EOF &gt;monthlytrafficcounter.conf</span><br><span class="line"> query = <span class="string">"\</span></span><br><span class="line"><span class="string">	 SELECT SUM(acctinputoctets + acctoutputoctets) DIV 1048576 \     #1MB字节数，radacct按照字节统计的。</span></span><br><span class="line"><span class="string">          FROM radacct \</span></span><br><span class="line"><span class="string">         WHERE UserName='%&#123;<span class="variable">$&#123;key&#125;</span>&#125;' \</span></span><br><span class="line"><span class="string">         AND UNIX_TIMESTAMP(AcctStartTime) &gt; '%b'"</span></span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>在/etc/raddb/sites-enabled/default中启用monthlytrafficcounter模块，在authenticate字段中，添加monthlytrafficcounter，然后重启radius服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">authenticate&#123;</span><br><span class="line">  	monthlytrafficcounter</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="4-启动服务"><a href="#4-启动服务" class="headerlink" title="4. 启动服务"></a>4. 启动服务</h3><p>启动ocserv服务，在终端进行测试，使用在freeradius服务器端配置的账号和密码进行登陆。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service ocserv start</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="5-问题拓展"><a href="#5-问题拓展" class="headerlink" title="5. 问题拓展"></a>5. 问题拓展</h3><ul>
+<li><p>ocserv验证对应的radgroupreply无法添加更多属性。</p>
+</li>
+<li><p>ocserv验证对应的radgroupcheck中Simultaneous-Use，限制同时在线人数属性不生效，验证pptp时候也如此。</p>
+</li>
+<li><p>nas-identifier验证没解决，解决如何分辨多台nas，使其只能使用特定的账户验证，而不是可以使用数据库中所有的验证条目。</p>
+</li>
+<li><p>ocserv证书验证能否使用freeradius？</p>
+<p>​</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vpn/" rel="tag"># vpn</a>
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/ocserv/" rel="tag"># ocserv</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/29/Centos 6.x Hadoop 安装/" rel="next" title="Centos 6.x Hadoop 安装">
+                <i class="fa fa-chevron-left"></i> Centos 6.x Hadoop 安装
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/29/OpenWRT 无线中继/" rel="prev" title="OpenWRT 无线中继">
+                OpenWRT 无线中继 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-ocserv安装"><span class="nav-number">1.</span> <span class="nav-text">1.ocserv安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#yum安装相关软件"><span class="nav-number">1.1.</span> <span class="nav-text">yum安装相关软件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自签名证书生成"><span class="nav-number">1.2.</span> <span class="nav-text">自签名证书生成</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#创建相关文件夹"><span class="nav-number">1.2.1.</span> <span class="nav-text">创建相关文件夹</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建自签CA"><span class="nav-number">1.2.2.</span> <span class="nav-text">创建自签CA</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建服务器证书"><span class="nav-number">1.2.3.</span> <span class="nav-text">创建服务器证书</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用授权证书"><span class="nav-number">1.3.</span> <span class="nav-text">使用授权证书</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#申请证书"><span class="nav-number">1.3.1.</span> <span class="nav-text">申请证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#安装证书"><span class="nav-number">1.3.2.</span> <span class="nav-text">安装证书</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件修改"><span class="nav-number">1.4.</span> <span class="nav-text">配置文件修改</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#本地账户密码验证"><span class="nav-number">1.4.1.</span> <span class="nav-text">本地账户密码验证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#证书验证"><span class="nav-number">1.4.2.</span> <span class="nav-text">证书验证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#吊销证书"><span class="nav-number">1.4.3.</span> <span class="nav-text">吊销证书</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-其他设置"><span class="nav-number">2.</span> <span class="nav-text">2.其他设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables设置"><span class="nav-number">2.1.</span> <span class="nav-text">iptables设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统转发设置"><span class="nav-number">2.2.</span> <span class="nav-text">系统转发设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-freeradius-设置"><span class="nav-number">3.</span> <span class="nav-text">3.freeradius 设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ocserv配置文件"><span class="nav-number">3.1.</span> <span class="nav-text">ocserv配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#freeradius客户端安装"><span class="nav-number">3.2.</span> <span class="nav-text">freeradius客户端安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#freeradius客户端配置"><span class="nav-number">3.3.</span> <span class="nav-text">freeradius客户端配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#freeradius服务器配置"><span class="nav-number">3.4.</span> <span class="nav-text">freeradius服务器配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-启动服务"><span class="nav-number">4.</span> <span class="nav-text">4. 启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-问题拓展"><span class="nav-number">5.</span> <span class="nav-text">5. 问题拓展</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

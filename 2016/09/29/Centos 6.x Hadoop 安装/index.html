@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Centos 6.x Hadoop 安装">
+<meta name="keywords" content="linux,hadoop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos 6.x Hadoop 安装">
+<meta property="og:url" content="http://blog.kompaz.win/2016/09/29/Centos 6.x Hadoop 安装/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="Centos 6.x Hadoop 安装">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-tpg.png">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/loopback.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/vm-net1.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/vm-net2.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/vm-net3.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-1.png">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-5.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-6.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-7.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-9.jpg">
+<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-10.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.079Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Centos 6.x Hadoop 安装">
+<meta name="twitter:description" content="Centos 6.x Hadoop 安装">
+<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-tpg.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2016/09/29/Centos 6.x Hadoop 安装/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Centos 6.x Hadoop 安装 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2016/09/29/Centos 6.x Hadoop 安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Centos 6.x Hadoop 安装
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2016-09-29 09:49:19" itemprop="dateCreated datePublished" datetime="2016-09-29T09:49:19+08:00">2016-09-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">Centos 6.x Hadoop 安装</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h3><p>Hadoop可分为<strong>分布式安装</strong>以及<strong>伪分布式安装</strong>，以分布式安装的方式安装Hadoop，可以更好地体验Hadoop的分布式工作的原理。然而，安装设备可能是一个问题，找不到那么多的Linux主机来安装Hadoop，以及要维护这些Linux主机之间的通信，这都是一系列问题。以下为我设计的Hadoop安装方案。</p>
+<ul>
+<li>所需软件<ul>
+<li>VirtualBox</li>
+<li>Xshell</li>
+<li>XFTP</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-逻辑拓扑"><a href="#2-逻辑拓扑" class="headerlink" title="2.逻辑拓扑"></a>2.逻辑拓扑</h3><p>Hadoop的结构为主从结构，即为master和slave，可能有一个master多个slave，也可能存在多个master节点，多个master节点中一个启用，其他的为备用。master节点维护Hadoop的namenode，维护着所存储文件的元数据，slave节点具体存储数据块。其中逻辑拓扑如图1-1所示。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-tpg.png" alt="图1-1"></center><br><center style="color:purple"><strong>图1-1</strong></center>   
+
+<p>其中IP地址表为如表1-1所示。</p>
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP地址</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyPC</td>
+<td>10.10.10.10/24</td>
+<td>windows换汇接口</td>
+</tr>
+<tr>
+<td>Master</td>
+<td>10.10.10.1/24</td>
+<td>桥接到Windows环回接口</td>
+</tr>
+<tr>
+<td>Slave1</td>
+<td>10.10.10.2/24</td>
+<td>桥接到Windows环回接口</td>
+</tr>
+<tr>
+<td>Slave2</td>
+<td>10.10.10.3/24</td>
+<td>桥接到Windows环回接口</td>
+</tr>
+</tbody>
+</table>
+<center style="color:purple"><strong>表1-1</strong></center>
+
+<hr>
+<h3 id="3-环境搭建"><a href="#3-环境搭建" class="headerlink" title="3.环境搭建"></a>3.环境搭建</h3><p>使用VirtualBox创建三个CentOS 6.x的虚拟机，这里建议创建CentOS minimal虚拟机，这样可以节省计算机内存，鉴于Hadoop的所有安装都是在命令行下， 所以极力建议只安装纯命令行的虚拟机。可以先创建一个虚拟机，然后克隆其他两个虚拟机。在虚拟机创建成功之后，关闭虚拟机并修改虚拟机的网卡文件。</p>
+<h4 id="Windows环回端口"><a href="#Windows环回端口" class="headerlink" title="Windows环回端口"></a>Windows环回端口</h4><p>添加Windows环回端口的意义在于可以把Windows加入到Hadoop虚拟机集群之间的局域网中，如何创建Windows环回端口，请自行Google或者Baidu，创建环回端口之后，设置环回端口的静态IP。如图2-1所示,将环回接口IP设置为10.10.10.10/24。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/loopback.jpg" alt=""></center><br><center style="color:purple"><strong>图2-1</strong></center>  
+
+<h4 id="修改虚拟机网口接口"><a href="#修改虚拟机网口接口" class="headerlink" title="修改虚拟机网口接口"></a>修改虚拟机网口接口</h4><p>为每个虚拟机添加三张网卡，第一张网卡VirtualBox配置如图2-2所示，网卡模式为NAT模式，用于虚拟机连接外网，对应CentOS的eth0。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/vm-net1.jpg" alt=""></center><br><center style="color:purple"><strong>图2-2</strong></center>   
+
+<p>第二张网卡如图2-3所示，对应CentOS的eth1，该网卡用于Windows SSH登录虚拟机，为host-only模式。</p>
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>也可以通过其他网卡SSH登录虚拟机，例如下面介绍的第三个网卡。但是仍然推荐通过使用host-only网卡SSH登录虚拟机。</p>
+</blockquote>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/vm-net2.jpg" alt=""></center><br><center style="color:purple"><strong>图2-3</strong></center> 
+
+<p>第三个网卡如图2-4所示，对应CentOS的eth2，用于Windows与Hadoop虚拟机集群之间的通信，也用于hadoop集群之间的通信，该网卡桥接到Windows之前创建的环回端口，这样在逻辑上，三台虚拟机和Windows都在一个局域网中了。   </p>
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>该网卡也可以桥接到Windows的任何一张物理网卡，但是物理网卡可能用于上网，所以推荐桥接到Windows的环回接口，环回接口也不影响Windows正常上网。</p>
+</blockquote>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/vm-net3.jpg" alt=""></center><br><center style="color:purple"><strong>图2-4</strong></center> 
+
+<h4 id="虚拟机网卡设置"><a href="#虚拟机网卡设置" class="headerlink" title="虚拟机网卡设置"></a>虚拟机网卡设置</h4><p>删除克隆虚拟机网卡遗留信息，克隆的虚拟机会重置MAC地址，但是CentOS系统不会自动更新信息，需要清理清理历史网卡信息，删除如图2-5所示的文件。删除该文件之后，重启虚拟机。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-1.png" alt=""></center>   <center style="color:purple"><strong>图2-5</strong></center>
+
+
+<p>以一台虚拟机为例，创建虚拟机网卡文件并修改其中的MAC地址以及IP地址，缺省只有eth0的文件，切换目录到网卡文件下,并创建其他两张网卡文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/sysconfig/network-script</span><br><span class="line">cp ifcfg-eth0 ifcfg-eth1</span><br><span class="line">cp ifcfg-eth0 ifcfg-eth2</span><br></pre></td></tr></table></figure>
+<p>修改ifcfg-eth0<br>​<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi ifcfg-eth0</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DEVICE=eth0</span><br><span class="line">HWADDR=08:00:27:B4:01:1F</span><br><span class="line">TYPE=Ethernet</span><br><span class="line">ONBOOT=yes</span><br><span class="line">BOOTPROTO=dhcp</span><br></pre></td></tr></table></figure>
+<p>MAC地址修改为VirtualBox网卡的MAC地址，该MAC为图2-2中的MAC地址。ONBOOT=yes是必要的，这样网卡会开机启动，获取地址的方式为DHCP。</p>
+<p>修改ifcfg-eth1</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi ifcfg-eth0</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DEVICE=eth1</span><br><span class="line">HWADDR=08:00:27:CB:C7:DE</span><br><span class="line">TYPE=Ethernet</span><br><span class="line">ONBOOT=yes</span><br><span class="line">BOOTPROTO=dhcp</span><br></pre></td></tr></table></figure>
+<p>修改ifcfg-eth2</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi ifcfg-eth0</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DEVICE=eth2</span><br><span class="line">HWADDR=08:00:27:9D:D9:4C</span><br><span class="line">TYPE=Ethernet</span><br><span class="line">ONBOOT=yes</span><br><span class="line">BOOTPROTO=none</span><br><span class="line">IPADDR=10.10.10.1</span><br><span class="line">NETMASK=255.255.255.0</span><br></pre></td></tr></table></figure>
+<p>该网卡地址为静态IP地址。</p>
+<p>设置好三张网卡的信息之后，重启网络服务。<br>​<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service network restart</span><br></pre></td></tr></table></figure></p>
+<h4 id="SSH到虚拟机"><a href="#SSH到虚拟机" class="headerlink" title="SSH到虚拟机"></a>SSH到虚拟机</h4><p>在VirtualBox下查看虚拟机eth1的IP地址<br>​<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig eth1</span><br></pre></td></tr></table></figure></p>
+<p>通过查询的到的IP地址，在Windows下使用xshell SSH到虚拟机，这样可以在xhell下更方便地操作命令行。</p>
+<h4 id="测试网络通信"><a href="#测试网络通信" class="headerlink" title="测试网络通信"></a>测试网络通信</h4><p>在Windows cmd模式下分别ping其他三台虚拟机IP地址，若可以ping通，则进入Hadoop安装的环节，若ping不通，可能的原因如下：</p>
+<ul>
+<li>虚拟机防火墙：关闭虚拟机的防火墙；</li>
+<li>IP地址配置错误：查看虚拟机eth2的IP信息；</li>
+<li>Windows环回接口IP地址与虚拟机eth2的IP不在一个网段。</li>
+</ul>
+<hr>
+<h3 id="4-Hadoop安装"><a href="#4-Hadoop安装" class="headerlink" title="4.Hadoop安装"></a>4.Hadoop安装</h3><h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><p>将<code>hadoop-2.6.0.tar.gz</code>和<code>jdk-7u75-linux-x64.tar</code>以及相关xml文件通过xftp传送不过到虚拟机/root目录下，三台虚拟机都如此操作。文件下载地址请点<a href="http://pan.baidu.com/s/1gdJgh4B" target="_blank" rel="noopener">这里</a>。</p>
+<h4 id="创建hadoop账户"><a href="#创建hadoop账户" class="headerlink" title="创建hadoop账户"></a>创建hadoop账户</h4><p>在三台虚拟机上均创建hadoop账户。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd hadoop</span><br><span class="line">passwd hadoop</span><br></pre></td></tr></table></figure>
+<h4 id="JDK安装"><a href="#JDK安装" class="headerlink" title="JDK安装"></a>JDK安装</h4><p>Hadoop需要JDK的支持，需要在所有的虚拟机节点上安装JDK环境，首先解压安装JDK。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd /opt/</span><br><span class="line">cp /root/jdk-7u75-linux-x64.tar.gz  ./</span><br><span class="line">tar xzf jdk-7u75-linux-x64.tar.gz</span><br><span class="line">cd /opt/jdk1.7.0_75/</span><br><span class="line">alternatives --install /usr/bin/java java /opt/jdk1.7.0_75/bin/java 2</span><br><span class="line">alternatives --config java</span><br><span class="line">alternatives --install /usr/bin/jar jar /opt/jdk1.7.0_75/bin/jar 2</span><br><span class="line">alternatives --install /usr/bin/javac javac /opt/jdk1.7.0_75/bin/javac 2</span><br><span class="line">alternatives --set jar /opt/jdk1.7.0_75/bin/jar</span><br><span class="line">alternatives --set javac /opt/jdk1.7.0_75/bin/javac</span><br></pre></td></tr></table></figure>
+<p>设置设置环境变量。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo 'export JAVA_HOME=/opt/jdk1.7.0_75' &gt;&gt; /etc/profile</span><br><span class="line">echo 'export JRE_HOME=/opt/jdk1.7.0_75/jre' &gt;&gt; /etc/profile</span><br><span class="line">echo 'export PATH=$PATH:/opt/jdk1.7.0_75/bin:/opt/jdk1.7.0_75/jre/bin' &gt;&gt; /etc/profile</span><br></pre></td></tr></table></figure>
+<h4 id="Hadoop基础安装"><a href="#Hadoop基础安装" class="headerlink" title="Hadoop基础安装"></a>Hadoop基础安装</h4><p>首先解压文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /home/hadoop</span><br><span class="line">cp /root/hadoop-2.6.0.tar.gz ./</span><br><span class="line">tar -zxvf hadoop-2.6.0.tar.gz</span><br><span class="line">rm -rf hadoop-2.6.0.tar.gz</span><br><span class="line">mv hadoop-2.6.0 hadoop</span><br></pre></td></tr></table></figure>
+<p>创建tmp文件夹以及节点数据存储文件夹。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd hadoop</span><br><span class="line">mkdir tmp hadoopdata hadoopdata/hdfs hadoopdata/hdfs/datanode1 hadoopdata/hdfs/datanode2 </span><br><span class="line">mkdir hadoopdata/hdfs/namenode1 hadoopdata/hdfs/namenode2</span><br></pre></td></tr></table></figure>
+<p>配置环境变量。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">echo 'export HADOOP_INSTALL=/home/hadoop/hadoop' &gt;&gt;/etc/profile </span><br><span class="line">echo 'export PATH=$&#123;PATH&#125;:$&#123;HADOOP_INSTALL&#125;/bin:$&#123;HADOOP_INSTALL&#125;/sbin' &gt;&gt;/etc/profile </span><br><span class="line">echo 'export HADOOP_MAPRED_HOME=$&#123;HADOOP_INSTALL&#125;' &gt;&gt;/etc/profile </span><br><span class="line">echo 'export HADOOP_COMMON_HOME=$&#123;HADOOP_INSTALL&#125;' &gt;&gt;/etc/profile </span><br><span class="line">echo 'export HADOOP_HDFS_HOME=$&#123;HADOOP_INSTALL&#125;' &gt;&gt;/etc/profile </span><br><span class="line">echo 'export YARN_HOME=$&#123;HADOOP_INSTALLL&#125;' &gt;&gt;/etc/profile </span><br><span class="line">echo 'export HADOOP_COMMON_LIB_NATIVE_DIR=$&#123;HADOOP_INSTALL&#125;/lib/natvie' &gt;&gt;/etc/profile </span><br><span class="line">echo 'export HADOOP_OPTS="-Djava.library.path=$&#123;HADOOP_INSTALL&#125;/lib:$&#123;HADOOP_INSTALL&#125;/lib/native"' &gt;&gt;/etc/profile </span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>很重要，否则无法启动hadoop进程。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo 'export JAVA_HOME=/opt/jdk1.7.0_75' &gt;&gt; hadoop/etc/hadoop/hadoop-env.sh</span><br><span class="line">echo 'export HADOOP_HOME_WARN_SUPPRESS=1' &gt;&gt; hadoop/etc/hadoop/hadoop-env.sh</span><br><span class="line">echo 'export JAVA_HOME=/opt/jdk1.7.0_75' &gt;&gt; hadoop/etc/hadoop/yarn-env.sh</span><br></pre></td></tr></table></figure>
+<h4 id="master节点配置"><a href="#master节点配置" class="headerlink" title="master节点配置"></a>master节点配置</h4><p>对master节点进行一些配置。<br>​<br>关闭iptables，防止其阻碍hadoop节点之间通信。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service iptables stop</span><br><span class="line">chkconfig iptables off</span><br></pre></td></tr></table></figure>
+<p>修改主机hostname为master</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HOSTNAME=master</span><br><span class="line">hostname $HOSTNAME</span><br><span class="line">sed -i "s/^HOSTNAME=.*/HOSTNAME=$HOSTNAME/g" /etc/sysconfig/network</span><br></pre></td></tr></table></figure>
+<p>备份配置文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd /home/hadoop/hadoop/etc/hadoop</span><br><span class="line">mv masters masters.bak</span><br><span class="line">mv slaves slaves.bak</span><br><span class="line">mv core-site.xml core-site.xml.bak</span><br><span class="line">mv hdfs-site.xml hdfs-site.xml.bak</span><br><span class="line">mv mapred-site.xml mapred-site.xml.bak</span><br><span class="line">mv yarn-site.xml yarn-site.xml.bak</span><br></pre></td></tr></table></figure>
+<p>拷贝新的配置文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cp /root/xml/core-site.xml ./</span><br><span class="line">cp /root/xml/hdfs-site.xml ./</span><br><span class="line">cp /root/xml/mapred-site.xml ./</span><br><span class="line">cp /root/xml/yarn-site.xml ./</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>配置文件的内容，请自行参考官网，在这里不进行赘述，配置文件中涉及的参数过多，本文只修改其中一些比较重要的参数。</p>
+</blockquote>
+<p>根据主机的IP地址，修改配置文件，将配置文件core-site.xml、mapred-site.xml、hdfs-site.xml、yarn-site.xml中master_ipaddr字段替换为eth2的IP地址。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">master_ip=$(ifconfig eth2 | awk -F':' '/inet addr/&#123;split($2,_," ");print _[1]&#125;')</span><br><span class="line">sed -i "s/master_ipaddr/$master_ip/g" core-site.xml mapred-site.xml hdfs-site.xml  yarn-site.xml</span><br></pre></td></tr></table></figure>
+<p>修改hdfs-site.xml中的replications字段为2，鉴于有两个slave节点，实际生产环境数量一般为3。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i "s/replications/2/g" hdfs-site.xml</span><br></pre></td></tr></table></figure>
+<p>修改hosts文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mv /etc/hosts /etc/hosts.bak</span><br><span class="line">echo "10.10.10.1 master</span><br><span class="line">10.10.10.2 slave1</span><br><span class="line">10.10.10.3 slave2"&gt;&gt;/etc/hosts</span><br></pre></td></tr></table></figure>
+<p>修改master、slave的IP列表。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /home/hadoop/etc/hadoop</span><br><span class="line">echo "10.10.10.1"&gt;&gt;masters</span><br><span class="line">echo "10.10.10.2</span><br><span class="line">10.10.10.3"&gt;&gt;slaves</span><br></pre></td></tr></table></figure>
+<h4 id="slave节点配置"><a href="#slave节点配置" class="headerlink" title="slave节点配置"></a>slave节点配置</h4><p>步骤与master节点配置基本一致，只有在主机名配置不太一样，$1在执行脚本时手动指定。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HOSTNAME=$1</span><br><span class="line">hostname $HOSTNAME</span><br><span class="line">sed -i "s/^HOSTNAME=.*/HOSTNAME=$HOSTNAME/g" /etc/sysconfig/network</span><br></pre></td></tr></table></figure>
+<h4 id="修改文件属主以及所属组群"><a href="#修改文件属主以及所属组群" class="headerlink" title="修改文件属主以及所属组群"></a>修改文件属主以及所属组群</h4><p>将hadoop的属组以及组群设置为hadoop。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /home/hadoop</span><br><span class="line">chown -R hadoop:hadoop hadoop</span><br><span class="line">chgrp -R hadoop hadoop</span><br></pre></td></tr></table></figure>
+<h4 id="免密码SSH登录"><a href="#免密码SSH登录" class="headerlink" title="免密码SSH登录"></a>免密码SSH登录</h4><p>hadoop集群要求master节点可以免密码SSH登录slave节点，slave节点也可以免密码登录master<br>节点。以master主机为例，首先切换到hadoop账户下。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su hadoop</span><br></pre></td></tr></table></figure>
+<p>生成一对公私钥，全部回车即可，生成的目录在~/.ssh下。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+<p>将生成的公钥 id_rsa.pub 追加到 ~/.ssh/authorized_keys中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ~/.ssh/id_rsa.pub&gt;&gt; ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<p>修改~/.ssh文件权限为600，否则无法免密码登录。这样，master主机就可ssh免密码登录本机，如图3-1所示。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh master</span><br></pre></td></tr></table></figure>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-5.jpg" alt=""></center><br><center style="color:purple"><strong>图3-1</strong></center> 
+
+<p>将master主机的公钥 id_rsa.pub 拷贝到所有slave节点上。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp ~/.ssh/id_rsa.pub hadoop@slave1:~/</span><br><span class="line">scp ~/.ssh/id_rsa.pub hadoop@slave2:~/</span><br></pre></td></tr></table></figure>
+<p>在slave节点下， 把master的 id_rsa.pub 追加到 ~/.ssh/authorized_keys中并删除master 公钥。<br>​<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat ~/id_rsa.pub&gt;&gt; ~/.ssh/authorized_keys</span><br><span class="line">rm -rf ~/id_rsa.pub</span><br></pre></td></tr></table></figure></p>
+<p>这样master节点可以免密码ssh登录所有的slave节点了，如图3-2，图3-3所示。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-6.jpg" alt=""></center><br><center style="color:purple"><strong>图3-2</strong></center>  
+
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-7.jpg" alt=""></center><br><center style="color:purple"><strong>图3-3</strong></center>  
+
+<p>同样的道理，slave节点也生成一对公私钥，并把公钥追加到master的~/.ssh/authorized_keys中，这样slave节点均可免密码ssh登录master节点了。</p>
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>以上关于免密码SSH登录的配置均在master和slave的hadoop账户下进行的， 免密码登录的是主机之间的hadoop账户，若需要root账户之间免密码登录，需要另行配置。还有很重要的一点是~/.ssh文件夹的权限必须是700</p>
+</blockquote>
+<hr>
+<h3 id="5-hadoop启动运行"><a href="#5-hadoop启动运行" class="headerlink" title="5.hadoop启动运行"></a>5.hadoop启动运行</h3><h4 id="脚本启动hadoop"><a href="#脚本启动hadoop" class="headerlink" title="脚本启动hadoop"></a>脚本启动hadoop</h4><p>以下操作均在master节点下<br>格式化master节点，即格式化namenode</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/hadoop/bin/hdfs namenode -format</span><br></pre></td></tr></table></figure>
+<p>启动HDFS服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~/hadoop/sbin/start-dfs.sh</span><br></pre></td></tr></table></figure>
+<p>服务启动成功之后，在浏览器地址栏输入<a href="http://10.10.10.1:50070" target="_blank" rel="noopener">http://10.10.10.1:50070</a>进入hdfs管理页面。如图4-1所示</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-9.jpg" alt=""></center><br><center style="color:purple"><strong>图4-1</strong></center> 
+
+<p>启动yarn服务,用于任务管理。<br>​<br>    ~/hadoop/sbin/start-yarn.sh<br>服务启动成功之后，在浏览器地址栏输入<a href="http://10.10.10.1:50070" target="_blank" rel="noopener">http://10.10.10.1:8088</a>进入mapreduce任务管理页面，如图4-2所示。</p>
+<center><img src="http://qingdao.icean.cc:11234/Imgbed/Hadoop/hadoop-10.jpg" alt=""></center><br><center style="color:purple"><strong>图4-2</strong></center>  
+
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>在主机下可以使用jps命令查看hadoop的相关进程。</p>
+</blockquote>
+<h4 id="hadoop相关操作"><a href="#hadoop相关操作" class="headerlink" title="hadoop相关操作"></a>hadoop相关操作</h4><p>假设HADOOP_HOME已经写入环境变量，则以下操作可以在任何路径执行，若hadoop命令无法执行，请执行source /etc/profile。</p>
+<p>查看文件列表，找到了hdfs中/user下的文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -ls /user</span><br></pre></td></tr></table></figure>
+<p>可以列出hdfs中/user目录下的所有文件（包括子目录下的文件）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -lsr /user</span><br></pre></td></tr></table></figure>
+<p>创建文件目录，查看hdfs中/user目录下再新建一个叫做newDir的新目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -mkdir /user/newDir</span><br></pre></td></tr></table></figure>
+<p>删除文件，删除hdfs中/user目录下一个名叫needDelete的文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -rm /user/needDelete</span><br></pre></td></tr></table></figure>
+<p>删除hdfs中/user目录以及该目录下的所有文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs -rmr /user</span><br></pre></td></tr></table></figure>
+<p>上传文件，上传一个本机/home/admin/newFile的文件到hdfs中/user目录下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs –put /home/admin/newFile /user/</span><br></pre></td></tr></table></figure>
+<p>下载文件，下载hdfs中/user目录下的newFile文件到本机/home/admin/newFile中</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs –get /user/newFile /home/admin/newFile</span><br></pre></td></tr></table></figure>
+<p>查看文件，可以直接在hdfs中直接查看文件，功能与类是cat类似，查看hdfs中/user目录下的newFile文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop fs –cat /home/admin/newFile</span><br></pre></td></tr></table></figure>
+<p>提交MAPREDUCE JOB，原则上说，Hadoop所有的MapReduce Job都是一个jar包。运行一个/home/admin/hadoop/job.jar的MapReduce Job</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar ~/hadoop/job.jar [jobMainClass] [jobArgs]</span><br></pre></td></tr></table></figure>
+<p>杀死某个正在运行的JOB，假设Job_Id为：job_201005310937_0053</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop job -kill job_201005310937_0053</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><span style="color:red"><strong>提示：</strong></span>完整Hadoop安装脚本轻点击<a href="http://pan.baidu.com/s/1dDdSF9R" target="_blank" rel="noopener">这里</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/29/CentOS Minimal X11转发/" rel="next" title="CentOS Minimal X11转发">
+                <i class="fa fa-chevron-left"></i> CentOS Minimal X11转发
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/29/CentOS 7.x ocserv + freeradius验证 + ssl/" rel="prev" title="CentOS 7.x ocserv + freeradius验证 + SSL">
+                CentOS 7.x ocserv + freeradius验证 + SSL <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-简介"><span class="nav-number">1.</span> <span class="nav-text">1.简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-逻辑拓扑"><span class="nav-number">2.</span> <span class="nav-text">2.逻辑拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-环境搭建"><span class="nav-number">3.</span> <span class="nav-text">3.环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows环回端口"><span class="nav-number">3.1.</span> <span class="nav-text">Windows环回端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改虚拟机网口接口"><span class="nav-number">3.2.</span> <span class="nav-text">修改虚拟机网口接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟机网卡设置"><span class="nav-number">3.3.</span> <span class="nav-text">虚拟机网卡设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSH到虚拟机"><span class="nav-number">3.4.</span> <span class="nav-text">SSH到虚拟机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试网络通信"><span class="nav-number">3.5.</span> <span class="nav-text">测试网络通信</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Hadoop安装"><span class="nav-number">4.</span> <span class="nav-text">4.Hadoop安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#准备工作"><span class="nav-number">4.1.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建hadoop账户"><span class="nav-number">4.2.</span> <span class="nav-text">创建hadoop账户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK安装"><span class="nav-number">4.3.</span> <span class="nav-text">JDK安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hadoop基础安装"><span class="nav-number">4.4.</span> <span class="nav-text">Hadoop基础安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#master节点配置"><span class="nav-number">4.5.</span> <span class="nav-text">master节点配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#slave节点配置"><span class="nav-number">4.6.</span> <span class="nav-text">slave节点配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改文件属主以及所属组群"><span class="nav-number">4.7.</span> <span class="nav-text">修改文件属主以及所属组群</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#免密码SSH登录"><span class="nav-number">4.8.</span> <span class="nav-text">免密码SSH登录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-hadoop启动运行"><span class="nav-number">5.</span> <span class="nav-text">5.hadoop启动运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#脚本启动hadoop"><span class="nav-number">5.1.</span> <span class="nav-text">脚本启动hadoop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hadoop相关操作"><span class="nav-number">5.2.</span> <span class="nav-text">hadoop相关操作</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1. 背景介绍关于如何绕过实验室的访问策略，直接访问服务器区服务器，之前的文章Strongswan Linux host-to-host配置 已经介绍过，实现的拓扑如图1-1所示：  服务器区的服务器Carol的IP地址为172.18.31.13/16，办公区Moon的IP地址为10.30.8.8/19 Carol以IKEv2 VPN连接到Moon，获取的办公区虚拟IP地址为10.30.30.13">
+<meta name="keywords" content="vpn,network,pptp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PPTP over IKEv2 配置">
+<meta property="og:url" content="http://blog.kompaz.win/2017/03/20/PPTP over IKEv2/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="1. 背景介绍关于如何绕过实验室的访问策略，直接访问服务器区服务器，之前的文章Strongswan Linux host-to-host配置 已经介绍过，实现的拓扑如图1-1所示：  服务器区的服务器Carol的IP地址为172.18.31.13/16，办公区Moon的IP地址为10.30.8.8/19 Carol以IKEv2 VPN连接到Moon，获取的办公区虚拟IP地址为10.30.30.13">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/pptp_over_ikev2/2-1.jpg">
+<meta property="og:updated_time" content="2018-05-08T01:52:33.775Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PPTP over IKEv2 配置">
+<meta name="twitter:description" content="1. 背景介绍关于如何绕过实验室的访问策略，直接访问服务器区服务器，之前的文章Strongswan Linux host-to-host配置 已经介绍过，实现的拓扑如图1-1所示：  服务器区的服务器Carol的IP地址为172.18.31.13/16，办公区Moon的IP地址为10.30.8.8/19 Carol以IKEv2 VPN连接到Moon，获取的办公区虚拟IP地址为10.30.30.13">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2017/03/20/PPTP over IKEv2/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>PPTP over IKEv2 配置 | Kompass</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Startseite</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archiv</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2017/03/20/PPTP over IKEv2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PPTP over IKEv2 配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Post created: 2017-03-20 16:29:00" itemprop="dateCreated datePublished" datetime="2017-03-20T16:29:00+08:00">2017-03-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Updated at: 2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">in</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-背景介绍"><a href="#1-背景介绍" class="headerlink" title="1. 背景介绍"></a>1. 背景介绍</h3><p>关于如何绕过实验室的访问策略，直接访问<span style="color:red"><strong>服务器区</strong></span>服务器，之前的文章<a href="http://blog.kompaz.win/2017/03/02/Strongswan%20Linux%20host-to-host/"><strong>Strongswan Linux host-to-host配置</strong></a> 已经介绍过，实现的拓扑如图1-1所示：</p>
+<ul>
+<li><span style="color:red"><strong>服务器区</strong></span>的服务器Carol的IP地址为<code>172.18.31.13/16</code>，<span style="color:green"><strong>办公区</strong></span>Moon的IP地址为<code>10.30.8.8/19</code></li>
+<li>Carol以IKEv2 VPN连接到Moon，获取的<span style="color:green"><strong>办公区</strong></span>虚拟IP地址为<code>10.30.30.13</code></li>
+</ul>
+<center><img src="http://blog.kompaz.win/images/strongswan_linux_host_to_host/3-1.jpg" alt="3-1"></center><center style="color:purple"><strong>图1-1 逻辑拓扑</strong></center>
+
+<a id="more"></a>
+<hr>
+<h3 id="2-理论基础"><a href="#2-理论基础" class="headerlink" title="2. 理论基础"></a>2. 理论基础</h3><h4 id="原解决方案"><a href="#原解决方案" class="headerlink" title="原解决方案"></a>原解决方案</h4><p>尽管此时可以从<span style="color:green"><strong>办公区</strong></span>直接访问<span style="color:red"><strong>服务器区</strong></span>的Carol，但是<span style="color:red"><strong>服务器区</strong></span>的服务器众多，如果要访问<span style="color:red"><strong>服务器区</strong></span>的其他服务器，原来的解决方案有两种，分别为：</p>
+<ul>
+<li><p>先SSH登录Carol，再在Carol上以SSH的方式登录其他服务器</p>
+<p>该方式只能SSH登录，但是其他服务器，例如HTTP，并不能通过Carol进行中转</p>
+</li>
+<li><p>在每台服务器上都建立与Moon的IKEv2 VPN连接</p>
+<p>该方式操作开销大，在每台服务器上都需要配置IKEv2，而且要为每个服务器都分配一个<span style="color:green"><strong>办公区</strong></span>的虚拟IP</p>
+</li>
+</ul>
+<p>因此以上两种解决方案均有各自的缺点与限制，因此需要新的方式来提高对<span style="color:red"><strong>服务器区</strong></span>的访问体验</p>
+<h4 id="解决方案1"><a href="#解决方案1" class="headerlink" title="解决方案1"></a>解决方案1</h4><p>使用路由方式，在个人路由器上，添加到<code>172.18.0.0/16</code>的路由，下一跳地址为<code>10.30.30.13</code>，从<span style="color:red"><strong>服务器区</strong></span>返回的路由正常返回。在路由器的使用traceroute结果如下，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@OpenWrt:~<span class="comment"># traceroute 172.18.31.41</span></span><br><span class="line">traceroute to 172.18.31.41 (172.18.31.41), 30 hops max, 38 byte packets</span><br><span class="line"> 1  ikev2.acs.ict.ac.cn (10.30.8.8)  0.310 ms  0.825 ms  0.260 ms</span><br><span class="line"> 2  10.30.0.254 (10.30.0.254)  49.573 ms  0.874 ms  0.703 ms</span><br><span class="line"> 3  192.168.200.1 (192.168.200.1)  1.307 ms  1.313 ms  1.441 ms</span><br><span class="line"> 4  xxx.xxx.43.36 (xxx.xxx.43.36)  1.905 ms  1.651 ms  1.729 ms</span><br><span class="line"> 5  192.168.46.49 (192.168.46.49)  1.425 ms  1.555 ms  1.366 ms</span><br><span class="line"> 6  xxx.xxx.xxx.195 (xxx.xxx.xxx.195)  1.299 ms  1.708 ms  1.676 ms</span><br><span class="line"> 7  xxx.xxx.253.50 (xxx.xxx.253.50)  1.466 ms !N  1.781 ms !N  1.572 ms !N</span><br></pre></td></tr></table></figure>
+<p>经过分析可知</p>
+<ul>
+<li>源主机知道发往<code>172.18.0.0/16</code>的数据包，要发往<code>10.30.30.13</code>，但是首先要发到Moon（<code>10.30.8.8</code>），虽然<code>10.30.30.13</code>在逻辑上为<span style="color:green"><strong>办公区</strong></span>的IP地址，但是在再往下一层看，其还是要通过Moon转发的。</li>
+<li>然后Moon接收到去往目的地为<code>172.18.0.0/16</code>的数据包，Moon并不会把数据包发往<code>10.30.30.13</code>，而是按照自己的路由表进行转发，因此Moon把该数据包转发到了自己的默认路由，因此需要在Moon上手动添加路由</li>
+</ul>
+<p>在Moon上手动添加到<code>172.18.0.0/16</code>的路由条目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># ip route</span></span><br><span class="line">10.30.0.0/19 dev eth0  proto kernel  scope link  src 10.30.7.235 </span><br><span class="line">172.16.0.0/16 dev eth1  proto kernel  scope link  src 172.16.0.235 </span><br><span class="line">169.254.0.0/16 dev eth0  scope link  metric 1002 </span><br><span class="line">169.254.0.0/16 dev eth1  scope link  metric 1003 </span><br><span class="line">default via 10.30.0.254 dev eth0 </span><br><span class="line">[root@localhost ~]<span class="comment"># ip route add 172.18.0.0/16 dev eth0 proto kernel via 10.30.30.13</span></span><br></pre></td></tr></table></figure>
+<p>手动添加路由后，再尝试在Moon上访问<span style="color:red"><strong>服务器区</strong></span>的Carol，出现了路由黑洞！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># traceroute 172.18.31.13</span></span><br><span class="line">traceroute to 172.18.31.13 (172.18.31.13), 30 hops max, 60 byte packets</span><br><span class="line"> 1  10.30.8.8 (10.30.8.8)  3000.424 ms !H  3000.423 ms !H  3000.417 ms !H</span><br></pre></td></tr></table></figure>
+<p>因此放弃该方案！原因未知，<strong>Linux添加路由条目，其指定的下一跳地址为VPN虚拟IP地址时候，出现路由黑洞！</strong></p>
+<h4 id="解决方案2"><a href="#解决方案2" class="headerlink" title="解决方案2"></a>解决方案2</h4><p>原来IKEv2 VPN的基础上，再建立一层PPTP VPN，其逻辑拓扑如图2-1所示</p>
+<center><img src="http://blog.kompaz.win/images/pptp_over_ikev2/2-1.jpg" alt="2-1"></center><center style="color:purple"><strong>图2-1 逻辑拓扑</strong></center>
+
+<p>总体思路如下</p>
+<ul>
+<li>Carol与Moon之间的为第一层为IKEv2 VPN链路，如图2-1绿色部分，使得Carol在逻辑上与<span style="color:green"><strong>办公区</strong></span>处于同一个局域网</li>
+<li>以Carol的<span style="color:green"><strong>办公区</strong></span>虚拟机IP地址<code>10.30.30.13</code>为PPTP VPN服务器地址，<span style="color:green"><strong>办公区</strong></span>主机与<code>10.30.30.13</code>建立第二层PPTP VPN链路，尽管PPTP安全性不高，但是内网之间通信，可以忽略这个问题</li>
+<li>Carol以PPTP VPN服务器的身份，给<span style="color:green"><strong>办公区</strong></span>主机分配的虚拟IP段位于<code>172.18.0.0/16</code>内，因此PPTP VPN连接之后，拥有了访问<span style="color:red"><strong>服务器区</strong></span>地址段的路由</li>
+</ul>
+<hr>
+<h3 id="3-实现步骤"><a href="#3-实现步骤" class="headerlink" title="3. 实现步骤"></a>3. 实现步骤</h3><h4 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h4><p>假设<span style="color:red"><strong>服务器区</strong></span>的服务器仍为Carol，<span style="color:green"><strong>办公区</strong></span>的IKEv2 服务器为Moon，<span style="color:green"><strong>办公区</strong></span>的客户端为Bob</p>
+<table>
+<thead>
+<tr>
+<th>设备</th>
+<th>所在区域</th>
+<th>逻辑所在区域</th>
+<th>IP地址</th>
+<th>操作系统</th>
+<th>VPN角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Moon</td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td>10.30.8.8</td>
+<td>CentOS 6</td>
+<td>IKEv2 VPN服务器IP</td>
+</tr>
+<tr>
+<td>Carol</td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td>172.18.31.13</td>
+<td>CentOS 7</td>
+<td>IKEv2 VPN客户端IP</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td>10.30.30.13</td>
+<td>CentOS 7</td>
+<td>IKEv2 VPN虚拟IP</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td>172.18.29.1</td>
+<td>CentOS 7</td>
+<td>PPTP VPN虚拟网关IP</td>
+</tr>
+<tr>
+<td>Bob</td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td><span style="color:green"><strong>办公区</strong></span></td>
+<td>10.30.5.39</td>
+<td>Windows</td>
+<td>PPTP VPN客户端</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><span style="color:red"><strong>服务器区</strong></span></td>
+<td>172.18.29.2</td>
+<td>Windows</td>
+<td>PPTP VPN虚拟</td>
+</tr>
+</tbody>
+</table>
+<h4 id="软件安装"><a href="#软件安装" class="headerlink" title="软件安装"></a>软件安装</h4><p>在Carol上安装pptp</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install epel-release</span><br><span class="line">yum -y install pptpd</span><br></pre></td></tr></table></figure>
+<h4 id="PPTP服务器配置"><a href="#PPTP服务器配置" class="headerlink" title="PPTP服务器配置"></a>PPTP服务器配置</h4><p>在<code>/etc/ppp/chap-secrets</code>中添加验证条目，内容如下，添加了一个用户名、密码均为test的账户，可以按照这个格式继续添加账户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># client        server  secret                  IP addresses</span></span><br><span class="line"><span class="built_in">test</span> pptpd <span class="built_in">test</span> *</span><br></pre></td></tr></table></figure>
+<p>在 <code>/etc/pptpd.conf</code>中设置虚拟IP网关地址、分配给客户端的虚拟IP地址范围，该虚拟IP在<span style="color:red"><strong>服务器区</strong></span>的IP地址范围内</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">localip 172.18.29.1</span><br><span class="line">remoteip 172.18.29.2-254</span><br></pre></td></tr></table></figure>
+<p>iptables以及内核转发设置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">'net.ipv4.ip_forward = 1'</span>&gt;&gt;/etc/sysctl.conf</span><br><span class="line">sysctl -p</span><br><span class="line">iptables -I INPUT 2 -p tcp --dport 1723 -j ACCEPT</span><br><span class="line">iptables -I INPUT 2 -p gre -j ACCEPT</span><br><span class="line">iptables-save&gt;/etc/sysconfig/iptables</span><br></pre></td></tr></table></figure>
+<p>启动服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service pptpd start</span><br><span class="line">chkconfig pptpd on</span><br></pre></td></tr></table></figure>
+<h4 id="Freeradius验证"><a href="#Freeradius验证" class="headerlink" title="Freeradius验证"></a>Freeradius验证</h4><p>鉴于使用文件添加文件不够方便，而且不方便进行管理，因此可以使用Freeradius进行验证PPTP VPN</p>
+<p>不要使用yum安装<code>radcli</code>，虽然其声明兼容<strong>freeradiusclient</strong>，但是会有一些奇怪的问题</p>
+<p>编译安装<code>freeradiusclient 1.1.7</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget ftp://ftp.freeradius.org/pub/freeradius/freeradius-client-1.1.7.tar.gz</span><br><span class="line">tar xvzf freeradius-client-1.1.7.tar.gz</span><br><span class="line"><span class="built_in">cd</span>  freeradius-client-1.1.7</span><br><span class="line">./configure</span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<p>切换到<strong>freeradiusclient</strong>的配置目录，下载字典，和windows登录PPTP VPN有关</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/etc/radiusclient</span><br><span class="line">wget http://qingdao.icean.cc:11234/dictionary.microsoft</span><br></pre></td></tr></table></figure>
+<p>修改<code>dictionary</code>文件，最后追加如下两行，并删除所有关于IPv6的条目，否则会报错</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt; dictionary &lt;&lt; EOF</span><br><span class="line">INCLUDE /usr/<span class="built_in">local</span>/etc/radiusclient/dictionary.microsoft</span><br><span class="line">INCLUDE /usr/<span class="built_in">local</span>/etc/radiusclient/dictionary.merit </span><br><span class="line">EOF</span><br><span class="line">sed -i <span class="string">'/IPv6/d'</span> dictionary</span><br></pre></td></tr></table></figure>
+<p>注释掉配置文件<code>radiusclient.conf</code>中<code>radius_deadtime</code>、<code>bindaddr</code>字段，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">'s/radius_deadtime/#radius_deadtime/g'</span> radiusclient.conf</span><br><span class="line">sed -i <span class="string">'s/bindaddr/#bindaddr/g'</span> radiusclient.conf</span><br></pre></td></tr></table></figure>
+<p>修改<code>authserver localhost</code>、<code>acctserver localhost</code>字段，将<code>localhost</code>修改为freeradius服务器的IP地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">"s/localhost/<span class="variable">$radiusserver</span>/g"</span> radiusclient.conf</span><br><span class="line">sed -i <span class="string">"s/localhost/<span class="variable">$radiusserver</span>/g"</span> radiusclient.conf</span><br></pre></td></tr></table></figure>
+<p>添加freeradius服务器以及预共享密钥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$radiusserver</span>/<span class="variable">$radiusserver</span>    <span class="variable">$sharekey</span>"</span> &gt;&gt; servers</span><br></pre></td></tr></table></figure>
+<p>修改PPTP配置文件<code>/etc/pptpd.conf</code>、<code>/etc/ppp/options.pptpd</code>，并重启服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">'s/logwtmp//#logwtmp/g'</span> /etc/pptpd.conf</span><br><span class="line">cat &gt;&gt; /etc/ppp/options.pptpd &lt;&lt; EOF</span><br><span class="line">plugin /usr/lib64/pppd/2.4.5/radius.so</span><br><span class="line">plugin /usr/lib64/pppd/2.4.5/radattr.so</span><br><span class="line">radius-config-file /usr/<span class="built_in">local</span>/etc/radiusclient/radiusclient.conf</span><br><span class="line">EOF</span><br><span class="line">service pptpd restart</span><br></pre></td></tr></table></figure>
+<p>freeradius服务器添加客户端，在配置文件夹的<code>clients.conf</code>文件中，添加客户端配置信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">client pptp &#123;                             </span><br><span class="line">    ipaddr = 0.0.0.0                      </span><br><span class="line">    secret= <span class="variable">$sharekey</span>  </span><br><span class="line">    require_message_authenticator = no    </span><br><span class="line">    nastype = other                       </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="静态IP地址分配"><a href="#静态IP地址分配" class="headerlink" title="静态IP地址分配"></a>静态IP地址分配</h4><p>如果想给某个客户端分配静态IP地址，可以在freeradius服务器上进行配置。</p>
+<p>修改freeradius配置文件<code>mods-config/files/authorize</code>，以如下为例，为用户名<code>username</code>，密码为<code>password</code>的客户端分配静态的IP为<code>172.18.42.10</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">username Cleartext-Password := "password"</span><br><span class="line">    Service-Type = Framed-User,</span><br><span class="line">    Framed-Protocol = PPP,</span><br><span class="line">    Framed-IP-Address = 172.18.42.10,                                                                                                                                </span><br><span class="line">    Framed-IP-Netmask = 255.255.0.0,</span><br><span class="line">    Framed-Routing = Broadcast-Listen,</span><br><span class="line">    Framed-Filter-Id = "std.ppp",</span><br><span class="line">    Framed-MTU = 1500,</span><br><span class="line">    Framed-Compression = Van-Jacobsen-TCP-IP</span><br></pre></td></tr></table></figure>
+<h4 id="客户端配置"><a href="#客户端配置" class="headerlink" title="客户端配置"></a>客户端配置</h4><h5 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h5><p>Windows如何设置VPN，请自行Google。但是鉴于Windows的不友好，如果既想连接到<span style="color:red"><strong>服务器区</strong></span>，又不影响正常上网，即不将PPTP链路设置为默认网关。需要进行如下设置：</p>
+<ul>
+<li>配置位置：<strong>控制面板 -&gt; 网络和 Internet -&gt; 网络和共享中心 -&gt; 更改适配器设置</strong></li>
+<li>在新建的 VPN 连接上右键<strong>属性</strong></li>
+<li>切换到<strong>网络</strong>选项卡<ul>
+<li>选择<strong>Internet协议版本4 -&gt; 高级 </strong></li>
+<li>切换到<strong>IP设置</strong>选项卡</li>
+<li>不选择<strong>在远程网络上使用默认网关</strong>，然后保存</li>
+</ul>
+</li>
+<li>再次连接VPN即可生效</li>
+</ul>
+<h5 id="MacOS"><a href="#MacOS" class="headerlink" title="MacOS"></a>MacOS</h5><p>如何设置PPTP VPN请自行Google。在当前实验环境下，MacOS不将PPTP链路设置为默认网关。</p>
+<h5 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h5><p>没有经过设置以及测试，请自行Google</p>
+<hr>
+<h3 id="4-问题总结"><a href="#4-问题总结" class="headerlink" title="4. 问题总结"></a>4. 问题总结</h3><h4 id="选择PPTP原因"><a href="#选择PPTP原因" class="headerlink" title="选择PPTP原因"></a>选择PPTP原因</h4><ul>
+<li><p>尽管有很多其他优秀的VPN，但是PPTP配置简单，轻量。鉴于第一层VPN使用IKEv2，经过测试，不能再用IKEv2 VPN进行叠加。</p>
+</li>
+<li><p>测试过Anyconnect VPN</p>
+<ul>
+<li>Anyconnect的优点为可以在服务器端自定义推送到客户端的路由表</li>
+<li>但是每次Windows 10连接之后，就无法使用IPv6了</li>
+<li>Anyconnect 客户端需要每次输入服务器地址、账户名以及密码</li>
+</ul>
+<p>鉴于无法使用IPv6，很影响体验，所以不采用Anyconnect VPN。</p>
+<p>Windows 其他版本以及Mac、Linux、iOS没有进行过该测试。</p>
+</li>
+</ul>
+<h4 id="OpenWRT问题"><a href="#OpenWRT问题" class="headerlink" title="OpenWRT问题"></a>OpenWRT问题</h4><ul>
+<li><p>在默认情况下，OpenWRT的缺省配置不允许LAN客户端（本地私有网络）以PPTP连接到WAN（外部网络）的服务器。因为PPTP使用GRE协议，该协议为纯IP协议，只使用IP地址作为源和目的，不会识别端口号，因为OpenWRT使用了NAT，所以要安装一个软件包，让OpenWRT支持PPTP NAT</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg install kmod-nf-nathelper-extra</span><br></pre></td></tr></table></figure>
+<p>更多内容，查看<a href="https://wiki.openwrt.org/doc/howto/vpn.nat.pptp" target="_blank" rel="noopener">这里</a></p>
+</li>
+</ul>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td>2017/3/20 16:29</td>
+<td></td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td>2017/6/19 12:58</td>
+<td>添加了pptp freeradius验证</td>
+</tr>
+<tr>
+<td>文档修改2</td>
+<td>2017/12/4 16:25</td>
+<td>添加了客户端静态IP分配</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vpn/" rel="tag"># vpn</a>
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+            <a href="/tags/pptp/" rel="tag"># pptp</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/19/OpenVSwitch基本使用/" rel="next" title="OpenVSwitch基本使用">
+                <i class="fa fa-chevron-left"></i> OpenVSwitch基本使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/24/OpenWRT Shadowsocks+GFWList 流量自动分流/" rel="prev" title="OpenWRT Shadowsocks+GFWList 流量自动分流">
+                OpenWRT Shadowsocks+GFWList 流量自动分流 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">Kategorien</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">Tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-背景介绍"><span class="nav-number">1.</span> <span class="nav-text">1. 背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-理论基础"><span class="nav-number">2.</span> <span class="nav-text">2. 理论基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原解决方案"><span class="nav-number">2.1.</span> <span class="nav-text">原解决方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决方案1"><span class="nav-number">2.2.</span> <span class="nav-text">解决方案1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决方案2"><span class="nav-number">2.3.</span> <span class="nav-text">解决方案2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现步骤"><span class="nav-number">3.</span> <span class="nav-text">3. 实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验环境"><span class="nav-number">3.1.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#软件安装"><span class="nav-number">3.2.</span> <span class="nav-text">软件安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PPTP服务器配置"><span class="nav-number">3.3.</span> <span class="nav-text">PPTP服务器配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Freeradius验证"><span class="nav-number">3.4.</span> <span class="nav-text">Freeradius验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#静态IP地址分配"><span class="nav-number">3.5.</span> <span class="nav-text">静态IP地址分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端配置"><span class="nav-number">3.6.</span> <span class="nav-text">客户端配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Windows"><span class="nav-number">3.6.1.</span> <span class="nav-text">Windows</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MacOS"><span class="nav-number">3.6.2.</span> <span class="nav-text">MacOS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其他"><span class="nav-number">3.6.3.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-问题总结"><span class="nav-number">4.</span> <span class="nav-text">4. 问题总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#选择PPTP原因"><span class="nav-number">4.1.</span> <span class="nav-text">选择PPTP原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OpenWRT问题"><span class="nav-number">4.2.</span> <span class="nav-text">OpenWRT问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">5.</span> <span class="nav-text">修订版本信息</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
