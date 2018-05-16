@@ -100,7 +100,7 @@
 
 
   <meta name="description" content="1. 背景介绍关于如何绕过实验室的访问策略，直接访问服务器区服务器，之前的文章Strongswan Linux host-to-host配置 已经介绍过，实现的拓扑如图1-1所示：  服务器区的服务器Carol的IP地址为172.18.31.13/16，办公区Moon的IP地址为10.30.8.8/19 Carol以IKEv2 VPN连接到Moon，获取的办公区虚拟IP地址为10.30.30.13">
-<meta name="keywords" content="IKEv2,openvpn,vpn,network">
+<meta name="keywords" content="openvpn,IKEv2,vpn,network">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OpenVPN over IKEv2 配置">
 <meta property="og:url" content="http://blog.kompaz.win/2017/12/11/20171211 OpenVPN over IKEv2/index.html">
@@ -398,6 +398,17 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/11/20171211 OpenVPN over IKEv2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/11/20171211 OpenVPN over IKEv2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -659,9 +670,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/IKEv2/" rel="tag"># IKEv2</a>
-          
             <a href="/tags/openvpn/" rel="tag"># openvpn</a>
+          
+            <a href="/tags/IKEv2/" rel="tag"># IKEv2</a>
           
             <a href="/tags/vpn/" rel="tag"># vpn</a>
           
@@ -715,6 +726,16 @@
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
 
   
 
@@ -1058,6 +1079,31 @@
 
   
 
+  
+    <script id="dsq-count-scr" src="https://kompaz.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://blog.kompaz.win/2017/12/11/20171211 OpenVPN over IKEv2/';
+        this.page.identifier = '2017/12/11/20171211 OpenVPN over IKEv2/';
+        this.page.title = 'OpenVPN over IKEv2 配置';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://kompaz.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
 
 
 	
@@ -1069,10 +1115,6 @@
   
 
 
-
-
-
-  
 
 
 
