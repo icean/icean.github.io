@@ -107,19 +107,19 @@
 <meta property="og:site_name" content="Kompass">
 <meta property="og:description" content="CentOS 6.x ocserv IPv6 实验">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/3-1.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/3-2.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/3-3.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-1.png">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-2.png">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-3.png">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-4.png">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-5.png">
-<meta property="og:updated_time" content="2018-05-08T01:52:33.098Z">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/3-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/3-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/3-3.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/4-1.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/4-2.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/4-3.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/4-4.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/openconnect_IPv6/4-5.png">
+<meta property="og:updated_time" content="2018-06-06T05:34:58.374Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS 6.x ocserv IPv6 实验">
 <meta name="twitter:description" content="CentOS 6.x ocserv IPv6 实验">
-<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/3-1.jpg">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/openconnect_IPv6/3-1.jpg">
 
 
 
@@ -377,7 +377,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+                <time title="修改时间：2018-06-06 13:34:58" itemprop="dateModified" datetime="2018-06-06T13:34:58+08:00">2018-06-06</time>
               
             
           </span>
@@ -464,12 +464,12 @@ ipv6-dns = 2001:4860:4860::8844
 </blockquote>
 <hr>
 <h3 id="3-连接测试"><a href="#3-连接测试" class="headerlink" title="3.连接测试"></a>3.连接测试</h3><h4 id="iPhone连接"><a href="#iPhone连接" class="headerlink" title="iPhone连接"></a>iPhone连接</h4><p>iPhone连接成功，成功地获取了IPv4地址和IPv6地址，如图3-1所示。可以进行IPv4访问，但是仍然无法访问IPv6网站。。</p>
-<p><span style="color:purple">图3-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/3-1.jpg" alt=""></p>
+<p><span style="color:purple">图3-1</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/3-1.jpg" alt=""></p>
 <h4 id="PC测试"><a href="#PC测试" class="headerlink" title="PC测试"></a>PC测试</h4><p>PC连接成功，成功地获取IPv4和IPv6地址，如图3-2所示，但是IPv6却无网络连接，如图3-3所示。</p>
-<p><span style="color:purple">图3-2</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/3-2.jpg" alt=""></p>
-<p><span style="color:purple">图3-3</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/3-3.jpg" alt=""></p>
+<p><span style="color:purple">图3-2</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/3-2.jpg" alt=""></p>
+<p><span style="color:purple">图3-3</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/3-3.jpg" alt=""></p>
 <hr>
-<h3 id="4-排错流程"><a href="#4-排错流程" class="headerlink" title="4.排错流程"></a>4.排错流程</h3><h4 id="网关地址寻找"><a href="#网关地址寻找" class="headerlink" title="网关地址寻找"></a>网关地址寻找</h4><strike style="color:red">在vps上通过traceroute6命令来找到vps所在局域网的网关地址，如图4-1所示，第一跳为网关地址。</strike><br>&gt;<span style="color:red"><strong>修订：</strong></span>vps的网关确实为图4-1所圈出的，但是在Anyconnect客户端连接时vps服务器会生成vpns0的网卡，该网卡的地址如下所示。对于接入到vps服务器的Anyconnect客户端而言，其获取的网关地址是vps服务器的虚拟网卡，而不是vps服务器局域网的网关，之前理解为填写vps服务器所在局域网的IPv6地址段，客户端获取的IPv6地址是接入的到vps所在的局域网，其实则不然，因为填写了vps所在局域网的地址池前缀，所以接入到vps服务器的客户端其发送的数据包，都被发送到vpns0这块虚拟网卡之上，但是该网卡IPv6地址与vps的IPv6网关地址冲突，因为数据包无法被转发，所以无法接入vps的Anyconnect的IPv6网络无法连接到因特网。<br><br>    vpns0 Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00<br>          inet addr:192.168.30.1  P-t-P:192.168.30.172  Mask:255.255.255.255<br>          inet6 addr: 2607:f358:1a:1::1/128 Scope:Global<br>          UP POINTOPOINT RUNNING  MTU:1341  Metric:1<br>          RX packets:0 errors:0 dropped:0 overruns:0 frame:0<br>          TX packets:1 errors:0 dropped:0 overruns:0 carrier:0<br>          collisions:0 txqueuelen:500<br>          RX bytes:0 (0.0 b)  TX bytes:76 (76.0 b)<br><br><span style="color:purple">图4-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-1.png" alt=""><br><br><strike style="color:red">在PC端ping网关和手机的IPv6地址，ping成功，如图4-2，图4-3所示。</strike><br>&gt;<span style="color:red"><strong>修订：</strong></span>虽然Anyconnect客户端无法通过IPv6接入网络，但是局域网还是可以进行通信。<br><br><span style="color:purple">图4-2</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-2.png" alt=""><br><br><span style="color:purple">图4-3</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-3.png" alt=""><br><br>说明局域网之间是可以通信的。<br><br>#### tcpdump抓包 ####<br>使用tcpdump进行抓包，抓包的过程中，手机向一个IPv6站点发送http请求。抓包命令如下。<br><br>    tcpdump ip6 -w ipv6.cap<br><br><strike style="color:red">抓包结果如图4-4所示，http请求发出去若干个但是，但是没有收到回应。</strike><br>&gt;<span style="color:red"><strong>修订：</strong></span>数据包都发送到了vpns0网卡，可以被tcpdump抓到。<br><br><span style="color:purple">图4-4</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-4.png" alt=""><br><br><strike style="color:red">由此暂时可以认为http请求数据包已经发出，但是却没有收到任何回应，ocserv的配置没有问题。</strike>
+<h3 id="4-排错流程"><a href="#4-排错流程" class="headerlink" title="4.排错流程"></a>4.排错流程</h3><h4 id="网关地址寻找"><a href="#网关地址寻找" class="headerlink" title="网关地址寻找"></a>网关地址寻找</h4><strike style="color:red">在vps上通过traceroute6命令来找到vps所在局域网的网关地址，如图4-1所示，第一跳为网关地址。</strike><br>&gt;<span style="color:red"><strong>修订：</strong></span>vps的网关确实为图4-1所圈出的，但是在Anyconnect客户端连接时vps服务器会生成vpns0的网卡，该网卡的地址如下所示。对于接入到vps服务器的Anyconnect客户端而言，其获取的网关地址是vps服务器的虚拟网卡，而不是vps服务器局域网的网关，之前理解为填写vps服务器所在局域网的IPv6地址段，客户端获取的IPv6地址是接入的到vps所在的局域网，其实则不然，因为填写了vps所在局域网的地址池前缀，所以接入到vps服务器的客户端其发送的数据包，都被发送到vpns0这块虚拟网卡之上，但是该网卡IPv6地址与vps的IPv6网关地址冲突，因为数据包无法被转发，所以无法接入vps的Anyconnect的IPv6网络无法连接到因特网。<br><br>    vpns0 Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00<br>          inet addr:192.168.30.1  P-t-P:192.168.30.172  Mask:255.255.255.255<br>          inet6 addr: 2607:f358:1a:1::1/128 Scope:Global<br>          UP POINTOPOINT RUNNING  MTU:1341  Metric:1<br>          RX packets:0 errors:0 dropped:0 overruns:0 frame:0<br>          TX packets:1 errors:0 dropped:0 overruns:0 carrier:0<br>          collisions:0 txqueuelen:500<br>          RX bytes:0 (0.0 b)  TX bytes:76 (76.0 b)<br><br><span style="color:purple">图4-1</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/4-1.png" alt=""><br><br><strike style="color:red">在PC端ping网关和手机的IPv6地址，ping成功，如图4-2，图4-3所示。</strike><br>&gt;<span style="color:red"><strong>修订：</strong></span>虽然Anyconnect客户端无法通过IPv6接入网络，但是局域网还是可以进行通信。<br><br><span style="color:purple">图4-2</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/4-2.png" alt=""><br><br><span style="color:purple">图4-3</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/4-3.png" alt=""><br><br>说明局域网之间是可以通信的。<br><br>#### tcpdump抓包 ####<br>使用tcpdump进行抓包，抓包的过程中，手机向一个IPv6站点发送http请求。抓包命令如下。<br><br>    tcpdump ip6 -w ipv6.cap<br><br><strike style="color:red">抓包结果如图4-4所示，http请求发出去若干个但是，但是没有收到回应。</strike><br>&gt;<span style="color:red"><strong>修订：</strong></span>数据包都发送到了vpns0网卡，可以被tcpdump抓到。<br><br><span style="color:purple">图4-4</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/4-4.png" alt=""><br><br><strike style="color:red">由此暂时可以认为http请求数据包已经发出，但是却没有收到任何回应，ocserv的配置没有问题。</strike>
 
 <blockquote>
 <p><span style="color:red"><strong>修订：</strong></span>http请求没有发出去，因为vpns0和vps的IPv6默认网关冲突，此时vps都</p>
@@ -479,7 +479,7 @@ ipv6-dns = 2001:4860:4860::8844
 <blockquote>
 <p><span style="color:red"><strong>修订：</strong></span>tracert只能到vpns0，无法tracert到下一跳。</p>
 </blockquote>
-<p><span style="color:purple">图4-5</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/openconnect_IPv6/4-5.png" alt=""></p>
+<p><span style="color:purple">图4-5</span><br><img src="http://blog.kompaz.win/images/openconnect_IPv6/4-5.png" alt=""></p>
 <hr>
 <h3 id="5-结论与猜想"><a href="#5-结论与猜想" class="headerlink" title="5.结论与猜想"></a>5.结论与猜想</h3><h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><ul>
 <li><strike style="color:red">vps服务商可能禁用了非注册IPv6地址的转发。</strike></li>
@@ -530,8 +530,8 @@ ipv6-dns = 2001:4860:4860::8844
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/09/29/CentOS 6.x PPTP + Radius + Mysql + Daloradius/" rel="next" title="CentOS 6.x PPTP + Radius + Mysql + Daloradius">
-                <i class="fa fa-chevron-left"></i> CentOS 6.x PPTP + Radius + Mysql + Daloradius
+              <a href="/2016/09/09/CentOS 批量添加SFTP用户/" rel="next" title="CentOS 批量添加 sftp 用户">
+                <i class="fa fa-chevron-left"></i> CentOS 批量添加 sftp 用户
               </a>
             
           </div>
@@ -540,8 +540,8 @@ ipv6-dns = 2001:4860:4860::8844
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/09/29/Centos 6.x Hadoop 安装/" rel="prev" title="Centos 6.x Hadoop 安装">
-                Centos 6.x Hadoop 安装 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/09/29/CentOS 6.x PPTP + Radius + Mysql + Daloradius/" rel="prev" title="CentOS 6.x PPTP + Radius + Mysql + Daloradius">
+                CentOS 6.x PPTP + Radius + Mysql + Daloradius <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

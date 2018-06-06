@@ -107,17 +107,17 @@
 <meta property="og:site_name" content="Kompass">
 <meta property="og:description" content="Wireshark TCP抓包总结">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-1.png">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.2.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-3.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-4.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-5.jpg">
-<meta property="og:updated_time" content="2018-05-08T01:52:33.927Z">
+<meta property="og:image" content="http://blog.kompaz.win/images/wireshark/3-1.png">
+<meta property="og:image" content="http://blog.kompaz.win/images/wireshark/3-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/wireshark/3-2.2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/wireshark/3-3.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/wireshark/3-4.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/wireshark/3-5.jpg">
+<meta property="og:updated_time" content="2018-06-06T05:35:27.827Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Wireshark TCP抓包总结">
 <meta name="twitter:description" content="Wireshark TCP抓包总结">
-<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-1.png">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/wireshark/3-1.png">
 
 
 
@@ -375,7 +375,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+                <time title="修改时间：2018-06-06 13:35:27" itemprop="dateModified" datetime="2018-06-06T13:35:27+08:00">2018-06-06</time>
               
             
           </span>
@@ -538,14 +538,14 @@
 </blockquote>
 <hr>
 <h3 id="3-wireshark-TCP数据"><a href="#3-wireshark-TCP数据" class="headerlink" title="3.wireshark TCP数据"></a>3.wireshark TCP数据</h3><h4 id="数据流追踪"><a href="#数据流追踪" class="headerlink" title="数据流追踪"></a>数据流追踪</h4><p>一下所有的wireshark都是以2.0为例子，点击任意一个TCP协议传输的数据帧，右键选择追踪流，选择TCP或者SSL，则可以追踪这个TCP连接的数据流。如图3-1所示。之后可以观察到这个TCP数据流传输的数据，并可以把数据保存。</p>
-<p><span style="color:purple">图3-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-1.png" alt=""></p>
+<p><span style="color:purple">图3-1</span><br><img src="http://blog.kompaz.win/images/wireshark/3-1.png" alt=""></p>
 <h4 id="端点（Endpoints）"><a href="#端点（Endpoints）" class="headerlink" title="端点（Endpoints）"></a>端点（Endpoints）</h4><p>Statistics（统计） → Endpoints是统计当前抓包文件的重要工具，如图3-2所示，可以查看TCP/IP以及UDP等协议的统计结果，也可以根据统计结果进行过滤。</p>
-<p><span style="color:purple">图3-2</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.jpg" alt=""></p>
+<p><span style="color:purple">图3-2</span><br><img src="http://blog.kompaz.win/images/wireshark/3-2.jpg" alt=""></p>
 <h4 id="序号-时间（Stevens）"><a href="#序号-时间（Stevens）" class="headerlink" title="序号-时间（Stevens）"></a>序号-时间（Stevens）</h4><p>Statistics（统计） → TCP流图形 → 时间序列（Stevens），可以查看当前文件中某一个TCP时间序列图形，使用PgUP/PgDN切换TCP数据流，使用D键切换目的地址和源地址。如图3-2.2所示。   </p>
 <p>也可在切换到其他数据统计，例如图3-2.2红色圈出部分。</p>
-<p><span style="color:purple">图3-2.2</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-2.2.jpg" alt=""></p>
+<p><span style="color:purple">图3-2.2</span><br><img src="http://blog.kompaz.win/images/wireshark/3-2.2.jpg" alt=""></p>
 <h4 id="IO图表"><a href="#IO图表" class="headerlink" title="IO图表"></a>IO图表</h4><p>Statistics（统计） → IO图表可以创建一些自定义统计数据，其界面如图3-3所示，以bytes in flight为例子。首先选择过滤器过滤数据包，</p>
-<p><span style="color:purple">图3-3</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-3.jpg" alt=""></p>
+<p><span style="color:purple">图3-3</span><br><img src="http://blog.kompaz.win/images/wireshark/3-3.jpg" alt=""></p>
 <ul>
 <li>名称：如图3-3中1所示，可以根据需要，写对应的名字。</li>
 <li>显示过滤器：如图3-3中2所示，可以选取一个过滤器对包进行过滤，图中示例选取的过滤器为一个TCP连接中发发送端的所有数据帧，<code>ip.src==172.25.221.2 &amp;&amp; tcp.port==53400</code>。具体情况根据作图要求填入对应的过滤器。</li>
@@ -554,8 +554,8 @@
 <li>Y字段: 根据需求，填入对应的字段，本示例中填入的为tcp.analysis.bytes_in_flight，可以填入任意的过滤器，例如tcp，ip，http等等。</li>
 <li>间隔: 根据需求，选择对应到时间间隔，本示例中，选取了缺省的1秒为时间间隔，由于选取的数据包发送时间密度较大，集中在1秒之内，所以出的图像很不明显，将时间间隔调整为0.01秒，图像图3-5所示。</li>
 </ul>
-<p><span style="color:purple">图3-4</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-4.jpg" alt=""></p>
-<p><span style="color:purple">图3-5</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/wireshark/3-5.jpg" alt=""></p>
+<p><span style="color:purple">图3-4</span><br><img src="http://blog.kompaz.win/images/wireshark/3-4.jpg" alt=""></p>
+<p><span style="color:purple">图3-5</span><br><img src="http://blog.kompaz.win/images/wireshark/3-5.jpg" alt=""></p>
 
       
     </div>

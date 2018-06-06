@@ -107,16 +107,16 @@
 <meta property="og:site_name" content="Kompass">
 <meta property="og:description" content="小米路由器mini刷PandoraBox">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/4-1.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/4-2.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/5-1.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/6-1.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/8-1.jpg">
-<meta property="og:updated_time" content="2018-05-08T01:52:34.083Z">
+<meta property="og:image" content="http://blog.kompaz.win/images/PandoraBox/4-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/PandoraBox/4-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/PandoraBox/5-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/PandoraBox/6-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/PandoraBox/8-1.jpg">
+<meta property="og:updated_time" content="2018-06-06T05:35:31.689Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="小米路由器mini刷PandoraBox">
 <meta name="twitter:description" content="小米路由器mini刷PandoraBox">
-<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/4-1.jpg">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/PandoraBox/4-1.jpg">
 
 
 
@@ -374,7 +374,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-05-08 09:52:34" itemprop="dateModified" datetime="2018-05-08T09:52:34+08:00">2018-05-08</time>
+                <time title="修改时间：2018-06-06 13:35:31" itemprop="dateModified" datetime="2018-06-06T13:35:31+08:00">2018-06-06</time>
               
             
           </span>
@@ -459,8 +459,8 @@
 <h3 id="3-初始化路由器"><a href="#3-初始化路由器" class="headerlink" title="3.初始化路由器"></a>3.初始化路由器</h3><p>刷入开发版本的ROM，最好初始化一遍路由器，不初始化在之后的刷如PandoraBox可能有些问题。</p>
 <hr>
 <h3 id="4-获取SSH权限"><a href="#4-获取SSH权限" class="headerlink" title="4.获取SSH权限"></a>4.获取SSH权限</h3><p>要获取SSH权限，首先要和小米账户进行绑定，具体如何绑定请自行Google或者Baidu。<br>绑定成功后，会在网页上显示root密码以及下载SSH工具包的链接。如图4-1，图4-2所示。</p>
-<p><span style="color:purple">图4-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/4-1.jpg" alt=""></p>
-<p><span style="color:purple">图4-2</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/4-2.jpg" alt=""></p>
+<p><span style="color:purple">图4-1</span><br><img src="http://blog.kompaz.win/images/PandoraBox/4-1.jpg" alt=""></p>
+<p><span style="color:purple">图4-2</span><br><img src="http://blog.kompaz.win/images/PandoraBox/4-2.jpg" alt=""></p>
 <p>刷入SSH工具包步骤如下。</p>
 <ul>
 <li>将下载的工具包bin文件复制到U盘（FAT/FAT32格式）的根目录下，保证文件名为miwifi_ssh.bin；</li>
@@ -470,14 +470,14 @@
 </ul>
 <hr>
 <h3 id="5-刷入PandoraBox"><a href="#5-刷入PandoraBox" class="headerlink" title="5.刷入PandoraBox"></a>5.刷入PandoraBox</h3><p>使用WinSCP将PandoraBox的镜像导入到小米路由器的/tmp目录下。PandoraBox下载地址请点击<a href="http://downloads.openwrt.org.cn/PandoraBox/" target="_blank" rel="noopener">这里</a>，或者<a href="http://pan.baidu.com/s/1sj6AI9f" target="_blank" rel="noopener">这里</a>。WinSCP的界面如图5-1所示。</p>
-<p><span style="color:purple">图5-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/5-1.jpg" alt=""></p>
+<p><span style="color:purple">图5-1</span><br><img src="http://blog.kompaz.win/images/PandoraBox/5-1.jpg" alt=""></p>
 <p>此时，可以通过xshell SSH登录小米路由器mini了，路由器的IP缺省为192.168.1.1，账户为root，密码为在小米路由器官网上给出的。执行如下命令</p>
 <pre><code>mtd -r write /tmp/PandoraBox-ralink-mt7620-xiaomi-mini-squashfs-sysupgrade-r512-20150309 OS1
 </code></pre><p>这样开始了刷机，几分钟过后刷机成功，可在PC的wifi列表中找到PandoraBox的SSID。连接其中一个成功之后，可以登录192.168.1.1进行管理了，也可以通过xshell ssh登录，地址也为192.168.1.1。以上两种登录方式的账户都是root，缺省密码为admin。</p>
 <hr>
 <h3 id="6-偏好设置"><a href="#6-偏好设置" class="headerlink" title="6.偏好设置"></a>6.偏好设置</h3><p>在进行开始设置之前，极力推荐备份下/etc目录下的所有文件，如图6-1所示。在路由器命令行下，执行如下命令：</p>
 <pre><code>tar cvpzf etc_back.tgz /etc
-</code></pre><p><span style="color:purple">图6-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/6-1.jpg" alt=""></p>
+</code></pre><p><span style="color:purple">图6-1</span><br><img src="http://blog.kompaz.win/images/PandoraBox/6-1.jpg" alt=""></p>
 <p>备份完毕，将备份下载到本地保存。</p>
 <p>进行偏好设置，例如无线的SSID，无线密码，管理密码等等。设置完毕之后，可以在PandoraBox网页端进行备份，同时推荐在命令行下进行备份/etc目录。备份方法如上。</p>
 <hr>
@@ -571,7 +571,7 @@ config odhcpd &apos;odhcpd&apos;
 <pre><code>/etc/init.d/odhcpd restart
 /etc/init.d/network restart
 </code></pre><p>这样在浏览器上就可以获取IPv4 NAT私有地址以及原生的IPv6地址了。如图8-1所示。</p>
-<p><span style="color:purple">图8-1</span><br><img src="http://qingdao.icean.cc:11234/Imgbed/PandoraBox/8-1.jpg" alt=""></p>
+<p><span style="color:purple">图8-1</span><br><img src="http://blog.kompaz.win/images/PandoraBox/8-1.jpg" alt=""></p>
 <blockquote>
 <p>若IPv6能获取地址但是不能上网，请重启odhcpd服务。</p>
 </blockquote>

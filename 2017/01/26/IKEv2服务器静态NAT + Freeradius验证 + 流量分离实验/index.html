@@ -100,19 +100,19 @@
 
 
   <meta name="description" content="需求分析：IKEv2服务器地址为私有IP，通过静态NAT映射，外网可以访问；使用Freeradius进行验证；客户端接入VPN之后，只有指定的流量可以通过VPN网关，其他流量仍通过客户端原来的网关">
-<meta name="keywords" content="IKEv2,vpn,Strongswan,linux">
+<meta name="keywords" content="IKEv2,Strongswan,vpn,linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IKEv2服务器静态NAT + Freeradius验证 + 流量分离实验">
 <meta property="og:url" content="http://blog.kompaz.win/2017/01/26/IKEv2服务器静态NAT + Freeradius验证 + 流量分离实验/index.html">
 <meta property="og:site_name" content="Kompass">
 <meta property="og:description" content="需求分析：IKEv2服务器地址为私有IP，通过静态NAT映射，外网可以访问；使用Freeradius进行验证；客户端接入VPN之后，只有指定的流量可以通过VPN网关，其他流量仍通过客户端原来的网关">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/ikev2 + freeradius + nat/topo+.png">
-<meta property="og:updated_time" content="2018-05-08T01:52:33.359Z">
+<meta property="og:image" content="http://blog.kompaz.win/images/ikev2 + freeradius + nat/topo+.png">
+<meta property="og:updated_time" content="2018-06-06T05:35:10.495Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="IKEv2服务器静态NAT + Freeradius验证 + 流量分离实验">
 <meta name="twitter:description" content="需求分析：IKEv2服务器地址为私有IP，通过静态NAT映射，外网可以访问；使用Freeradius进行验证；客户端接入VPN之后，只有指定的流量可以通过VPN网关，其他流量仍通过客户端原来的网关">
-<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/ikev2 + freeradius + nat/topo+.png">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/ikev2 + freeradius + nat/topo+.png">
 
 
 
@@ -370,7 +370,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+                <time title="修改时间：2018-06-06 13:35:10" itemprop="dateModified" datetime="2018-06-06T13:35:10+08:00">2018-06-06</time>
               
             
           </span>
@@ -440,7 +440,7 @@
 <li>客户端接入VPN之后，只有指定的流量可以通过VPN网关，其他流量仍通过客户端原来的网关</li>
 </ul>
 <hr>
-<h3 id="2-实验环境"><a href="#2-实验环境" class="headerlink" title="2. 实验环境"></a>2. 实验环境</h3><h4 id="2-1-实验拓扑"><a href="#2-1-实验拓扑" class="headerlink" title="2.1 实验拓扑"></a>2.1 实验拓扑</h4><center><img src="http://qingdao.icean.cc:11234/Imgbed/ikev2 + freeradius + nat/topo+.png" alt="topo"></center><center style="color:purple"><strong>图2-1 实验拓扑</strong></center>
+<h3 id="2-实验环境"><a href="#2-实验环境" class="headerlink" title="2. 实验环境"></a>2. 实验环境</h3><h4 id="2-1-实验拓扑"><a href="#2-1-实验拓扑" class="headerlink" title="2.1 实验拓扑"></a>2.1 实验拓扑</h4><center><img src="http://blog.kompaz.win/images/ikev2 + freeradius + nat/topo+.png" alt="topo"></center><center style="color:purple"><strong>图2-1 实验拓扑</strong></center>
 
 <h4 id="2-2-设备信息"><a href="#2-2-设备信息" class="headerlink" title="2.2 设备信息"></a>2.2 设备信息</h4><p>各个设备的操作系统、IP地址以及网卡信息如下所示</p>
 <table>
@@ -680,9 +680,9 @@
           
             <a href="/tags/IKEv2/" rel="tag"># IKEv2</a>
           
-            <a href="/tags/vpn/" rel="tag"># vpn</a>
-          
             <a href="/tags/Strongswan/" rel="tag"># Strongswan</a>
+          
+            <a href="/tags/vpn/" rel="tag"># vpn</a>
           
             <a href="/tags/linux/" rel="tag"># linux</a>
           
@@ -697,8 +697,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/01/18/CentOS Freeradius 3.0.12编译安装/" rel="next" title="CentOS Freeradius 3.0.12编译安装">
-                <i class="fa fa-chevron-left"></i> CentOS Freeradius 3.0.12编译安装
+              <a href="/2017/01/18/CentOS 6.x ocserv安装/" rel="next" title="CentOS 6.x ocserv 安装">
+                <i class="fa fa-chevron-left"></i> CentOS 6.x ocserv 安装
               </a>
             
           </div>

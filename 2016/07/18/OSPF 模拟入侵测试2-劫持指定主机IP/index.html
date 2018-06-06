@@ -107,19 +107,19 @@
 <meta property="og:site_name" content="Kompass">
 <meta property="og:description" content="OSPF 模拟入侵测试2-劫持指定主机IP">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/1-1.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-1.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-2.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-3.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-4.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-5.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-6.jpg">
-<meta property="og:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-7.jpg">
-<meta property="og:updated_time" content="2018-05-08T01:52:33.722Z">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/1-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-1.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-2.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-3.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-4.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-5.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-6.jpg">
+<meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-7.jpg">
+<meta property="og:updated_time" content="2018-06-06T05:35:21.594Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OSPF 模拟入侵测试2-劫持指定主机IP">
 <meta name="twitter:description" content="OSPF 模拟入侵测试2-劫持指定主机IP">
-<meta name="twitter:image" content="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/1-1.jpg">
+<meta name="twitter:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/1-1.jpg">
 
 
 
@@ -377,7 +377,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+                <time title="修改时间：2018-06-06 13:35:21" itemprop="dateModified" datetime="2018-06-06T13:35:21+08:00">2018-06-06</time>
               
             
           </span>
@@ -442,7 +442,7 @@
 
       
         <h3 id="1-实验环境"><a href="#1-实验环境" class="headerlink" title="1. 实验环境"></a>1. 实验环境</h3><h4 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h4><p>使用GNS3搭建实验拓扑，实验拓扑如图1-1所示，其中R1、R2为OSPF网络，Vigilante为入侵主机，模拟路由器，PC3模拟一个服务器，IP地址为210.76.211.7/24，Ovzinp将冒充该服务器，Vigilante注入主机路由并重分布进OSPF中，将属于PC3的流量劫持到Vigilante。</p>
-<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 实验拓扑</strong></center>
+<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 实验拓扑</strong></center>
 
 <h4 id="IP地址表"><a href="#IP地址表" class="headerlink" title="IP地址表"></a>IP地址表</h4><table>
 <thead>
@@ -549,11 +549,11 @@
 </ul>
 <hr>
 <h3 id="2-入侵测试"><a href="#2-入侵测试" class="headerlink" title="2. 入侵测试"></a>2. 入侵测试</h3><h4 id="ping-PC3"><a href="#ping-PC3" class="headerlink" title="ping PC3"></a>ping PC3</h4><p>210.76.211.7为<strong>PC3</strong>的IP地址，在<strong>Winxp2</strong>上ping  210.76.211.7，路由正常，在<strong>PC3~R1</strong>链路上抓包结果如下。</p>
-<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-1.jpg" alt="2-1"></center><center style="color:purple"><strong>图2-1 抓包结果</strong></center>
+<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-1.jpg" alt="2-1"></center><center style="color:purple"><strong>图2-1 抓包结果</strong></center>
 
 
 
-<center><img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-2.jpg" alt="2-2"></center><center style="color:purple"><strong>图2-2 Winxp2 ping</strong></center>
+<center><img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-2.jpg" alt="2-2"></center><center style="color:purple"><strong>图2-2 Winxp2 ping</strong></center>
 
 <p>说明<strong>PC3</strong>到 210.76.211.7的路由是正常的，<strong>PC3</strong>访问了真正的服务器。</p>
 <h4 id="入侵设置"><a href="#入侵设置" class="headerlink" title="入侵设置"></a>入侵设置</h4><ul>
@@ -561,10 +561,10 @@
 <li>Ovzinp的e2端口地址为211.76.211.7，Ovzinp用于冒充PC3。</li>
 <li>Vigilante的直连路由表如图2-3所示。</li>
 </ul>
-<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-3.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-3 Vigilante路由表</strong></center>
+<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-3.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-3 Vigilante路由表</strong></center>
 
 <p>此时，<strong>Winxp2</strong>到210.76.211.7的ping数据包为什么不到Vigilante？因为<strong>Winxp2</strong>的网关为30.30.30.254，首先会把到210.76.211.7的数据包转发到该地址，该地址在R1，而R1上有到210.76.211.0/24的路由，如图2-4所示，目的地为210.76.211.7的数据包会被直接转发到f1/1端口，而不是转发到Vigilante。</p>
-<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-4.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-4 R1正常路由表</strong></center>
+<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-4.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-4 R1正常路由表</strong></center>
 
 <h4 id="注入主机路由条目"><a href="#注入主机路由条目" class="headerlink" title="注入主机路由条目"></a>注入主机路由条目</h4><p>因为会涉及到转发，所以<strong>Vigilante</strong>最好关闭<strong>iptables</strong>和<strong>ip6tables</strong>，这样可以避免一些不必要的麻烦，同时要开启linux内核转发。确定<strong>/etc/sysctl.conf</strong>中<strong>net.ipv4.ip_forward = 1</strong>，然后执行如下命令</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
@@ -573,13 +573,13 @@
 <p>重分布到OSPF中，必须重分布到OSPF中，这样所有的路由器才能学习到该路由条目。</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">router</span> <span class="selector-tag">ospf</span></span><br><span class="line"><span class="selector-tag">redistribute</span>  <span class="selector-tag">static</span></span><br></pre></td></tr></table></figure>
 <p><strong>R1</strong>注入后路由表如下图所示，因为路由表查找最长匹配的原则，所以当接收到目的地为210.77.211.7为目的的数据包时，路由器会将该数据包从30.30.30.1转发出去，即转发到了<strong>Vigilante</strong>。根据图2-3中，<strong>Vigilante</strong>收到该数据包后，会通过eth2转发给<strong>Ovzinp</strong>。</p>
-<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-5.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-5 R1注入后路由表</strong></center>
+<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-5.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-5 R1注入后路由表</strong></center>
 
 <p>测试结果如下，注入路由条目之后，<strong>Winxp2</strong> ping 210.76.211.7，在链路<strong>Vigilante~SW2</strong>之间抓到结果如图2-6</p>
-<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-6.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-6 Winxp2 ping</strong></center>
+<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-6.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-6 Winxp2 ping</strong></center>
 
 <p>也可以访问<strong>Ovzinp</strong>的http服务器，如图2-7所示</p>
-<center> <img src="http://qingdao.icean.cc:11234/Imgbed/OSPF_模拟入侵测试2_指定主机欺骗/2-7.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-7  http服务访问</strong></center>
+<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试2_指定主机欺骗/2-7.jpg" alt="2-3"></center><center style="color:purple"><strong>图2-7  http服务访问</strong></center>
 
 
 
@@ -625,8 +625,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/18/OSPF 模拟入侵测试4-劫持DNS服务器IP/" rel="next" title="OSPF 模拟入侵测试4-劫持DNS服务器IP">
-                <i class="fa fa-chevron-left"></i> OSPF 模拟入侵测试4-劫持DNS服务器IP
+              <a href="/2016/07/17/基础DNS学习/" rel="next" title="基础DNS学习">
+                <i class="fa fa-chevron-left"></i> 基础DNS学习
               </a>
             
           </div>
