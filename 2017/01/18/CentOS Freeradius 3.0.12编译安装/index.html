@@ -107,7 +107,7 @@
 <meta property="og:site_name" content="Kompass">
 <meta property="og:description" content="编译来安装Freeradius3">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-08T01:52:33.206Z">
+<meta property="og:updated_time" content="2018-06-06T05:49:38.723Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS Freeradius 3.0.12编译安装">
 <meta name="twitter:description" content="编译来安装Freeradius3">
@@ -368,7 +368,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-05-08 09:52:33" itemprop="dateModified" datetime="2018-05-08T09:52:33+08:00">2018-05-08</time>
+                <time title="修改时间：2018-06-06 13:49:38" itemprop="dateModified" datetime="2018-06-06T13:49:38+08:00">2018-06-06</time>
               
             
           </span>
@@ -447,9 +447,10 @@
 <p>如果要确认当前系统的OpenSSL是否已经打上心脏滴血的补丁，运行如下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -q --changelog openssl | grep -i -E <span class="string">"CVE-2014-0160"</span></span><br></pre></td></tr></table></figure>
 <hr>
-<h3 id="2-MySQL设置"><a href="#2-MySQL设置" class="headerlink" title="2. MySQL设置"></a>2. MySQL设置</h3><h4 id="2-1-创建数据库-amp-用户"><a href="#2-1-创建数据库-amp-用户" class="headerlink" title="2.1 创建数据库&amp;用户"></a>2.1 创建数据库&amp;用户</h4><p>为Freeradius创建一个数据库，并创建一个用户将。以root登录mysql，创建<code>数据库radius</code>，创建<code>用户radius</code>，并将<code>数据库radius</code>所有权限赋予给<code>用户radiu</code>s，登录密码为<code>radpass</code></p>
+<h3 id="2-MySQL设置"><a href="#2-MySQL设置" class="headerlink" title="2. MySQL设置"></a>2. MySQL设置</h3><h4 id="2-1-创建数据库-amp-用户"><a href="#2-1-创建数据库-amp-用户" class="headerlink" title="2.1 创建数据库&amp;用户"></a>2.1 创建数据库&amp;用户</h4><p>数据库使用的版本为<code>5.5.56-MariaDB</code>!</p>
+<p>为Freeradius创建一个数据库，并创建一个用户将。以<code>root</code>登录mysql，创建数据库<code>radius</code>，创建用户<code>radius</code>，并将数据库<code>radius</code>所有权限赋予给用户<code>radius</code>，登录密码为<code>radpass</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE radius;</span><br><span class="line">GRANT ALL PRIVILEGES ON radius.* TO radius@&quot;localhost&quot; IDENTIFIED BY &quot;radpass&quot;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
-<h4 id="2-2-Navicat管理MySQL"><a href="#2-2-Navicat管理MySQL" class="headerlink" title="2.2 Navicat管理MySQL"></a>2.2 Navicat管理MySQL</h4><p>为方便管理MySQL，可以使用Navicat进行管理，则需要添加一个可以远程访问<code>数据库radius</code>的用户，如下添加一个<code>用户radcat</code>，密码为<code>radpass</code>，<code>radcat@&#39;%&#39;</code>代表可以从任何地点访问<code>数据库radius</code></p>
+<h4 id="2-2-Navicat管理MySQL"><a href="#2-2-Navicat管理MySQL" class="headerlink" title="2.2 Navicat管理MySQL"></a>2.2 Navicat管理MySQL</h4><p>为方便管理MySQL，可以使用Navicat进行管理，则需要添加一个可以远程访问数据库<code>radius</code>的用户，如下添加一个用户<code>radcat</code>，密码为<code>radpass</code>，<code>radcat@&#39;%&#39;</code>代表可以从任何地点访问数据库<code>radius</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GRANT ALL PRIVILEGES ON radius.* TO radcat@&apos;%&apos; IDENTIFIED BY &quot;radpass&quot;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
 <p>可以控制navicat的权限粒度，例如只赋予某些表的查看权限</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GRANT SELECT ON radius.radacct TO radcat@&apos;%&apos; IDENTIFIED BY &apos;radpass&apos;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
@@ -568,8 +569,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/01/16/Linux重定向/" rel="next" title="Linux Shell 标准输入、输出和错误重定向">
-                <i class="fa fa-chevron-left"></i> Linux Shell 标准输入、输出和错误重定向
+              <a href="/2017/01/18/CentOS 6.x ocserv安装/" rel="next" title="CentOS 6.x ocserv 安装">
+                <i class="fa fa-chevron-left"></i> CentOS 6.x ocserv 安装
               </a>
             
           </div>
@@ -578,8 +579,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/01/18/CentOS 6.x ocserv安装/" rel="prev" title="CentOS 6.x ocserv 安装">
-                CentOS 6.x ocserv 安装 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/01/26/IKEv2服务器静态NAT + Freeradius验证 + 流量分离实验/" rel="prev" title="IKEv2服务器静态NAT + Freeradius验证 + 流量分离实验">
+                IKEv2服务器静态NAT + Freeradius验证 + 流量分离实验 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
