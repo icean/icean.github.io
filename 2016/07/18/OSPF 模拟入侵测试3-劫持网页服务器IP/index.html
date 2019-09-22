@@ -110,7 +110,7 @@
 <meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/1-1.jpg">
 <meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/2-1.jpg">
 <meta property="og:image" content="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/2-2.jpg">
-<meta property="og:updated_time" content="2018-06-06T05:35:22.516Z">
+<meta property="og:updated_time" content="2019-09-22T10:11:14.387Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OSPF 模拟入侵测试3-劫持网页服务器IP">
 <meta name="twitter:description" content="OSPF 模拟入侵测试3-劫持网页服务器IP">
@@ -372,7 +372,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-06-06 13:35:22" itemprop="dateModified" datetime="2018-06-06T13:35:22+08:00">2018-06-06</time>
+                <time title="修改时间：2019-09-22 18:11:14" itemprop="dateModified" datetime="2019-09-22T18:11:14+08:00">2019-09-22</time>
               
             
           </span>
@@ -437,8 +437,7 @@
 
       
         <h3 id="1-实验环境"><a href="#1-实验环境" class="headerlink" title="1. 实验环境"></a>1. 实验环境</h3><h4 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h4><p>使用GNS3搭建实验拓扑，实验拓扑如图1-1所示，其中R1、R2为OSPF网络，Vigilante为入侵主机，模拟路由器，PC3模拟一个服务器，IP地址为210.76.211.7/24，同时Vigilante，也将冒充该服务器，其eth2的IP地址为210.76.211.7/24。Vigilante注入主机路由并重分布进OSPF中，欺骗整个网络中的设备，将属于PC3的流量将被路由到Vigilante的eth2。</p>
-<center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 实验拓扑</strong></center>
-
+<p><center> <img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/1-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图1-1 实验拓扑</strong></center></p>
 <h4 id="IP地址表"><a href="#IP地址表" class="headerlink" title="IP地址表"></a>IP地址表</h4><table>
 <thead>
 <tr>
@@ -532,13 +531,8 @@
 <p>其中0x504f5354意义为，代表POST</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">P=0x50</span><br><span class="line">O=0x4f</span><br><span class="line">S=0x53</span><br><span class="line">T=0x54</span><br></pre></td></tr></table></figure>
 <h4 id="读取结果"><a href="#读取结果" class="headerlink" title="读取结果"></a>读取结果</h4><p>讲读取文件结果使用sftp传输到本机，使用Wireshark打开，记过如图2-1所示。</p>
-<center><img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/2-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图2-1 POST请求</strong></center>
-
-<p>经过验证，该网页登录没用其他加密手段，其验证口令通过POST明文传输，如图2-2所示。其中账户名和密码为在Winxp2上输入的账户名和密码。</p>
-<center><img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/2-2.jpg" alt="1-1"></center><center style="color:purple"><strong>图2-2 POST抓取验证口令</strong></center>
-
-<hr>
-<h3 id="3-拓展"><a href="#3-拓展" class="headerlink" title="3. 拓展"></a>3. 拓展</h3><ul>
+<p><center><img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/2-1.jpg" alt="1-1"></center><center style="color:purple"><strong>图2-1 POST请求</strong></center><br>经过验证，该网页登录没用其他加密手段，其验证口令通过POST明文传输，如图2-2所示。其中账户名和密码为在Winxp2上输入的账户名和密码。</p>
+<h2 id="图2-2-POST抓取验证口令"><a href="#图2-2-POST抓取验证口令" class="headerlink" title="图2-2 POST抓取验证口令"></a><center><img src="http://blog.kompaz.win/images/OSPF_模拟入侵测试3_网站服务器伪装/2-2.jpg" alt="1-1"></center><center style="color:purple"><strong>图2-2 POST抓取验证口令</strong></center></h2><h3 id="3-拓展"><a href="#3-拓展" class="headerlink" title="3. 拓展"></a>3. 拓展</h3><ul>
 <li>引流DNS流量，做中间人攻击。</li>
 </ul>
 
@@ -576,8 +570,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/18/OSPF 模拟入侵测试2-劫持指定主机IP/" rel="next" title="OSPF 模拟入侵测试2-劫持指定主机IP">
-                <i class="fa fa-chevron-left"></i> OSPF 模拟入侵测试2-劫持指定主机IP
+              <a href="/2016/07/18/OSPF 模拟入侵测试1-路由表获取&路由注入/" rel="next" title="OSPF 模拟入侵测试1-路由表获取&路由注入">
+                <i class="fa fa-chevron-left"></i> OSPF 模拟入侵测试1-路由表获取&路由注入
               </a>
             
           </div>
@@ -586,8 +580,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/07/18/OSPF 模拟入侵测试4-劫持DNS服务器IP/" rel="prev" title="OSPF 模拟入侵测试4-劫持DNS服务器IP">
-                OSPF 模拟入侵测试4-劫持DNS服务器IP <i class="fa fa-chevron-right"></i>
+              <a href="/2016/07/18/OSPF 模拟入侵测试2-劫持指定主机IP/" rel="prev" title="OSPF 模拟入侵测试2-劫持指定主机IP">
+                OSPF 模拟入侵测试2-劫持指定主机IP <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -672,7 +666,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">75</span>
+                    <span class="site-state-item-count">79</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -697,7 +691,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">6</span>
+                      
+                    
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -812,7 +808,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-实验环境"><span class="nav-number">1.</span> <span class="nav-text">1. 实验环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验拓扑"><span class="nav-number">1.1.</span> <span class="nav-text">实验拓扑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP地址表"><span class="nav-number">1.2.</span> <span class="nav-text">IP地址表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由器配置"><span class="nav-number">1.3.</span> <span class="nav-text">路由器配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-抓取数据"><span class="nav-number">2.</span> <span class="nav-text">2. 抓取数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#注入路由"><span class="nav-number">2.1.</span> <span class="nav-text">注入路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网页下载"><span class="nav-number">2.2.</span> <span class="nav-text">网页下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#上传伪装服务器"><span class="nav-number">2.3.</span> <span class="nav-text">上传伪装服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tcpdump抓取POST请求"><span class="nav-number">2.4.</span> <span class="nav-text">tcpdump抓取POST请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取结果"><span class="nav-number">2.5.</span> <span class="nav-text">读取结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-拓展"><span class="nav-number">3.</span> <span class="nav-text">3. 拓展</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-实验环境"><span class="nav-number">1.</span> <span class="nav-text">1. 实验环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实验拓扑"><span class="nav-number">1.1.</span> <span class="nav-text">实验拓扑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IP地址表"><span class="nav-number">1.2.</span> <span class="nav-text">IP地址表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#路由器配置"><span class="nav-number">1.3.</span> <span class="nav-text">路由器配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-抓取数据"><span class="nav-number">2.</span> <span class="nav-text">2. 抓取数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#注入路由"><span class="nav-number">2.1.</span> <span class="nav-text">注入路由</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网页下载"><span class="nav-number">2.2.</span> <span class="nav-text">网页下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#上传伪装服务器"><span class="nav-number">2.3.</span> <span class="nav-text">上传伪装服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tcpdump抓取POST请求"><span class="nav-number">2.4.</span> <span class="nav-text">tcpdump抓取POST请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取结果"><span class="nav-number">2.5.</span> <span class="nav-text">读取结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图2-2-POST抓取验证口令"><span class="nav-number"></span> <span class="nav-text">图2-2 POST抓取验证口令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-拓展"><span class="nav-number">1.</span> <span class="nav-text">3. 拓展</span></a></li></ol></div>
             
 
           </div>
@@ -832,7 +828,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>

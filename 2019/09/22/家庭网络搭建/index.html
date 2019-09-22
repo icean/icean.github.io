@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="介绍一些家庭网络搭建的思路">
+<meta name="keywords" content="network">
+<meta property="og:type" content="article">
+<meta property="og:title" content="家庭网络搭建思路">
+<meta property="og:url" content="http://blog.kompaz.win/2019/09/22/家庭网络搭建/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="介绍一些家庭网络搭建的思路">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727759270.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727754590.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727759270.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727754590.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727749550.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568728027850.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727765979.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568729089877.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727742317.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1567727134687.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568723200287.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568723225863.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568723236591.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1569145476072.png">
+<meta property="og:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1569146134817.png">
+<meta property="og:updated_time" content="2019-09-22T10:11:14.610Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="家庭网络搭建思路">
+<meta name="twitter:description" content="介绍一些家庭网络搭建的思路">
+<meta name="twitter:image" content="d:/Users/Icean/Documents/Git/icean/source/images/home_net/1568727759270.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2019/09/22/家庭网络搭建/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>家庭网络搭建思路 | Kompass</title>
+  
+
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?20fc723d508ae536a84f44656263a202";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2019/09/22/家庭网络搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">家庭网络搭建思路
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-22 09:07:14 / 修改时间：18:11:14" itemprop="dateCreated datePublished" datetime="2019-09-22T09:07:14+08:00">2019-09-22</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/网络/" itemprop="url" rel="index"><span itemprop="name">网络</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/22/家庭网络搭建/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2019/09/22/家庭网络搭建/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">介绍一些家庭网络搭建的思路</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>谨以此文写给不折腾会死星人。本文介绍了我个人目前实践成功并稳定运行的一些家庭网络方案，希望可以带给喜欢折腾的人一些启发。</p>
+<p>本文对大部分配置不做详细介绍，仅仅介绍思路。</p>
+<h3 id="物理拓扑"><a href="#物理拓扑" class="headerlink" title="物理拓扑"></a>物理拓扑</h3><h4 id="硬件需求"><a href="#硬件需求" class="headerlink" title="硬件需求"></a>硬件需求</h4><p>搭建一个体验良好的家庭网络，硬件上必须不能含糊，包括但是不限于：</p>
+<ul>
+<li>100Mb以上的运营商承诺的下行带宽，上行带宽必然不是对称，但是对于家庭网络来说，下行带宽更为影响体验</li>
+<li>1000Mb光猫，务必询问运营商的安装工程师，光猫是否为1000Mb光猫，目前某运营商仍有100Mb光猫</li>
+<li>1000Mb路由器，路由器是决定家庭网络体验的核心设备。无线功率、CPU、内存都是决定网络体验的重要决定因素，至于设备的选型，按照需求购买</li>
+<li>1000Mb交换机，非必须，按照需求购买，例如需要有线网络连接多个设备</li>
+<li>超五类网线，设备都是千兆带宽的，网线必须得匹配上这个速率</li>
+</ul>
+<h4 id="软件需求"><a href="#软件需求" class="headerlink" title="软件需求"></a>软件需求</h4><ul>
+<li>熟悉<a href="https://openwrt.org" target="_blank" rel="noopener">OpenWRT</a>，后续一些好玩的操作，都是基于OpenWRT进行实现的</li>
+<li>熟悉Linux，还是那句话，一些好玩的操作，也都是基于Linux服务器的</li>
+</ul>
+<h4 id="拓扑图"><a href="#拓扑图" class="headerlink" title="拓扑图"></a>拓扑图</h4><p>下图为当前家庭物理拓扑图，关于拓扑图一些图例的介绍，后续的拓扑图均使用该图例</p>
+<ul>
+<li>不同的颜色代表不同的网络区域</li>
+<li>设备跨越不同颜色区域表示设备可以实现区域间网络转发，不同网络区域的转发模式有  <img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568727759270.png" alt="1568727759270"><strong>NAT</strong>、<img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568727754590.png" alt="1568727754590"><strong>网络路由</strong>两种模式</li>
+<li><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568727759270.png" alt="1568727759270">   <strong>NAT</strong> 红色箭头方向表示NAT转发方向，即设备所在一个网络区域NAT转发到设备所在另一网络区域</li>
+<li><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568727754590.png" alt="1568727754590">   <strong>网络路由</strong> 路由模式，即设备实现了不同的网络区域之间路由转发</li>
+<li><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568727749550.png" alt="1568727749550">   <strong>网络桥接</strong> 桥接模式，无线桥接为设备对网络区域进行无线拓展，有线桥接利用物理网卡进行网络区域拓展</li>
+<li><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568728027850.png" alt="1568728027850"> <strong>无线链路</strong> 设备之间以无线的方式进行连接</li>
+</ul>
+<ul>
+<li><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568727765979.png" alt="1568727765979"> <strong>物理链路</strong> 设备之间以物理介质进行连接，例如以太网、光纤等</li>
+<li><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568729089877.png" alt="1568729089877"> <strong>VPN虚拟链路</strong> 设备之间以VPN协议维持的虚拟链路</li>
+<li><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568727742317.png" alt="1568727742317">   <strong>无线 </strong>设备具有无线发射功能</li>
+</ul>
+<p><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1567727134687.png" alt="1567727134687"></p>
+<h4 id="设备列表"><a href="#设备列表" class="headerlink" title="设备列表"></a>设备列表</h4><p>上面拓扑图涉及到的设备如下列表所示，其中带 <span style="color:red"><strong>*</strong></span> 标记设备为必要设备，为了实现一些好玩的功能，带 <span style="color:orange"><strong>*</strong></span> 也是必须的。设备选型不必拘泥于列表中的设备</p>
+<table>
+<thead>
+<tr>
+<th>设备名</th>
+<th>类型</th>
+<th>硬件</th>
+<th>操作系统</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Garlic <span style="color:red"><strong>*</strong></span></td>
+<td>路由器</td>
+<td>NetGear R7800</td>
+<td>OpenWRT 18.06.4</td>
+<td>路由器</td>
+</tr>
+<tr>
+<td>Orange</td>
+<td>服务器</td>
+<td>Ryzen 2600X + B450I</td>
+<td>CentOS 7.6</td>
+<td>运行服务</td>
+</tr>
+<tr>
+<td>Tomato <span style="color:orange"><strong>*</strong></span></td>
+<td>服务器</td>
+<td>NUC J3455</td>
+<td>CentOS 7.6</td>
+<td>运行服务</td>
+</tr>
+<tr>
+<td>Apple</td>
+<td>路由器</td>
+<td></td>
+<td></td>
+<td>音频Airplay</td>
+</tr>
+<tr>
+<td>Swtich</td>
+<td>交换机</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Tmall Box</td>
+<td>终端</td>
+<td>M81_A</td>
+<td></td>
+<td>影音播放</td>
+</tr>
+<tr>
+<td>Modem <span style="color:red"><strong>*</strong></span></td>
+<td>调制解调器</td>
+<td>KD-YUN-811E</td>
+<td></td>
+<td>光猫</td>
+</tr>
+<tr>
+<td>Xzffwy <span style="color:orange"><strong>*</strong></span></td>
+<td>云服务器</td>
+<td></td>
+<td>CentOS 7.2</td>
+<td>阿里云服务器</td>
+</tr>
+<tr>
+<td>Vultr</td>
+<td>云服务器</td>
+<td></td>
+<td>CentOS 7.2</td>
+<td>外网服务器</td>
+</tr>
+</tbody>
+</table>
+<h4 id="光猫桥接"><a href="#光猫桥接" class="headerlink" title="光猫桥接"></a>光猫桥接</h4><p>目前运营商很喜欢把路由器的功能集成到光猫里，但是光猫的转发和无线性能比较差，而且使用光猫拨号之后，接入光猫的路由器如果使用桥接模式，则无法使用大部分功能。若再次使用NAT，则接入路由器的终端设备，经过两次NAT才可访问互联网，做端口转发(DNAT)也是极其不友好了，需要配置两次</p>
+<p>至于光猫如何修改为桥接模式，这里不做过多介绍，自己Google或者和联通安装工程师进行PY，有很多选</p>
+<h3 id="虚拟拓扑"><a href="#虚拟拓扑" class="headerlink" title="虚拟拓扑"></a>虚拟拓扑</h3><p>物理拓扑可以满足基本上网需求，但是仍然无法满足一些高级需求，例如：</p>
+<ul>
+<li>远程管理家庭网络，一个最简单的场景就是可以在任何接入互联网的地方，通过VPN接入家庭网络，访问家里的私人云盘（owncloud）、文件共享（samba）、个人维基（dokuwiki）、RSS（tiny tiny RSS）、离线下载（transmission）等服务，以及远程管理路由器、服务器。</li>
+<li>透明代理，自动对某些屏蔽的域名，转发到指定的服务器</li>
+<li>站点到站点VPN，如果有需求的话，打通两个局域网，实现互相访问。</li>
+</ul>
+<h4 id="软件需求-1"><a href="#软件需求-1" class="headerlink" title="软件需求"></a>软件需求</h4><p>实现虚拟拓扑，需要对下面的软件、操作系统的配置有一定程度的了解</p>
+<ul>
+<li>CentOS/Ubuntu等，服务器操作系统</li>
+</ul>
+<ul>
+<li>Tinc，主要基于TCP，传输效率较低、开销较大，仅仅用于紧急网络维护</li>
+<li>Wireguard，新兴的VPN协议，基于UDP传输，其传输效率高、开销低，用于实现站点到站点VPN、透明代理</li>
+<li>Strongswan，实现IKEv2协议，用于远程接入家庭网络进行管理</li>
+<li>iptables/netfilter，实现各种虚拟网络的必要工具</li>
+</ul>
+<h4 id="站点到站点VPN"><a href="#站点到站点VPN" class="headerlink" title="站点到站点VPN"></a>站点到站点VPN</h4><p>没有Wireguard的时代，tinc是实现站点到站点VPN的不二选择，至于strongswan嘛，也可以实现，但是其复杂的配置选项，基本可以吓退大部分人了。尽管现在有了Wireguard这种高效的协议，可以实现站点到站点VPN，但是保留tinc仍有必要，可以用tinc作为一个应急链路，维护网络。</p>
+<p>如下图所示，Tinc实现了家庭本地网络 <em>Garlic LAN</em> 可以通过 <em>Tinc LAN</em>  <strong>以NAT转发的形式</strong>访问服务器 Xzffwy，访问的接口是服务器 Xzffwy 的 <em>Tinc LAN</em> 虚拟接口，即 <strong>Garlic LAN -&gt; Tinc LAN</strong>, 为单向访问。为啥不直接使用路由转发的方式？因为路由转发留给Wireguard。</p>
+<p>家庭网络与服务器之间实站点到站点VPN的一个有点为可以在家里无缝访问服务器上的一些不面向互联网的服务。例如在服务器上搭建了Samba、Gitweb等不能面向互联网开放的护肤，可以通过站点到站点VPN的方式方位，这样更为安全，也减少了服务器在互联网暴露的端口。</p>
+<p><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568723200287.png" alt="1568723200287"></p>
+<p>如下图所示，Wireguard实现了本地家庭网络 <em>Garlic LAN</em> 可以通过 <em>Wireguard LAN</em> <strong>以路由转发</strong>的形式访问服务器Xzffwy，即 <strong>Garlic LAN <-> Tinc LAN</-></strong>, 为两者可以相互转发访问，Wireguard的传输速度基本接近原生协议，其传输效率十分高效，而且对CPU资源的消耗很低，这使得家庭网络访问服务器上的对传输速度有要求的服务成为可能，例如Samba、Owncloud等。</p>
+<p><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568723225863.png" alt="1568723225863"></p>
+<p>如下图所示，在服务器上可以再通过Strongswan搭建一个IKEv2 VPN，实现对家庭网络的远程管理。Strongswan的配置十分繁琐、选项众多。Windows、iOS、MacOS上都原生支持IKEv2。</p>
+<p>手机或者电脑以IKEv2 VPN链接到服务器Xzffwy之后，即接入了 <em>IKEv2 Virtual LAN</em> ，则可以通过 <em>Wireguard LAN</em>，将流量转发到 <em>Garlic LAN</em>，这样通过间接的方式，实现了对家庭网络的远程访问。</p>
+<p><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1568723236591.png" alt="1568723236591"></p>
+<h4 id="远程管理"><a href="#远程管理" class="headerlink" title="远程管理"></a>远程管理</h4><p>如下图所示，也可以在家里的服务器上搭建Strongswan，将家里服务器搭建的VPN端口暴露在互联网上很简单，直接在路由器上端口转发即可（DNAT）。但是仍有一个棘手的问题需要解决，不想服务器Xzffwy这种云服务器，每次路由器拨号的时候，获取的公网IP地址都是不一样的。这时候就引入了一个新的概念：DDNS</p>
+<p>实现DDNS的思路也比较简单，需要两个前提：</p>
+<ul>
+<li>一个域名，域名的解析可以通过API修改</li>
+<li>家里有一台24小时在线的服务器</li>
+</ul>
+<p>实现DDNS的思路为：</p>
+<ul>
+<li><p>创建一个域名，例如home.skbtst.cn</p>
+</li>
+<li><p>家里服务器访问ifconfig.me或者ip.cn等站点，或者你自己的某个云服务器，获取你家里路由器的公网IP地址</p>
+</li>
+<li>通过API查询home.skbtst.cn解析IP，对比你的路由器公网IP，如果不是这个IP，通过API修改解析结果为当前公网IP</li>
+<li>上述第二、三步骤，通过Linux的crontab进行循环执行，执行的间隔可以设置在1到2分钟左右</li>
+</ul>
+<p>通过上述步骤，可以确保home.skbtst.cn的解析结果为家庭网络路由器获取的最新公网IP。</p>
+<p><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1569145476072.png" alt="1569145476072"></p>
+<h4 id="透明代理"><a href="#透明代理" class="headerlink" title="透明代理"></a>透明代理</h4><p>配置透明代理稍微繁琐一些，如下图所示，路由器Garlic和服务器Vultr之间的虚拟网络 <em>Wireguard EX LAN</em> ，用来实现透明代理</p>
+<p>主要配置涉及如下三个软件</p>
+<ul>
+<li>dnsmasq</li>
+<li>ipset</li>
+<li>iptables</li>
+</ul>
+<p>实现透明代理的核心思路如下</p>
+<ul>
+<li>在OpenWRT上需要安装dnsmasq-full，添加dnsmasq配置文件，让需要使用透明代理的域名，访问指定的DNS服务器进行解析，防止DNS污染，并把解析的结果加入到指定的ipset，例如redir</li>
+<li>配置iptables，将匹配上述名字为redir的ipset的流量，在mangle表PREROUTING链进行打标记，例如0x80</li>
+<li>添加额外的ip rule，将指定标记的0x80的流量转发到指定路由表110</li>
+<li>添加额外的路由表110，并添加默认路由为转发到wiregurad虚拟网卡，则需要访问透明代理的域名通过 <em>Wireguard EX LAN</em> 转发到了服务器Vultr</li>
+<li>服务器Vultr在iptables的nat表POSTROUTING链增加来自 <em>Garlic LAN</em> 的NAT转发</li>
+<li>服务器添加到<em>Garlic LAN</em> 的路由</li>
+</ul>
+<p><img src="D:\Users\Icean\Documents\Git\icean\source\images\home_net/1569146134817.png" alt="1569146134817"></p>
+<h3 id="网络监控"><a href="#网络监控" class="headerlink" title="网络监控"></a>网络监控</h3><p>待续</p>
+<h3 id="日志管理"><a href="#日志管理" class="headerlink" title="日志管理"></a>日志管理</h3><p>待续</p>
+<h3 id="统一认证"><a href="#统一认证" class="headerlink" title="统一认证"></a>统一认证</h3><p>待续</p>
+<h3 id="服务管理"><a href="#服务管理" class="headerlink" title="服务管理"></a>服务管理</h3><h4 id="离线下载"><a href="#离线下载" class="headerlink" title="离线下载"></a>离线下载</h4><h4 id="文件备份"><a href="#文件备份" class="headerlink" title="文件备份"></a>文件备份</h4><h4 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h4><h4 id="个人云盘"><a href="#个人云盘" class="headerlink" title="个人云盘"></a>个人云盘</h4><h4 id="个人维基"><a href="#个人维基" class="headerlink" title="个人维基"></a>个人维基</h4><h4 id="代码管理"><a href="#代码管理" class="headerlink" title="代码管理"></a>代码管理</h4>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"># network</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/13/20190113 OpenWRT升级到18.06.1/" rel="next" title="OpenWRT升级到18.06.1">
+                <i class="fa fa-chevron-left"></i> OpenWRT升级到18.06.1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/22/Demo/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">79</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#物理拓扑"><span class="nav-number">2.</span> <span class="nav-text">物理拓扑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#硬件需求"><span class="nav-number">2.1.</span> <span class="nav-text">硬件需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#软件需求"><span class="nav-number">2.2.</span> <span class="nav-text">软件需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拓扑图"><span class="nav-number">2.3.</span> <span class="nav-text">拓扑图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设备列表"><span class="nav-number">2.4.</span> <span class="nav-text">设备列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#光猫桥接"><span class="nav-number">2.5.</span> <span class="nav-text">光猫桥接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟拓扑"><span class="nav-number">3.</span> <span class="nav-text">虚拟拓扑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#软件需求-1"><span class="nav-number">3.1.</span> <span class="nav-text">软件需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#站点到站点VPN"><span class="nav-number">3.2.</span> <span class="nav-text">站点到站点VPN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#远程管理"><span class="nav-number">3.3.</span> <span class="nav-text">远程管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#透明代理"><span class="nav-number">3.4.</span> <span class="nav-text">透明代理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络监控"><span class="nav-number">4.</span> <span class="nav-text">网络监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志管理"><span class="nav-number">5.</span> <span class="nav-text">日志管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#统一认证"><span class="nav-number">6.</span> <span class="nav-text">统一认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务管理"><span class="nav-number">7.</span> <span class="nav-text">服务管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#离线下载"><span class="nav-number">7.1.</span> <span class="nav-text">离线下载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件备份"><span class="nav-number">7.2.</span> <span class="nav-text">文件备份</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件共享"><span class="nav-number">7.3.</span> <span class="nav-text">文件共享</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#个人云盘"><span class="nav-number">7.4.</span> <span class="nav-text">个人云盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#个人维基"><span class="nav-number">7.5.</span> <span class="nav-text">个人维基</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码管理"><span class="nav-number">7.6.</span> <span class="nav-text">代码管理</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.2.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://kompaz.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://blog.kompaz.win/2019/09/22/家庭网络搭建/';
+        this.page.identifier = '2019/09/22/家庭网络搭建/';
+        this.page.title = '家庭网络搭建思路';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://kompaz.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

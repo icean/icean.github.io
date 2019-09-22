@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.2.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.2.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="终于把OpenWRT升级了！">
+<meta name="keywords" content="OpenWRT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenWRT升级到18.06.1">
+<meta property="og:url" content="http://blog.kompaz.win/2019/01/13/20190113 OpenWRT升级到18.06.1/index.html">
+<meta property="og:site_name" content="Kompass">
+<meta property="og:description" content="终于把OpenWRT升级了！">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://blog.kompaz.win/Desktop/DNS.jpg">
+<meta property="og:updated_time" content="2019-09-22T10:11:13.719Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenWRT升级到18.06.1">
+<meta name="twitter:description" content="终于把OpenWRT升级了！">
+<meta name="twitter:image" content="http://blog.kompaz.win/Desktop/DNS.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://blog.kompaz.win/2019/01/13/20190113 OpenWRT升级到18.06.1/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>OpenWRT升级到18.06.1 | Kompass</title>
+  
+
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?20fc723d508ae536a84f44656263a202";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kompass</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.kompaz.win/2019/01/13/20190113 OpenWRT升级到18.06.1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Icean L">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kompass">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenWRT升级到18.06.1
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-01-13 00:00:00" itemprop="dateCreated datePublished" datetime="2019-01-13T00:00:00+08:00">2019-01-13</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-22 18:11:13" itemprop="dateModified" datetime="2019-09-22T18:11:13+08:00">2019-09-22</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/01/13/20190113 OpenWRT升级到18.06.1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2019/01/13/20190113 OpenWRT升级到18.06.1/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">终于把OpenWRT升级了！</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-OpenWRT-18-06-1"><a href="#1-OpenWRT-18-06-1" class="headerlink" title="1. OpenWRT 18.06.1"></a>1. OpenWRT 18.06.1</h3><p>为了使用新型site-to-site VPN wireguard，决定把路由器固件从OpenWRT 15.05.1升级到OpenWRT 18.06.1，直接去OpenWRT官网下载升级固件</p>
+<a id="more"></a>
+<hr>
+<h3 id="2-软件安装"><a href="#2-软件安装" class="headerlink" title="2. 软件安装"></a>2. 软件安装</h3><h4 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">opkg install block-mount</span><br><span class="line">opkg install kmod-usb-storage</span><br><span class="line">opkg install kmod-usb-storage-extras</span><br><span class="line">opkg install kmod-fs-ext4</span><br><span class="line">opkg install fdisk</span><br><span class="line">opkg install e2fsprogs</span><br></pre></td></tr></table></figure>
+<h4 id="透明代理"><a href="#透明代理" class="headerlink" title="透明代理"></a>透明代理</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">wget http://openwrt-dist.sourceforge.net/openwrt-dist.pub</span><br><span class="line">opkg-key add openwrt-dist.pub</span><br><span class="line">opkg <span class="built_in">print</span>-architecture | awk <span class="string">'&#123;print $2&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加软件源</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"src/gz openwrt_dist http://openwrt-dist.sourceforge.net/packages/base/<span class="variable">$(opkg print-architecture | awk '&#123;print $2&#125;' | tail -n 1)</span>"</span> &gt;&gt; /etc/opkg/distfeeds.conf</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"src/gz openwrt_dist_luci http://openwrt-dist.sourceforge.net/packages/luci"</span> &gt;&gt; /etc/opkg/distfeeds.conf</span><br><span class="line">opkg update</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装透明代理相关软件</span></span><br><span class="line">opkg install ChinaDNS</span><br><span class="line">opkg install simple-obfs</span><br><span class="line">opkg install dns-forwarder</span><br><span class="line">opkg install shadowsocks-libev</span><br><span class="line">opkg install luci-app-shadowsocks</span><br><span class="line">opkg install luci-app-chinadns</span><br><span class="line">opkg install luci-app-dns-forwarder</span><br></pre></td></tr></table></figure>
+<h4 id="iptables模块"><a href="#iptables模块" class="headerlink" title="iptables模块"></a>iptables模块</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># UDP转发</span></span><br><span class="line">opkg install iptables-mod-tproxy</span><br><span class="line"><span class="comment"># 使用PPTP VPN</span></span><br><span class="line">opkg install kmod-nf-nathelper-extra ppp-mod-pptp iptables-mod-conntrack-extra</span><br><span class="line">opkg install iptables-mod-nat-extra</span><br><span class="line">opkg install kmod-nf-nathelper-extra</span><br><span class="line"><span class="comment"># 用于透明代理，重启后生效</span></span><br><span class="line">opkg install ipset</span><br></pre></td></tr></table></figure>
+<h4 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">opkg remove dnsmasq</span><br><span class="line">opkg install dnsmasq-full</span><br></pre></td></tr></table></figure>
+<h4 id="其他工具"><a href="#其他工具" class="headerlink" title="其他工具"></a>其他工具</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">opkg install ip-full</span><br><span class="line">opkg install vim</span><br><span class="line">opkg install htop</span><br></pre></td></tr></table></figure>
+<h4 id="下载工具"><a href="#下载工具" class="headerlink" title="下载工具"></a>下载工具</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">opkg install coreutils-base64  </span><br><span class="line">opkg install curl</span><br><span class="line">opkg install ca-certificates</span><br><span class="line">opkg install ca-bundle</span><br></pre></td></tr></table></figure>
+<h4 id="VPN"><a href="#VPN" class="headerlink" title="VPN"></a>VPN</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tinc VPN，一种site-to-site VPN</span></span><br><span class="line">opkg install tinc  </span><br><span class="line"><span class="comment"># wireguard，新型site-to-site VPN</span></span><br><span class="line">opkg install luci-app-wireguard</span><br><span class="line">opkg install wireguard</span><br></pre></td></tr></table></figure>
+<h4 id="汉语语言包"><a href="#汉语语言包" class="headerlink" title="汉语语言包"></a>汉语语言包</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg install luci-i18n-base-zh-cn</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-透明代理配置"><a href="#3-透明代理配置" class="headerlink" title="3. 透明代理配置"></a>3. 透明代理配置</h3><p>安装完软件后，需要重启路由器才能生效</p>
+<h4 id="Shadowsocks配置"><a href="#Shadowsocks配置" class="headerlink" title="Shadowsocks配置"></a>Shadowsocks配置</h4><p>进入影梭配置页面 <code>服务</code> &gt; <code>影梭</code> &gt; <code>服务器管理</code>，添加服务器，填写服务器信息，服务器地址、服务器端口、密码、加密方式</p>
+<p>设置代理方案，进入 <code>访问控制</code> 页面，</p>
+<ul>
+<li><p>「外网区域」<code>被忽略IP列表</code> 选择ChinaDNS路由表即可，其他的留空。</p>
+</li>
+<li><p>「内网区域」<code>接口</code>设置为默认接口<strong>br-lan</strong>即可，<code>代理类型</code>主要有三种：</p>
+<ul>
+<li>正常代理：使用外网区域设置的方式。</li>
+<li>直接连接：忽略外网区域的设置，不走代理。</li>
+<li><p>全局代理：忽略外网区域的设置，强制走代理。</p>
+<p> <code>代理自身</code>为路由设备自身访问网络时的代理方式</p>
+</li>
+</ul>
+</li>
+<li><p>「内网主机」，单独配置内网特定IP的代理方式，优先级更高</p>
+</li>
+</ul>
+<p>进入<code>基本设置</code>页面，<code>透明代理</code>选择一个主服务器，UDP服务器若无玩游戏需求，停用即可。<code>SOCKS5代理</code>停用即可。<code>端口转发</code>用于避免DNS污染，选择一个主服务器即可，本地端口设置为5300，目标地址为8.8.8.8:53，然后保存上述配置，刷新页面查看透明代理和端口转发是否处于运行中状态</p>
+<h4 id="DNS配置"><a href="#DNS配置" class="headerlink" title="DNS配置"></a>DNS配置</h4><p>DNS转发示意图如下图所示</p>
+<p><img src="../../../../../Desktop/DNS.jpg" alt="img"></p>
+<p>国内域名走国内 DNS 解析，国外域名走国外 DNS 解析，解决DNS污染问题。选择<code>服务</code> -&gt; <code>DNS转发</code>，选择「启用」，保存配置然后刷新页面确认DNS转发处于运行状态</p>
+<p>选择<code>服务</code>-&gt;<code>ChinaDNS</code>，选择「启用」，并将「上游服务器」改为 <code>114.114.114.114,127.0.0.1#5300</code>，<code>5300</code> 是 <code>DNS 转发</code> 配置项的 <code>监听端口</code>，保存配置刷新页面确认ChinaDNS转发处于运行状态</p>
+<p>选择<code>网络</code> &gt; <code>DHCP/DNS</code>，在「DNS转发」中填入：<code>127.0.0.1#5353</code>，<code>5353</code> 是 <code>ChinaDNS</code> 配置项的 <code>本地端口</code>并保存</p>
+<p>依赖ChinaDNS解析速度很慢，经过测试，也有证书问题。需要指定域名强制直连，下载相应脚本并生成dnsmasq配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -L -o generate_dnsmasq_chinalist.sh https://github.com/cokebar/openwrt-scripts/raw/master/generate_dnsmasq_chinalist.sh</span><br><span class="line">chmod +x generate_dnsmasq_chinalist.sh</span><br><span class="line">sh generate_dnsmasq_chinalist.sh -d 182.254.116.116 -p 53 -s ss_spec_dst_bp -o /etc/dnsmasq.d/accelerated-domains.china.conf</span><br></pre></td></tr></table></figure>
+<p>接着可以继续添加自己的需要强制不走代理的域名，在 /etc/dnsmasq.d 目录下新建 custom_bypass.conf ，按照下列格式添加，通常需要将 CDN 域名加进来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server=/example.com/182.254.116.116</span><br><span class="line">ipset=/example.com/ss_spec_dst_bp</span><br></pre></td></tr></table></figure>
+<p>GFWList强制走代理，自定义域名强制走代理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -L -o gfwlist2dnsmasq.sh https://github.com/cokebar/gfwlist2dnsmasq/raw/master/gfwlist2dnsmasq.sh</span><br><span class="line">chmod +x gfwlist2dnsmasq.sh</span><br><span class="line">sh gfwlist2dnsmasq.sh -d 127.0.0.1 -p 5300 -s ss_spec_dst_fw -o /etc/dnsmasq.d/dnsmasq_gfwlist.conf</span><br></pre></td></tr></table></figure>
+<p>接着可以增加自己的强制走代理的域名，在 <code>/etc/dnsmasq.d</code> 目录下新建 <code>custom_forward.conf</code>，按照下列格式添加，同样需要将 CDN 域名加进来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server=/example.com/127.0.0.1#5300</span><br><span class="line">ipset=/example.com/ss_spec_dst_fw</span><br></pre></td></tr></table></figure>
+<p>重启dnsmasq</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/dnsmasq restart</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="修订版本信息"><a href="#修订版本信息" class="headerlink" title="修订版本信息"></a>修订版本信息</h3><table>
+<thead>
+<tr>
+<th>修订版本</th>
+<th>时间</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档创建</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>文档修改1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://leamtrop.com/2017/05/14/shadowsocks-proxy-on-lede/" target="_blank" rel="noopener">https://leamtrop.com/2017/05/14/shadowsocks-proxy-on-lede/</a></li>
+<li><a href="https://cokebar.info/archives/664" target="_blank" rel="noopener">https://cokebar.info/archives/664</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/OpenWRT/" rel="tag"># OpenWRT</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/13/20190113 OpenWRT&CentOS Wireguard/" rel="next" title="OpenWRT&CentOS Wireguard">
+                <i class="fa fa-chevron-left"></i> OpenWRT&CentOS Wireguard
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/22/家庭网络搭建/" rel="prev" title="家庭网络搭建思路">
+                家庭网络搭建思路 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Icean L</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">79</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">33</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-OpenWRT-18-06-1"><span class="nav-number">1.</span> <span class="nav-text">1. OpenWRT 18.06.1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-软件安装"><span class="nav-number">2.</span> <span class="nav-text">2. 软件安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件系统"><span class="nav-number">2.1.</span> <span class="nav-text">文件系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#透明代理"><span class="nav-number">2.2.</span> <span class="nav-text">透明代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iptables模块"><span class="nav-number">2.3.</span> <span class="nav-text">iptables模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS"><span class="nav-number">2.4.</span> <span class="nav-text">DNS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他工具"><span class="nav-number">2.5.</span> <span class="nav-text">其他工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#下载工具"><span class="nav-number">2.6.</span> <span class="nav-text">下载工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VPN"><span class="nav-number">2.7.</span> <span class="nav-text">VPN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#汉语语言包"><span class="nav-number">2.8.</span> <span class="nav-text">汉语语言包</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-透明代理配置"><span class="nav-number">3.</span> <span class="nav-text">3. 透明代理配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Shadowsocks配置"><span class="nav-number">3.1.</span> <span class="nav-text">Shadowsocks配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DNS配置"><span class="nav-number">3.2.</span> <span class="nav-text">DNS配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修订版本信息"><span class="nav-number">4.</span> <span class="nav-text">修订版本信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Icean L</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Gemini</a> v6.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.2.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.2.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.2.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.2.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.2.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.2.0"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://kompaz.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://blog.kompaz.win/2019/01/13/20190113 OpenWRT升级到18.06.1/';
+        this.page.identifier = '2019/01/13/20190113 OpenWRT升级到18.06.1/';
+        this.page.title = 'OpenWRT升级到18.06.1';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://kompaz.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
